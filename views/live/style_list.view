@@ -1,0 +1,139 @@
+// --- List item styles
+
+style(ListItemOuter, {
+  height: 2em;
+});
+
+style(ListItem, {
+  margin: [$ui.xmargin, 0.1em, 0.5em, 0.1em];
+  spacing: $ui.xmargin;
+});
+
+style(ListItemIcon_narrow, {
+  width: 2.5em;
+});
+
+style(ListItemIcon_wide, {
+  width: 6em;
+});
+
+style(ListItemIcon, {
+});
+
+style(ListItemLabel, {
+//  color: iir(!isNavFocused(), 4);
+});
+
+style(ListItemLabelDimmed, {
+  color: 0.7; //iir(select(isNavFocused(), 0, 0.7), 4);
+});
+
+style(ListItemLabelContainer, {
+  filterConstraintX: true;
+});
+
+style(ListItemValue, {
+  filterConstraintX: true;
+  padding: [1em, 0, 0, 0];
+//  color: iir(!isNavFocused(), 4);
+  font: "skin://fonts/RobotoCondensed-Regular.ttf";
+});
+
+style(ListItemValueOn, {
+  padding: [1em, 0, 0, 0];
+  filterConstraintX: true;
+  color: [0.8, 1.0, 0.8];
+  font: "skin://fonts/RobotoCondensed-Bold.ttf";
+});
+
+style(ListItemValueOff, {
+  padding: [1em, 0, 0, 0];
+  filterConstraintX: true;
+  color: [1.0, 0.8, 0.8];
+  font: "skin://fonts/RobotoCondensed-Light.ttf";
+});
+
+style(ListItemSeparatorLabel, {
+//  font: "skin://fonts/RobotoCondensed-Light.ttf";
+  size: 1.5em;
+//  alpha: 0.3;
+  align: bottom;
+});
+
+//
+// -- Multiopt --------------------------------------
+//
+
+
+style(ListMultioptContainer, {
+  height: 5 * 1.5em;
+});
+
+style(MultioptValue, {
+  filterConstraintX: true;
+//  color: iir(!isNavFocused(), 4);
+  font: "skin://fonts/RobotoCondensed-Regular.ttf";
+});
+
+style(MultioptIcon, {
+  source: "skin://icons/ic_expand_more_48px.svg";
+  width: 2em;
+  size: 1em;
+});
+
+style(MultioptItem, {
+  height: 1.5em;
+  font: "skin://fonts/RobotoCondensed-Regular.ttf";
+});
+
+
+style(MultioptItemIconSelected, {
+  source: "skin://icons/ic_check_48px.svg";
+  width: 2em;
+  size: 1em;
+});
+
+style(MultioptItemIconUnselected, {
+  source: "";
+  width: 2em;
+  size: 1em;
+});
+
+style(MultioptItemLabel, {
+  font: "skin://fonts/RobotoCondensed-Regular.ttf";
+//  color: iir(!isNavFocused(), 4);
+});
+
+//
+// -- Slider --------------------------------------
+//
+
+style(SliderRail, {
+  padding: [2em, 0];
+});
+
+style(SliderLabel, {
+  align: center;
+  font: "skin://fonts/RobotoCondensed-Regular.ttf";
+  shadow: true;
+});
+
+//
+// -- Action --------------------------------------
+//
+
+style(ActionLabel, {
+  align: left;
+  filterConstraintX: true;
+  font: "skin://fonts/RobotoCondensed-Regular.ttf";
+//  color: iir(!isNavFocused(), 4);
+});
+
+//
+// -- Integer --------------------------------------
+//
+
+style(IntegerLayout, {
+  page: select($ui.aspect < 1, "narrow", "wide");
+});
+

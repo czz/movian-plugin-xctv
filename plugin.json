@@ -1,0 +1,15 @@
+{
+	"description": "<p>AnonymousTv beta version</p>",
+	"author": "czz78", 
+	"homepage": "",
+	"title": "Xctv",
+	"synopsis": "xctv",
+	"version": "0.0.2",
+        "file": "xctv.js",
+	"showtimeVersion": "4.8",
+	"type": "ecmascript",
+	"id": "xctv",
+	"icon": "logo.png",
+	"category": "video",
+	"apiversion":2
+}

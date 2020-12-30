@@ -1,0 +1,17 @@
+// --- List item styles
+
+//questo img
+style(ListItem, {
+ padding: [0, 3em, 0, 0em];
+});
+
+//questo img
+style(ListItemIcon, {
+  size: 25em;
+  width: 25em;
+  align: center;
+  margin: [0,0,0,0];
+});
+
+
+

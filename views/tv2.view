@@ -1,0 +1,139 @@
+#import "skin://theme.view"
+
+
+widget(container_z, {
+
+  height: 5em;
+
+  ListItemBevel();
+  ListItemHighlight();
+
+  onEvent(activate, navOpen($self.url, void, $self, $parent.model, void, $parent.url));
+  onEvent(itemMenu, eventWithProp(videoInfo, $self));
+//  onEvent(itemMenu, navOpen($self.eventUrl));
+
+  focusable: true;
+
+  widget(container_x, {
+    style: "ListItem";
+
+    widget(deck, {
+      width: 8em;
+
+      widget(label, {
+        align: center;
+        caption: $self.metadata.title;
+      });
+
+//      widget(image, {
+//        source: $self.metadata.icon;
+//      });
+
+        widget(container_x, {
+          widget(container_y, {
+            padding: [0.2em,0,0,0.5em];
+
+              widget(image, {
+                source: $self.metadata.icon;
+              });
+          });
+          widget(container_y, {
+            padding: [0.2em,0,0,0.5em];
+
+              widget(image, {
+                source: $self.metadata.nows;
+              });
+          });
+        });
+
+
+      page: select(isVoid($self.metadata.icon), 0, 1);
+    });
+
+
+    widget(container_y, {
+      filterConstraintX: true;
+      padding: [0,0.5em];
+      align: top;
+
+      widget(table, {
+        filterConstraintY: true;
+
+        widget(container_y, {
+
+          // Current event
+          widget(container_x, {
+            hidden: isVoid($self.metadata.cstart);
+            tableMode: true;
+            spacing: 1em;
+            widget(label, {
+              caption: strftime($self.metadata.cstart, "%H:%M");
+              style: "ListItemLabel";
+            });
+
+            widget(label, {
+	      ellipsize: true;
+              caption: $self.metadata.ctitle;
+              style: "ListItemLabel";
+            });
+          });
+
+          widget(container_x, {
+            hidden: isVoid($self.metadata.cstart);
+            padding: [0.2em,0.2em,0.2em,0.5em];
+            widget(container_z, {
+              width: 12em;
+              widget(quad, {
+                color: 0.4;
+                alpha: 0.8;
+              });
+
+              widget(bar, {
+                height: 0.3em;
+                color1: 0.8;
+                color2: 0.81;
+	        fill: ($core.clock.unixtime - $self.metadata.cstart) /
+                  ($self.metadata.cstop - $self.metadata.cstart);
+              });
+            });
+          });
+
+          // Next event
+          widget(container_x, {
+            tableMode: true;
+            spacing: 1em;
+
+            widget(label, {
+              caption: strftime($self.metadata.nstart, "%H:%M");
+              style: "ListItemLabelDimmed";
+            });
+
+            widget(label, {
+	      ellipsize: true;
+              caption: $self.metadata.ntitle;
+              style: "ListItemLabelDimmed";
+            });
+          });
+
+          // Third
+          widget(container_x, {
+            tableMode: true;
+            spacing: 1em;
+
+            widget(label, {
+              caption: strftime($self.metadata.tstart, "%H:%M");
+              style: "ListItemLabelDimmed";
+            });
+
+            widget(label, {
+	      ellipsize: true;
+              caption: $self.metadata.ttitle;
+              style: "ListItemLabelDimmed";
+            });
+          });
+
+        });
+      });
+    });
+  });
+});

@@ -141,7 +141,7 @@ var Xtream = (function () {
 
         var s = { method: "POST",
                   debug: this.options().debug,
-                  compression: true,
+                  compression: false,
                   headers: { 'User-Agent' : this.userAgent() },
                   postdata: post_data
                  };

@@ -1,5 +1,7 @@
 # movian-plugin-xctv
 
+![XCtv — IPTV plugin for Movian](images/banner.jpg)
+
 **Xtream Codes** plugin for [Movian](https://movian.tv) / movian-go.
 
 A complete IPTV client: live TV with EPG guide, catch-up,

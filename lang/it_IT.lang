@@ -973,3 +973,27 @@ msg: puntate
 id: puntate in palinsesto
 msg: puntate in palinsesto
 
+id: Caricamento…
+msg: Caricamento…
+
+id: Caricamento fallito — riprova
+msg: Caricamento fallito — riprova
+
+id: Nessun elemento
+msg: Nessun elemento
+
+id: Nascondi elemento
+msg: Nascondi elemento
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Elemento nascosto (ripristina dalle Impostazioni)
+
+
+id: Rinomina
+msg: Rinomina
+
+id: Nuovo nome (vuoto = originale)
+msg: Nuovo nome (vuoto = originale)
+
+id: Elemento rinominato
+msg: Elemento rinominato

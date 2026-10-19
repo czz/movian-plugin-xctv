@@ -975,3 +975,27 @@ msg: Folgen
 id: puntate in palinsesto
 msg: Folgen im Sendeplan
 
+id: Caricamento…
+msg: Laden…
+
+id: Caricamento fallito — riprova
+msg: Laden fehlgeschlagen — erneut versuchen
+
+id: Nessun elemento
+msg: Keine Einträge
+
+id: Nascondi elemento
+msg: Element ausblenden
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Element ausgeblendet (in Einstellungen wiederherstellen)
+
+
+id: Rinomina
+msg: Umbenennen
+
+id: Nuovo nome (vuoto = originale)
+msg: Neuer Name (leer = Original)
+
+id: Elemento rinominato
+msg: Element umbenannt

@@ -974,3 +974,27 @@ msg: серії
 id: puntate in palinsesto
 msg: серії в розкладі
 
+id: Caricamento…
+msg: Завантаження…
+
+id: Caricamento fallito — riprova
+msg: Помилка завантаження — спробуйте знову
+
+id: Nessun elemento
+msg: Немає елементів
+
+id: Nascondi elemento
+msg: Pryhovaty element
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Element pryhovano (vidnovyty v nalashtuvannyah)
+
+
+id: Rinomina
+msg: Перейменувати
+
+id: Nuovo nome (vuoto = originale)
+msg: Нова назва (пусто = оригінал)
+
+id: Elemento rinominato
+msg: Елемент перейменовано

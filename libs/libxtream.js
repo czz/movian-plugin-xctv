@@ -125,6 +125,18 @@ var Xtream = (function () {
             return v;
         };
 
+        // peek/put per i path async: stessa cache, senza la
+        // chiamata sincrona
+        this._cachePeek = function(key, ttlSecs) {
+            var now = Math.floor(Date.now() / 1000);
+            if(_cache[key] && (now - _cache[key].t) < ttlSecs)
+                return _cache[key].v;
+            return undefined;
+        };
+        this._cachePut = function(key, v) {
+            if(v) _cache[key] = { t: Math.floor(Date.now() / 1000), v: v };
+        };
+
         // getter for player url
         this.playerUrl = function () {
             return this.baseUrl().playerApi + "/player_api.php";
@@ -192,6 +204,23 @@ var Xtream = (function () {
 
 
     /*
+     *  _catMatch — match categoria tollerante: category_id puo'
+     *  arrivare come numero, stringa o array (item multi-categoria).
+     */
+    function _catMatch(cid, id) {
+
+        var s = String(id);
+        if(cid == null || cid === '') return s == '0';
+        if(Object.prototype.toString.call(cid) === '[object Array]') {
+            for(var i = 0; i < cid.length; i++)
+                if(String(cid[i]) == s) return true;
+            return false;
+        }
+        return String(cid) == s;
+    }
+
+
+    /*
      * Private method req — GET on player_api.php with query args.
      * When statuscode === true, returns the HTTP status code instead
      * of the parsed JSON body.
@@ -216,7 +245,10 @@ var Xtream = (function () {
                   debug: this.options().debug,
                   compression: false,
                   connectTimeout: 5000,
-                  readTimeout: 15000,
+                  // liste VOD/serie possono pesare decine di MB in
+                  // chiaro (compression off): 15s non bastavano su
+                  // connessioni lente — 60s resta un bound ai hang
+                  readTimeout: 60000,
                   headers: { 'User-Agent' : this.userAgent() }
                  };
 
@@ -251,6 +283,106 @@ var Xtream = (function () {
 
         return res;
 
+    }
+
+
+    /*
+     *  _reqAsync — come _req ma con callback: la pagina resta
+     *  reattiva mentre la rete scarica (le liste catalogo possono
+     *  pesare decine di MB). cb(parsed|false).
+     *  Le richieste identiche in volo si deduppano: due pagine
+     *  aperte insieme non scaricano due volte lo stesso catalogo.
+     */
+    var _inflight = {};
+    function _reqAsync(data, cb) {
+
+        var self = this;
+        if(!self.credentials().username || !self.credentials().password) {
+            cb(false);
+            return;
+        }
+
+        var url = self.playerUrl() +
+                  "?username=" + encodeURIComponent(self.credentials().username) +
+                  "&password=" + encodeURIComponent(self.credentials().password);
+
+        if (data === Object(data) && Object.prototype.toString.call(data) !== '[object Array]') {
+            for(var k in data)
+                url += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]);
+        }
+
+        // dedup inflight: stessa URL -> si accoda alla richiesta
+        // gia' partita
+        var fin;
+        if(_inflight[url]) {
+            _inflight[url].push(cb);
+            return;
+        }
+        _inflight[url] = [cb];
+        fin = function(out) {
+            var list = _inflight[url] || [];
+            delete _inflight[url];
+            for(var i = 0; i < list.length; i++)
+                try { list[i](out); } catch(e) {
+                    _debug.call(self, '_reqAsync cb: ' + e, 'Xtream', true);
+                }
+        };
+
+        var s = { method: "GET",
+                  debug: self.options().debug,
+                  // liste catalogo fino a ~50MB in chiaro: gzip le
+                  // riduce a ~8MB. Al primo fallimento si riprova
+                  // senza compressione (pannelli/proxy che rompono
+                  // gzip o i redirect — il bug storico del 301).
+                  compression: true,
+                  connectTimeout: 5000,
+                  readTimeout: 60000,
+                  headers: { 'User-Agent' : self.userAgent() }
+                 };
+
+        function attempt() {
+            try {
+                http.request(url, s, function(err, res) {
+                    var out = false;
+                    try {
+                        if(!err && res) {
+                            var body = res.toString();
+                            if(body && body.length >= 2) {
+                                var parsed = JSON.parse(body);
+                                if(_shapeOk(data && data.action, parsed)) {
+                                    out = parsed;
+                                } else {
+                                    _debug.call(self, 'Bad response shape for ' +
+                                        (data && data.action) + ' => ' +
+                                        body.substring(0, 80), 'Xtream', true);
+                                }
+                            }
+                        }
+                    } catch(e) {
+                        _debug.call(self, '_reqAsync parse: ' + e,
+                                    'Xtream', true);
+                    }
+                    if(out === false && s.compression) {
+                        _debug.call(self, '_reqAsync ' +
+                            (data && data.action) +
+                            ' gzip fallito, riprovo senza', 'Xtream', true);
+                        s.compression = false;
+                        attempt();
+                        return;
+                    }
+                    _debug.call(self, '_reqAsync ' + (data && data.action) +
+                        (data && data.category_id ? ' cat=' + data.category_id : '') +
+                        ' err=' + err + ' items=' +
+                        (out && out.length !== undefined ? out.length : out),
+                        'Xtream', true);
+                    fin(out);
+                });
+            } catch(e) {
+                _debug.call(self, '_reqAsync req: ' + e, 'Xtream', true);
+                fin(false);
+            }
+        }
+        attempt();
     }
 
 
@@ -344,6 +476,43 @@ var Xtream = (function () {
 
 
     /*
+     *  checkLogin async — stessa logica ma via _reqAsync: la
+     *  home del plugin si apre subito e decide su callback.
+     *  cb({status, error})
+     */
+    Xtream.prototype.checkLoginAsync = function (cb) {
+
+        if(!this.credentials().username || !this.credentials().password) {
+            cb({status : false, error: "No credentials set"});
+            return;
+        }
+
+        var self = this;
+        var res = this._cachePeek('_info', 600);
+        if(res && res.user_info) {
+            if(String(res.user_info.auth) == '0')
+                cb({status : false, error: "Authentication failed (auth=0)"});
+            else
+                cb({status : true, error: ''});
+            return;
+        }
+
+        _reqAsync.call(this, {}, function(r) {
+            if(r && r.user_info) {
+                try { self._cachePut('_info', r); } catch(e) {}
+                if(String(r.user_info.auth) == '0')
+                    cb({status : false, error: "Authentication failed (auth=0)"});
+                else
+                    cb({status : true, error: ''});
+            } else {
+                cb({status : false,
+                    error: "Something went wrong, maybe wrong credentials or expired"});
+            }
+        });
+    };
+
+
+    /*
      *  Get infos of your account
      *  returns object data
      */
@@ -368,6 +537,20 @@ var Xtream = (function () {
                 return res;
         }
 
+    };
+
+
+    Xtream.prototype.getInfoAsync = function (action, cb) {
+
+        var self = this;
+        _reqAsync.call(this, {}, function(res) {
+            if(!res) { cb(false); return; }
+            switch (action) {
+                case "user":   cb(res.user_info);   return;
+                case "server": cb(res.server_info); return;
+                default:       cb(res);
+            }
+        });
     };
 
 
@@ -438,9 +621,24 @@ var Xtream = (function () {
 
 
     /*
+     *  _liveItem — mapping condiviso sync/async di un canale live.
+     *  { id, cat_id, title, icon, epgid, source:{ url } }
+     */
+    function _liveItem(xt, r) {
+        return { id: r.stream_id ?  r.stream_id :  0,
+                 cat_id: r.category_id ?  r.category_id :  '0',
+                 title: r.name  ? r.name :  'Unknown',
+                 icon: (r.stream_icon && r.stream_icon != '') ? r.stream_icon : Plugin.path + 'images/livetv.png',
+                 epgid: r.epg_channel_id ? r.epg_channel_id : '',
+                 archive: r.tv_archive == 1 || r.tv_archive === true,
+                 source:{url: xt.baseUrl().playerApi + "/live/" + xt.credentials().username + "/" + xt.credentials().password + "/" + r.stream_id + "." + xt.liveExtension() }
+               };
+    }
+
+
+    /*
      *  Live Streams
      *  Returns an array of live streams. Each element of the array is an object.
-     *  { id, cat_id, title, icon, epgid, source:{ url } }
      */
     Xtream.prototype.getLiveStreams = function() {
 
@@ -452,24 +650,64 @@ var Xtream = (function () {
         });
         _debug.call(this, JSON.stringify(res), "Xtream:getLiveStreams");
 
-        var ext = this.liveExtension();
-
-        if(res) {
-           for(var i in res) {
-
-              live.push({ id: res[i].stream_id ?  res[i].stream_id :  0,
-                             cat_id: res[i].category_id ?  res[i].category_id :  '0',
-                             title: res[i].name  ? res[i].name :  'Unknown',
-                             icon: (res[i].stream_icon && res[i].stream_icon != '') ? res[i].stream_icon : Plugin.path + 'images/livetv.png',
-                             epgid: res[i].epg_channel_id ? res[i].epg_channel_id : '',
-                             archive: res[i].tv_archive == 1 || res[i].tv_archive === true,
-                             source:{url:    this.baseUrl().playerApi + "/live/" + this.credentials().username + "/" + this.credentials().password + "/" + res[i].stream_id + "." + ext }
-                           });
-           }
-        }
+        if(res)
+            for(var i in res)
+                live.push(_liveItem(this, res[i]));
 
         return live;
 
+    };
+
+
+    Xtream.prototype.getLiveStreamsAsync = function(cb) {
+
+        var self = this;
+        _reqAsync.call(this, { action: "get_live_streams" }, function(res) {
+            if(!res) { cb(false); return; }
+            _buildChunked(_liveItem, self, res, cb);
+        });
+    };
+
+
+    Xtream.prototype.getLiveStreamsByCategoryIdAsync = function(id, cb) {
+
+        var self = this;
+        _reqAsync.call(this, { action: "get_live_streams",
+                               category_id: id }, function(res) {
+            var src = res;
+            if(!src) {
+                // pannello che rigetta category_id -> catalogo
+                // intero + filtro locale
+                _reqAsync.call(self, { action: "get_live_streams" },
+                               function(res2) {
+                    if(!res2) { cb(false); return; }
+                    _buildChunked(_liveItem, self, res2, function(built) {
+                        cb(_catFilter(res2, built, id));
+                    });
+                });
+                return;
+            }
+            _buildChunked(_liveItem, self, src, function(built) {
+                cb(_catFilter(src, built, id));
+            });
+        });
+    };
+
+
+    Xtream.prototype.getLiveCategoriesAsync = function(cb) {
+
+        var self = this;
+        _reqAsync.call(this, { action: "get_live_categories" },
+                       function(res) {
+            if(!res) { cb(false); return; }
+            var cats = [];
+            for(var i in res)
+                cats.push({ id: res[i].category_id ?  res[i].category_id :  '0',
+                            title: res[i].category_name && res[i].category_name != 'undefined' ? res[i].category_name :  'Unknown',
+                            icon: Plugin.path + 'images/livetv.png'
+                          });
+            cb(cats);
+        });
     };
 
 
@@ -717,14 +955,83 @@ var Xtream = (function () {
     };
 
 
+    Xtream.prototype.getVodCategoriesAsync = function(cb) {
+
+        _reqAsync.call(this, { action: "get_vod_categories" },
+                       function(res) {
+            if(!res) { cb(false); return; }
+            var cats = [];
+            for(var i in res)
+                cats.push({ id: res[i].category_id ?  res[i].category_id :  '0',
+                            title: res[i].category_name  ? res[i].category_name :  'Unknown',
+                            icon: Plugin.path + 'images/vod.png'
+                          });
+            cb(cats);
+        });
+    };
+
+
     /*
      *  Vod Streams
      *  Returns an array of vod streams.
      *  [{ id, cat_id, title, icon, rating, year, source:{ url } }]
      */
-    Xtream.prototype.getVodStreams = function() {
+    /*
+     *  _vodBuild — mapper res JSON -> lista vod condiviso dai
+     *  path sync e async.
+     */
+    function _vodItem(xt, r) {
+
+        var ext = xt.vodExtension(r.container_extension);
+        var cid = r.category_id != null ? r.category_id :
+                  (r.category_ids != null ? r.category_ids : '0');
+
+        return { id: r.stream_id ?  r.stream_id :  0,
+                 cat_id: cid,
+                 title: r.name ? r.name :  'Unknown',
+                 icon: (r.stream_icon && r.stream_icon != '') ? r.stream_icon : Plugin.path + 'images/vod.png',
+                 rating: r.rating_5based ? r.rating_5based : (r.rating ? r.rating : ''),
+                 added: parseInt(r.added, 10) || 0,
+                 source:{url:    xt.baseUrl().playerApi + "/movie/" + xt.credentials().username + "/" + xt.credentials().password + "/" + r.stream_id + "." + ext}
+               };
+    }
+
+    function _vodBuild(xt, res) {
 
         var streams = [];
+        if(res) {
+           for(var i in res)
+              streams.push(_vodItem(xt, res[i]));
+        }
+        return streams;
+    }
+
+
+    /*
+     *  _buildChunked — come _vodBuild/_seriesBuild ma a fette via
+     *  setTimeout: il catalogo intero puo' superare i 150k item e
+     *  il mapping dentro la callback http tiene il contesto ES
+     *  per secondi, congelando gli altri callback in coda
+     *  (click categoria inclusi). Ogni yield lascia girare gli
+     *  altri task.
+     */
+    function _buildChunked(itemFn, xt, res, cb) {
+
+        var streams = [], i = 0, n = res.length;
+        (function step() {
+            var end = Math.min(i + 4000, n);
+            for(; i < end; i++)
+                streams.push(itemFn(xt, res[i]));
+            if(i < n) {
+                setTimeout(step, 0);
+                return;
+            }
+            cb(streams);
+        })();
+    }
+
+
+    Xtream.prototype.getVodStreams = function() {
 
         var self = this;
         var res = this._cached('_vod', 300, function() {
@@ -732,52 +1039,90 @@ var Xtream = (function () {
         });
         _debug.call(this, JSON.stringify(res), "Xtream:getVodStreams");
 
-        if(res) {
-           for(var i in res) {
-
-              var ext = this.vodExtension(res[i].container_extension);
-
-              streams.push({ id: res[i].stream_id ?  res[i].stream_id :  0,
-                             cat_id: res[i].category_id ?  res[i].category_id :  '0',
-                             title: res[i].name ? res[i].name :  'Unknown',
-                             icon: (res[i].stream_icon && res[i].stream_icon != '') ? res[i].stream_icon : Plugin.path + 'images/vod.png',
-                             rating: res[i].rating_5based ? res[i].rating_5based : (res[i].rating ? res[i].rating : ''),
-                             added: parseInt(res[i].added, 10) || 0,
-                             source:{url:    this.baseUrl().playerApi + "/movie/" + this.credentials().username + "/" + this.credentials().password + "/" + res[i].stream_id + "." + ext}
-                           });
-           }
-        }
-
-
-        return streams;
+        return _vodBuild(this, res);
 
     };
 
 
     /*
-     *  Vod Streams by category id
+     *  Vod Streams by category id — fetch lato server con
+     *  category_id (il catalogo intero puo' pesare decine di MB);
+     *  il refilter _catMatch copre i pannelli che ignorano il
+     *  parametro.
      */
+    /*
+     *  _catFilter — refilter client-side dopo un fetch
+     *  per-categoria. Se gli item non espongono nessun campo
+     *  categoria il server ha gia' filtrato lui (o il pannello non
+     *  la fornisce): rifiltrare svuoterebbe la lista.
+     */
+    function _catFilter(res, built, id) {
+
+        var hasCatField = false;
+        for(var i in res)
+            if(res[i] && (res[i].category_id != null ||
+                          res[i].category_ids != null)) {
+                hasCatField = true;
+                break;
+            }
+        if(!hasCatField) return built;
+        var streams = [];
+        for(var j = 0; j < built.length; j++)
+            if(_catMatch(built[j].cat_id, id)) streams.push(built[j]);
+        return streams;
+    }
+
+
     Xtream.prototype.getVodStreamsByCategoryId = function(id) {
 
-        var streams = [];
+        var self = this;
+        var res = this._cached('_vod:' + id, 300, function() {
+            return _req.call(self, { action: "get_vod_streams",
+                                     category_id: id });
+        });
 
-        var res = (this).getVodStreams();
+        // il pannello rigetta category_id -> fetch intero +
+        // filtro locale (stesso risultato, piu' traffico)
+        if(!res)
+            res = _req.call(this, { action: "get_vod_streams" });
 
-        if(res) {
+        return res ? _catFilter(res, _vodBuild(this, res), id) : [];
 
-           for(var i in res) {
+    };
 
-              if( res[i].cat_id == id ){
 
-                  delete res[i].cat_id;
-                  streams.push(res[i]);
+    Xtream.prototype.getVodStreamsAsync = function(cb) {
 
-              }
-           }
-        }
+        var self = this;
+        _reqAsync.call(this, { action: "get_vod_streams" }, function(res) {
+            if(!res) { cb(false); return; }
+            _buildChunked(_vodItem, self, res, cb);
+        });
+    };
 
-        return streams;
 
+    Xtream.prototype.getVodStreamsByCategoryIdAsync = function(id, cb) {
+
+        var self = this;
+        _reqAsync.call(this, { action: "get_vod_streams",
+                               category_id: id }, function(res) {
+            var src = res;
+            if(!src) {
+                // pannello che rigetta category_id -> catalogo
+                // intero + filtro locale
+                _reqAsync.call(self, { action: "get_vod_streams" },
+                               function(res2) {
+                    if(!res2) { cb(false); return; }
+                    _buildChunked(_vodItem, self, res2, function(built) {
+                        cb(_catFilter(res2, built, id));
+                    });
+                });
+                return;
+            }
+            _buildChunked(_vodItem, self, src, function(built) {
+                cb(_catFilter(src, built, id));
+            });
+        });
     };
 
 
@@ -785,10 +1130,11 @@ var Xtream = (function () {
      *  Vod Info
      *  Returns a showtime video object
      */
-    Xtream.prototype.getVodInfo = function(id) {
-
-        var res = _req.call(this, { action: "get_vod_info", vod_id: id});
-        _debug.call(this, JSON.stringify(res), "Xtream:getVodInfo");
+    /*
+     *  _vodInfoBuild — mapper res JSON -> dettaglio film, condiviso
+     *  dai path sync e async.
+     */
+    function _vodInfoBuild(xt, id, res) {
 
         if(!res || !res.movie_data)
             return false;
@@ -801,7 +1147,7 @@ var Xtream = (function () {
         var dir = res.info && res.info.director ? res.info.director: '';
         var plot = res.info && res.info.plot ? res.info.plot: '';
 
-        var ext = this.vodExtension(res.movie_data.container_extension);
+        var ext = xt.vodExtension(res.movie_data.container_extension);
 
         var backdrop = '';
         if(res.info && res.info.backdrop_path && res.info.backdrop_path.length)
@@ -817,15 +1163,71 @@ var Xtream = (function () {
                   rating: res.info && res.info.rating ? res.info.rating : '',
                   year: res.info && res.info.releasedate ? res.info.releasedate : (res.info && res.info.releaseDate ? res.info.releaseDate : ''),
                   duration: res.info && res.info.duration ? res.info.duration: '',
-                  source:{url:    this.baseUrl().playerApi + "/movie/" + this.credentials().username + "/" + this.credentials().password + "/" + id+ "." + ext}
+                  source:{url:    xt.baseUrl().playerApi + "/movie/" + xt.credentials().username + "/" + xt.credentials().password + "/" + id+ "." + ext}
          };
+    }
 
+    Xtream.prototype.getVodInfo = function(id) {
+
+        var res = _req.call(this, { action: "get_vod_info", vod_id: id});
+        _debug.call(this, JSON.stringify(res), "Xtream:getVodInfo");
+
+        return _vodInfoBuild(this, id, res);
+    };
+
+    Xtream.prototype.getVodInfoAsync = function(id, cb) {
+
+        var self = this;
+        var hit = self._cachePeek('_vodi:' + id, 300);
+        if(hit !== undefined) { cb(hit); return; }
+        _reqAsync.call(this, { action: "get_vod_info", vod_id: id },
+                       function(res) {
+            if(!res) { cb(false); return; }
+            var v = _vodInfoBuild(self, id, res);
+            self._cachePut('_vodi:' + id, v);
+            cb(v);
+        });
     };
 
 
-    Xtream.prototype.getSeries = function() {
+    /*
+     *  _seriesItem/_seriesBuild — mapper res JSON -> lista serie
+     *  condiviso dai path sync e async.
+     */
+    function _seriesItem(xt, r) {
+
+        var cast = r.cast ? r.cast : '';
+        var dir = r.director ? r.director: '';
+        var plot = r.plot ? r.plot: '';
+        var cid = r.category_id != null ? r.category_id :
+                  (r.category_ids != null ? r.category_ids : '0');
+
+        return { id: r.series_id ?  r.series_id :  0,
+                 cat_id: cid,
+                 title: r.name  ? r.name :  'Unknown',
+                 icon: r.cover && r.cover != '' ? r.cover : Plugin.path + "images/series.png",
+                 tagline: r.episode_run_time ? r.episode_run_time : "?",
+                 genre: r.genre ? r.genre : 'unknown',
+                 description: (cast ? "Cast: " + cast + " - " : '') + (dir ? dir + "\n" : '') + plot ,
+                 rating: r.rating ? r.rating : '',
+                 added: parseInt(r.last_modified, 10) || parseInt(r.added, 10) || 0,
+                 year: r.releaseDate ? r.releaseDate : '',
+                 source:{url:    xt.baseUrl().playerApi + "/series/" + xt.credentials().username + "/" + xt.credentials().password + "/" + r.series_id+ ".mp4"}
+               };
+    }
+
+    function _seriesBuild(xt, res) {
 
         var series = [];
+        if(res) {
+           for(var i in res)
+              series.push(_seriesItem(xt, res[i]));
+        }
+        return series;
+    }
+
+
+    Xtream.prototype.getSeries = function() {
 
         var self = this;
         var res = this._cached('_series', 300, function() {
@@ -833,30 +1235,8 @@ var Xtream = (function () {
         });
         _debug.call(this, JSON.stringify(res), "Xtream:getSeriesStreams request");
 
-        if(res) {
-           for(var i in res) {
-
-              var cast = res[i].cast ? res[i].cast : '';
-              var dir = res[i].director ? res[i].director: '';
-              var plot = res[i].plot ? res[i].plot: '';
-
-              series.push({ id: res[i].series_id ?  res[i].series_id :  0,
-                            cat_id: res[i].category_id ?  res[i].category_id :  '0',
-                            title: res[i].name  ? res[i].name :  'Unknown',
-                            icon: res[i].cover && res[i].cover != '' ? res[i].cover : Plugin.path + "images/series.png",
-                            tagline: res[i].episode_run_time ? res[i].episode_run_time : "?",
-                            genre: res[i].genre ? res[i].genre : 'unknown',
-                            description: (cast ? "Cast: " + cast + " - " : '') + (dir ? dir + "\n" : '') + plot ,
-                            rating: res[i].rating ? res[i].rating : '',
-                            added: parseInt(res[i].last_modified, 10) || parseInt(res[i].added, 10) || 0,
-                            year: res[i].releaseDate ? res[i].releaseDate : '',
-                            source:{url:    this.baseUrl().playerApi + "/series/" + this.credentials().username + "/" + this.credentials().password + "/" + res[i].series_id+ ".mp4"}
-                        });
-           }
-        }
-
+        var series = _seriesBuild(this, res);
         _debug.call(this, JSON.stringify(series), "Xtream:getSeriesStreams stream return");
-
         return series;
 
     };
@@ -891,27 +1271,72 @@ var Xtream = (function () {
     };
 
 
+    Xtream.prototype.getSeriesCategoriesAsync = function(cb) {
+
+        _reqAsync.call(this, { action: "get_series_categories" },
+                       function(res) {
+            if(!res) { cb(false); return; }
+            var cats = [];
+            for(var i in res)
+                cats.push({ id: res[i].category_id ?  res[i].category_id :  '0',
+                            title: res[i].category_name  ? res[i].category_name :  'Unknown',
+                            icon: Plugin.path + 'images/series.png'
+                          });
+            cb(cats);
+        });
+    };
+
+
     /*
      *  Series by category id
      */
     Xtream.prototype.getSeriesByCategoryId = function(id) {
 
-        var streams = [];
+        var self = this;
+        var res = this._cached('_series:' + id, 300, function() {
+            return _req.call(self, { action: "get_series",
+                                     category_id: id });
+        });
 
-        var res = (this).getSeries();
+        if(!res)
+            res = _req.call(this, { action: "get_series" });
 
-        if(res) {
-           for(var i in res) {
+        return res ? _catFilter(res, _seriesBuild(this, res), id) : [];
 
-              if( res[i].cat_id == id ){
-                  delete res[i].cat_id;
-                  streams.push(res[i]);
-              }
-           }
-        }
+    };
 
-        return streams;
 
+    Xtream.prototype.getSeriesAsync = function(cb) {
+
+        var self = this;
+        _reqAsync.call(this, { action: "get_series" }, function(res) {
+            if(!res) { cb(false); return; }
+            _buildChunked(_seriesItem, self, res, cb);
+        });
+    };
+
+
+    Xtream.prototype.getSeriesByCategoryIdAsync = function(id, cb) {
+
+        var self = this;
+        _reqAsync.call(this, { action: "get_series",
+                               category_id: id }, function(res) {
+            var src = res;
+            if(!src) {
+                // pannello che rigetta category_id -> catalogo intero
+                _reqAsync.call(self, { action: "get_series" },
+                               function(res2) {
+                    if(!res2) { cb(false); return; }
+                    _buildChunked(_seriesItem, self, res2, function(built) {
+                        cb(_catFilter(res2, built, id));
+                    });
+                });
+                return;
+            }
+            _buildChunked(_seriesItem, self, src, function(built) {
+                cb(_catFilter(src, built, id));
+            });
+        });
     };
 
 
@@ -919,12 +1344,13 @@ var Xtream = (function () {
      *  Series Info
      *  Returns an array of episodes (all seasons flattened).
      */
-    Xtream.prototype.getSeriesInfo = function(id) {
+    /*
+     *  _seriesInfoBuild — mapper res JSON -> lista episodi,
+     *  condiviso dai path sync e async.
+     */
+    function _seriesInfoBuild(xt, res) {
 
         var series = [];
-
-        var res = _req.call(this, { action: "get_series_info", series_id: id});
-        _debug.call(this, JSON.stringify(res), "Xtream:getSeriesInfo");
 
         if(res && res.episodes){
             for (var i in res.episodes) {
@@ -937,7 +1363,7 @@ var Xtream = (function () {
                     var ch = ep.info && ep.info.video && ep.info.video.coded_height ? ep.info.video.coded_height : '';
                     var au = ep.info && ep.info.audio && ep.info.audio.codec_name ? ep.info.audio.codec_name : '';
 
-                    var ext = this.vodExtension(ep.container_extension);
+                    var ext = xt.vodExtension(ep.container_extension);
 
                     series.push({ id: ep.id,
                                   title: ep.title ? ep.title : 'unknown',
@@ -949,14 +1375,37 @@ var Xtream = (function () {
                                   season: {number: ep.season},
                                   episode: {title: ep.title ? ep.title : 'unknown' ,number: ep.episode_num},
                                   duration: ep.info && ep.info.duration ? ep.info.duration: '',
-                                  source:{url:    this.baseUrl().playerApi + "/series/" + this.credentials().username + "/" + this.credentials().password + "/" + ep.id+ "." + ext}
+                                  source:{url:    xt.baseUrl().playerApi + "/series/" + xt.credentials().username + "/" + xt.credentials().password + "/" + ep.id+ "." + ext}
                                  });
                 }
             }
         }
 
          return series;
+    }
 
+
+    Xtream.prototype.getSeriesInfo = function(id) {
+
+        var res = _req.call(this, { action: "get_series_info", series_id: id});
+        _debug.call(this, JSON.stringify(res), "Xtream:getSeriesInfo");
+
+        return _seriesInfoBuild(this, res);
+    };
+
+
+    Xtream.prototype.getSeriesInfoAsync = function(id, cb) {
+
+        var self = this;
+        var hit = self._cachePeek('_seriesi:' + id, 300);
+        if(hit !== undefined) { cb(hit); return; }
+        _reqAsync.call(this, { action: "get_series_info",
+                               series_id: id }, function(res) {
+            if(!res) { cb(false); return; }
+            var v = _seriesInfoBuild(self, res);
+            self._cachePut('_seriesi:' + id, v);
+            cb(v);
+        });
     };
 
 

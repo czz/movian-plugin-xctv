@@ -70,11 +70,58 @@ function Stalker(portal, credentials, options) {
         }
     }
 
+    // _reqAsync(params, cb) — stessa request via callback http:
+    // handshake/login non bloccano il thread ES.
+    function _reqAsync(params, cb) {
+        var url = _base() + '?';
+        for(var k in params)
+            url += encodeURIComponent(k) + '=' +
+                   encodeURIComponent(params[k]) + '&';
+        url += 'JsHttpRequest=1-xml';
+
+        var headers = {
+            'Cookie': 'mac=' + mac + '; stb_lang=en; timezone=Europe/Rome',
+            'Referer': _base().replace(/[^/]*$/, '') + 'c/',
+            'User-Agent': opts.ua ||
+                'Mozilla/5.0 (QtEmbedded; U; Linux; C) ' +
+                'AppleWebKit/533.3 (KHTML, like Gecko) ' +
+                'MAG200 stbapp ver: 4 rev: 2721 Safari/533.3'
+        };
+        for(var h in (opts.headers || {})) headers[h] = opts.headers[h];
+        if(token) headers['Authorization'] = 'Bearer ' + token;
+
+        try {
+            http.request(url, { method: 'GET', headers: headers },
+                function(err, res) {
+                    var txt = '';
+                    try { txt = (!err && res) ? res.toString() : ''; }
+                    catch(e0) { txt = ''; }
+                    try {
+                        var j = JSON.parse(txt);
+                        cb(j && j.js !== undefined ? j.js : j);
+                    } catch(e) {
+                        _debug('bad JSON for ' + params.action + ': ' +
+                               txt.substring(0, 120), 'Stalker');
+                        cb(false);
+                    }
+                });
+        } catch(e) { cb(false); }
+    }
+
     function _handshake() {
         if(token) return true;
         var j = _req({ type: 'stb', action: 'handshake', token: '' });
         if(j && j.token) { token = j.token; return true; }
         return false;
+    }
+
+    function _handshakeAsync(cb) {
+        if(token) { cb(true); return; }
+        _reqAsync({ type: 'stb', action: 'handshake', token: '' },
+            function(j) {
+                if(j && j.token) { token = j.token; cb(true); }
+                else cb(false);
+            });
     }
 
     function _cmd2url(cmd) {
@@ -124,6 +171,53 @@ function Stalker(portal, credentials, options) {
         return arr;
     }
 
+    // _listAsync — paginazione get_ordered_list via _reqAsync:
+    // N pagine in serie su callback, niente spin bloccanti.
+    function _listAsync(type, genre, cb) {
+        _handshakeAsync(function(ok) {
+            if(!ok) { cb([]); return; }
+            var out = [], p = 1;
+            var step = function() {
+                _reqAsync({ type: type, action: 'get_ordered_list',
+                            genre: genre || '*', force_ch_link_check: '0',
+                            fav: '0', sortby: 'number', hd: '0', p: p },
+                    function(j) {
+                        if(!j || !j.data || !j.data.length) {
+                            cb(out);
+                            return;
+                        }
+                        for(var i = 0; i < j.data.length; i++)
+                            out.push(j.data[i]);
+                        var total = parseInt(j.total_items, 10) || 0;
+                        if(out.length >= total || j.data.length < 10 || p > 50) {
+                            cb(out);
+                            return;
+                        }
+                        p++;
+                        step();
+                    });
+            };
+            step();
+        });
+    }
+
+    function _genresAsync(type, cb) {
+        _handshakeAsync(function(ok) {
+            if(!ok) { cb([]); return; }
+            _reqAsync({ type: type, action: 'get_genres' },
+                function(j) {
+                    if(!j) { cb([]); return; }
+                    var arr = j;
+                    if(!Array.isArray(arr)) {
+                        arr = [];
+                        for(var k in j)
+                            if(j[k] && j[k].id) arr.push(j[k]);
+                    }
+                    cb(arr);
+                });
+        });
+    }
+
     this.checkLogin = function() {
         try {
             if(!_handshake())
@@ -142,6 +236,51 @@ function Stalker(portal, credentials, options) {
         } catch(e) {
             return { status: false, error: String(e) };
         }
+    };
+
+    // checkLoginAsync(cb) — handshake + get_profile senza
+    // request bloccanti sul thread ES.
+    this.checkLoginAsync = function(cb) {
+        var okBody = function() {
+            return {
+                status: true, error: '',
+                user_info: { username: mac,
+                             max_connections: '0',
+                             allowed_output_formats: ['m3u8', 'ts'] },
+                server_info: { url: portal }
+            };
+        };
+        try {
+            _handshakeAsync(function(ok) {
+                if(!ok) {
+                    cb({ status: false,
+                         error: 'Handshake fallito (MAC valida?)' });
+                    return;
+                }
+                _reqAsync({ type: 'stb', action: 'get_profile' },
+                    function(prof) {
+                        if(!prof) {
+                            cb({ status: false,
+                                 error: 'get_profile fallito' });
+                            return;
+                        }
+                        cb(okBody());
+                    });
+            });
+        } catch(e) {
+            cb({ status: false, error: String(e) });
+        }
+    };
+
+    this.getInfoAsync = function(action, cb) {
+        this.checkLoginAsync(function(res) {
+            if(!res.status) { cb(false); return; }
+            switch(action) {
+            case 'user': cb(res.user_info); return;
+            case 'server': cb(res.server_info); return;
+            default: cb(res);
+            }
+        });
     };
 
     this.getInfo = function(action) {
@@ -196,6 +335,107 @@ function Stalker(portal, credentials, options) {
         return cats;
     };
 
+    // ---- varianti async dei metodi catalogo ----
+
+    this.getLiveCategoriesAsync = function(cb) {
+        _genresAsync('itv', function(g) {
+            var cats = [];
+            for(var i = 0; i < g.length; i++)
+                if(g[i] && g[i].id != '*')
+                    cats.push({ id: String(g[i].id),
+                                title: g[i].title || g[i].id });
+            cb(cats);
+        });
+    };
+
+    function mapLive(c, i) {
+        return {
+            id: c.id,
+            cat_id: String(c.tv_genre_id || '0'),
+            title: c.name || ('CH ' + (c.number || i)),
+            icon: c.logo ? (portal.replace(/\/+$/, '') + c.logo) : '',
+            epgid: c.xmltv_id || c.epg_id || '',
+            archive: parseInt(c.tv_archive_duration, 10) > 0,
+            chno: c.number || '',
+            _cmd: c.cmd,
+            source: { url: _cmd2url(c.cmd) }
+        };
+    }
+
+    this.getLiveStreamsAsync = function(cb) {
+        this.getLiveStreamsByCategoryIdAsync('*', cb);
+    };
+
+    this.getLiveStreamsByCategoryIdAsync = function(id, cb) {
+        _listAsync('itv', (id == null || id === '') ? '*' : String(id),
+            function(raw) {
+                var out = [];
+                for(var i = 0; i < raw.length; i++)
+                    out.push(mapLive(raw[i], i));
+                cb(out);
+            });
+    };
+
+    this.getVodCategoriesAsync = function(cb) {
+        _genresAsync('vod', function(g) {
+            var cats = [];
+            for(var i = 0; i < g.length; i++)
+                if(g[i] && g[i].id != '*')
+                    cats.push({ id: String(g[i].id),
+                                title: g[i].title || g[i].id });
+            cb(cats);
+        });
+    };
+
+    this.getVodStreamsAsync = function(cb) {
+        this.getVodStreamsByCategoryIdAsync('*', cb);
+    };
+
+    this.getVodStreamsByCategoryIdAsync = function(id, cb) {
+        _listAsync('vod', (id == null || id === '') ? '*' : String(id),
+            function(raw) {
+                var out = [];
+                for(var i = 0; i < raw.length; i++) {
+                    var v = raw[i];
+                    out.push({
+                        id: v.id,
+                        cat_id: String(v.category_id || '0'),
+                        title: v.name || v.o_name || 'Unknown',
+                        icon: v.screenshot_uri || '',
+                        year: v.year || '',
+                        source: { url: '' },
+                        _cmd: v.cmd
+                    });
+                }
+                cb(out);
+            });
+    };
+
+    this.getVodInfoAsync = function(id, cb) {
+        _handshakeAsync(function(ok) {
+            if(!ok) { cb(false); return; }
+            _reqAsync({ type: 'vod', action: 'get_ordered_list',
+                        movie_id: id }, function(j) {
+                var v = j && j.data && j.data[0];
+                if(!v) { cb(false); return; }
+                cb({
+                    info: {
+                        name: v.name, description: v.description,
+                        director: v.director, actors: v.actors,
+                        genre: v.genres_str, releasedate: v.year,
+                        rating: v.rating_imdb || v.rating_kinopoisk,
+                        duration_secs: parseInt(v.time, 10) * 60
+                    },
+                    movie_data: {
+                        stream_id: v.id, name: v.name,
+                        container_extension: 'mp4',
+                        url: _cmd2url(v.cmd)
+                    }
+                });
+            });
+        });
+    };
+
     this.getVodStreams = function() {
         return this.getVodStreamsByCategoryId('*');
     };
@@ -244,6 +484,33 @@ function Stalker(portal, credentials, options) {
     this.getSeries = function() { return []; };
     this.getSeriesByCategoryId = function(id) { return []; };
     this.getSeriesInfo = function(id) { return false; };
+    this.getSeriesCategoriesAsync = function(cb) { cb([]); };
+    this.getSeriesAsync = function(cb) { cb([]); };
+    this.getSeriesByCategoryIdAsync = function(id, cb) { cb([]); };
+    this.getSeriesInfoAsync = function(id, cb) { cb(false); };
+
+    this.getShortEpgAsync = function(stream_id, limit, cb) {
+        _handshakeAsync(function(ok) {
+            if(!ok) { cb({ epg_listings: [] }); return; }
+            _reqAsync({ type: 'itv', action: 'get_short_epg',
+                        ch_id: stream_id, size: limit || 2 },
+                function(j) {
+                    var l = (j && j.data) || [];
+                    var out = [];
+                    for(var i = 0; i < l.length; i++)
+                        out.push({
+                            id: l[i].id, epg_id: stream_id,
+                            title: l[i].name, lang: '',
+                            start: l[i].start_timestamp,
+                            end: l[i].stop_timestamp,
+                            description: l[i].descr,
+                            start_timestamp: l[i].start_timestamp,
+                            stop_timestamp: l[i].stop_timestamp
+                        });
+                    cb({ epg_listings: out });
+                });
+        });
+    };
 
     this.getShortEpg = function(stream_id, limit) {
         if(!_handshake()) return { epg_listings: [] };

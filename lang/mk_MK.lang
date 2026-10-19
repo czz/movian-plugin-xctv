@@ -974,3 +974,27 @@ msg: епизоди
 id: puntate in palinsesto
 msg: епизоди во програмата
 
+id: Caricamento…
+msg: Се вчитува…
+
+id: Caricamento fallito — riprova
+msg: Вчитувањето не успеа — обиди се повторно
+
+id: Nessun elemento
+msg: Нема елементи
+
+id: Nascondi elemento
+msg: Skrij element
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Element skrien (vrati od Podesuvanja)
+
+
+id: Rinomina
+msg: Преименувај
+
+id: Nuovo nome (vuoto = originale)
+msg: Ново име (празно = оригинално)
+
+id: Elemento rinominato
+msg: Елементот е преименуван

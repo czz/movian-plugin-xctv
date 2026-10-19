@@ -974,3 +974,27 @@ msg: afleveringen
 id: puntate in palinsesto
 msg: afleveringen in het overzicht
 
+id: Caricamento…
+msg: Laden…
+
+id: Caricamento fallito — riprova
+msg: Laden mislukt — probeer opnieuw
+
+id: Nessun elemento
+msg: Geen items
+
+id: Nascondi elemento
+msg: Item verbergen
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Item verborgen (herstel via Instellingen)
+
+
+id: Rinomina
+msg: Hernoemen
+
+id: Nuovo nome (vuoto = originale)
+msg: Nieuwe naam (leeg = origineel)
+
+id: Elemento rinominato
+msg: Item hernoemd

@@ -974,3 +974,27 @@ msg: серии
 id: puntate in palinsesto
 msg: серии в расписании
 
+id: Caricamento…
+msg: Загрузка…
+
+id: Caricamento fallito — riprova
+msg: Ошибка загрузки — повторите
+
+id: Nessun elemento
+msg: Нет элементов
+
+id: Nascondi elemento
+msg: Skryt element
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Element skryt (vosstanovit v nastroikah)
+
+
+id: Rinomina
+msg: Переименовать
+
+id: Nuovo nome (vuoto = originale)
+msg: Новое имя (пусто = исходное)
+
+id: Elemento rinominato
+msg: Элемент переименован

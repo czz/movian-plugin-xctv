@@ -31,17 +31,17 @@ $view.ctxar = 0;  // canale con archivio catch-up
 
 // ---- tasti di pagina ----
 
-// BACK a strati: popup contestuale -> drawer -> info ->
-// video pulito riapre la griglia. A griglia aperta back propaga
-// al navigator: torna alla pagina precedente (o esce se e' la
-// prima — la guida si richiude solo scegliendo un canale o col
-// tasto menu, altrimenti back non uscirebbe mai).
+// BACK a strati: popup contestuale -> drawer -> info card ->
+// griglia aperta con video sotto (torna al video pulito).
+// A griglia chiusa o senza video in corso back propaga al
+// navigator: torna alla pagina precedente / esce dal plugin.
 onEvent(back, { $view.gctx = 0; focus("groupslist"); }, $view.gctx);
 onEvent(back, { $view.ctx = 0; focus("chanlist"); }, $view.ctx);
 onEvent(back, { $view.menu = 0; focus("groupslist"); }, $view.menu && !$view.ctx);
 onEvent(back, { $view.info = 0; focus("zaproot"); }, !$view.osd && $view.info);
-onEvent(back, { $view.osd = 1; $view.info = 0; focus("chanlist"); },
-      !$view.osd && !$view.menu && !$view.ctx);
+onEvent(back, { $view.osd = 0; $view.info = 0; focus("zaproot"); },
+      $view.osd && !$view.gctx && !$view.ctx && !$view.menu &&
+      !isVoid($self.model.zapurl));
 
 // MENU apre/chiude la griglia.
 onEvent(menu,     { $view.info = 0; $view.osd = 1; focus("chanlist"); }, !$view.osd);
@@ -106,6 +106,15 @@ widget(container_z, {
     source: $self.model.zapurl;
     primary: true;
     hidden: isVoid($self.model.zapurl);
+
+    // stato buffering dello stream -> throbber sotto
+    delta($view.zaploading, $self.media.current.loading);
+  });
+
+  // throbber mentre lo stream carica o va in buffering
+  widget(throbber, {
+    hidden: iir($view.zaploading, 4) < 0.01;
+    alpha: iir($view.zaploading, 4);
   });
 
   // placeholder prima della prima sintonizzazione

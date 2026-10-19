@@ -974,3 +974,27 @@ msg: episoade
 id: puntate in palinsesto
 msg: episoade în program
 
+id: Caricamento…
+msg: Se încarcă…
+
+id: Caricamento fallito — riprova
+msg: Încărcare eșuată — reîncearcă
+
+id: Nessun elemento
+msg: Niciun element
+
+id: Nascondi elemento
+msg: Ascunde elementul
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Element ascuns (restaureaza din Setari)
+
+
+id: Rinomina
+msg: Redenumește
+
+id: Nuovo nome (vuoto = originale)
+msg: Nume nou (gol = original)
+
+id: Elemento rinominato
+msg: Element redenumit

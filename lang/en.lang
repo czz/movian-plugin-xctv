@@ -975,3 +975,27 @@ msg: episodes
 id: puntate in palinsesto
 msg: episodes in the schedule
 
+id: Caricamento…
+msg: Loading…
+
+id: Caricamento fallito — riprova
+msg: Loading failed — try again
+
+id: Nessun elemento
+msg: No items
+
+id: Nascondi elemento
+msg: Hide item
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Item hidden (restore from Settings)
+
+
+id: Rinomina
+msg: Rename
+
+id: Nuovo nome (vuoto = originale)
+msg: New name (empty = original)
+
+id: Elemento rinominato
+msg: Item renamed

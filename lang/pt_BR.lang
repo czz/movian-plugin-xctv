@@ -974,3 +974,27 @@ msg: episódios
 id: puntate in palinsesto
 msg: episódios na programação
 
+id: Caricamento…
+msg: Carregando…
+
+id: Caricamento fallito — riprova
+msg: Falha ao carregar — tente novamente
+
+id: Nessun elemento
+msg: Nenhum item
+
+id: Nascondi elemento
+msg: Ocultar item
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Item oculto (restaurar nas Configuracoes)
+
+
+id: Rinomina
+msg: Renomear
+
+id: Nuovo nome (vuoto = originale)
+msg: Novo nome (vazio = original)
+
+id: Elemento rinominato
+msg: Item renomeado

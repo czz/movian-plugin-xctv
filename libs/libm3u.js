@@ -47,6 +47,39 @@ function M3U(url, options) {
         }
     }
 
+    // _loadAsync(cb) — stessa cosa ma http.request con callback:
+    // il download della playlist non blocca il thread ES.
+    function _loadAsync(cb) {
+        if(list) { cb(true); return; }
+        var done = false;
+        var fin = function(ok) { if(!done) { done = true; cb(ok); } };
+        try {
+            http.request(url, {
+                method: 'GET',
+                headers: opts.headers || {},
+                noFollow: false
+            }, function(err, res) {
+                try {
+                    var txt = (!err && res) ? res.toString() : '';
+                    if(!txt || txt.indexOf('#EXTM3U') == -1 &&
+                       txt.indexOf('#EXTINF') == -1) {
+                        fin(false);
+                        return;
+                    }
+                    list = _parse(txt);
+                    _debug('parsed ' + list.length + ' entries', 'M3U');
+                    fin(true);
+                } catch(e) {
+                    _debug('load failed: ' + e, 'M3U');
+                    fin(false);
+                }
+            });
+        } catch(e) {
+            _debug('load failed: ' + e, 'M3U');
+            fin(false);
+        }
+    }
+
     function _attr(line, name) {
         var m = line.match(new RegExp(name + '="([^"]*)"'));
         return m ? m[1] : '';
@@ -146,6 +179,27 @@ function M3U(url, options) {
         }
     };
 
+    // checkLoginAsync(cb) — gate di login senza _load bloccante:
+    // la playlist si scarica su task thread.
+    this.checkLoginAsync = function(cb) {
+        var self = this;
+        _loadAsync(function(ok) {
+            if(!ok) {
+                cb({ status: false,
+                     error: 'Playlist non valida o non raggiungibile' });
+                return;
+            }
+            cb({
+                status: true,
+                error: '',
+                user_info: { username: 'm3u',
+                             max_connections: '0',
+                             allowed_output_formats: ['m3u8', 'ts'] },
+                server_info: { url: url }
+            });
+        });
+    };
+
     this.getInfo = function(action) {
         var res = this.checkLogin();
         if(!res.status) return false;
@@ -154,6 +208,17 @@ function M3U(url, options) {
         case 'server': return res.server_info;
         default: return res;
         }
+    };
+
+    this.getInfoAsync = function(action, cb) {
+        this.checkLoginAsync(function(res) {
+            if(!res.status) { cb(false); return; }
+            switch(action) {
+            case 'user': cb(res.user_info); return;
+            case 'server': cb(res.server_info); return;
+            default: cb(res);
+            }
+        });
     };
 
     this.getLiveCategories = function() {
@@ -251,6 +316,56 @@ function M3U(url, options) {
         } catch(e) {
             return false;
         }
+    };
+
+    // getEpgAsync(fin) — XMLTV su callback http, niente blocco ES
+    this.getEpgAsync = function(fin) {
+        var self = this;
+        _loadAsync(function(ok) {
+            if(!ok || !epgSrc) { fin(false); return; }
+            try {
+                http.request(epgSrc, { method: 'GET',
+                                       compression: true },
+                    function(err, res) {
+                        fin((!err && res) ? res.toString() : false);
+                    });
+            } catch(e) { fin(false); }
+        });
+    };
+
+    // ---- varianti async dei metodi catalogo: la playlist si
+    // scarica una volta via _loadAsync, il resto e' in memoria ----
+    var self2 = this;
+    function wrap(fn) {
+        return function(cb) {
+            _loadAsync(function() {
+                try { cb(fn()); } catch(e) { cb(false); }
+            });
+        };
+    }
+    function wrapId(fn) {
+        return function(id, cb) {
+            _loadAsync(function() {
+                try { cb(fn(id)); } catch(e) { cb(false); }
+            });
+        };
+    }
+
+    this.getLiveCategoriesAsync      = wrap(this.getLiveCategories);
+    this.getLiveStreamsAsync         = wrap(this.getLiveStreams);
+    this.getLiveStreamsByCategoryIdAsync =
+        wrapId(this.getLiveStreamsByCategoryId);
+    this.getVodCategoriesAsync       = wrap(this.getVodCategories);
+    this.getVodStreamsAsync          = wrap(this.getVodStreams);
+    this.getVodStreamsByCategoryIdAsync =
+        wrapId(this.getVodStreamsByCategoryId);
+    this.getVodInfoAsync             = wrapId(this.getVodInfo);
+    this.getSeriesCategoriesAsync    = wrap(this.getSeriesCategories);
+    this.getSeriesAsync              = wrap(this.getSeries);
+    this.getSeriesByCategoryIdAsync  = wrapId(this.getSeriesByCategoryId);
+    this.getSeriesInfoAsync          = wrapId(this.getSeriesInfo);
+    this.getShortEpgAsync = function(stream_id, limit, cb) {
+        cb({ epg_listings: [] });
     };
 
     this.getCatchupUrl = function(stream_id, start, durationMin) {

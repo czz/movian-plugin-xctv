@@ -975,3 +975,27 @@ msg: episodios
 id: puntate in palinsesto
 msg: episodios en la parrilla
 
+id: Caricamento…
+msg: Cargando…
+
+id: Caricamento fallito — riprova
+msg: Error de carga — inténtalo de nuevo
+
+id: Nessun elemento
+msg: Sin elementos
+
+id: Nascondi elemento
+msg: Ocultar elemento
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Elemento oculto (restaura desde Ajustes)
+
+
+id: Rinomina
+msg: Renombrar
+
+id: Nuovo nome (vuoto = originale)
+msg: Nuevo nombre (vacío = original)
+
+id: Elemento rinominato
+msg: Elemento renombrado

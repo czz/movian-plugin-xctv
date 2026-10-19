@@ -44,6 +44,16 @@ function tr(s) {
     }
 }
 
+// Loader universale di Movian: lega currentpage.model.loading (+ il
+// testo di model.loadingStatus). page.loading scrive un prop
+// "loading" sulla root della pagina — utile su Movian classico, ma
+// invisibile con glwview custom in movian-go: si setta anche
+// model.loading perche' il loader si veda davvero.
+function setLoading(page, on) {
+    page.loading = on ? true : false;
+    try { page.model.loading = on ? 1 : 0; } catch(e) {}
+}
+
 function setPageHeader(page, title) {
 
     if (page.metadata) {
@@ -210,8 +220,16 @@ settings.createDivider(tr('Account'));
 
 settings.createAction('testLogin', tr('Verifica connessione'), function() {
     var x = makeXtream();
-    var res = x.checkLogin();
-    popup.notify(res.status ? tr(tr('Connessione OK')) : (tr(tr('Errore')) + ': ' + res.error), 4);
+    if(x.checkLoginAsync) {
+        popup.notify(tr('Verifica in corso…'), 2);
+        x.checkLoginAsync(function(res) {
+            popup.notify(res.status ? tr('Connessione OK') :
+                (tr('Errore') + ': ' + res.error), 4);
+        });
+    } else {
+        var res = x.checkLogin();
+        popup.notify(res.status ? tr(tr('Connessione OK')) : (tr(tr('Errore')) + ': ' + res.error), 4);
+    }
 });
 
 settings.createAction('loginPopup', tr('Inserisci credenziali…'), function() {
@@ -381,7 +399,11 @@ function refreshPlaylistData(silent) {
     guideFetchedAt = 0;
     guide = null;
     try {
-        api().getInfo('user');     // forza una chiamata per scaldare la cache
+        var a = api();
+        // scaldare la cache non deve bloccare il contesto ES
+        // (giro sul timer di auto-refresh = freeze periodico)
+        if(a.getInfoAsync) a.getInfoAsync('user', function() {});
+        else a.getInfo('user');
     } catch(e) {}
     if(zapPage && !prop.isZombie(zapPage.root)) {
         try { if(zapPage.reload) zapPage.reload(); } catch(e) {}
@@ -415,14 +437,42 @@ function api() {
 }
 
 
+// cachePut — scrittura condivisa con eviction lazy: le entry
+// scadute non vengono mai lette ma restano in heap (una lista
+// VOD puo' pesare decine di MB): si buttano quando le chiavi
+// superano una soglia — niente timer dedicati
+function cachePut(key, v) {
+    if(v) cache[key] = { t: Math.floor(Date.now() / 1000), v: v };
+    var n = 0;
+    for(var k in cache)
+        if(cache[k] && ++n > 40) break;
+    if(n > 40) {
+        var now = Math.floor(Date.now() / 1000);
+        for(var k2 in cache)
+            if(cache[k2] && now - cache[k2].t >= CACHE_TTL)
+                delete cache[k2];
+    }
+}
+
 function cached(key, fn) {
     var now = Math.floor(Date.now() / 1000);
     if(cache[key] && (now - cache[key].t) < CACHE_TTL)
         return cache[key].v;
     var v = fn();
-    if(v)
-        cache[key] = { t: now, v: v };
+    cachePut(key, v);
     return v;
+}
+
+// varianti per i path async: leggono il valore solo se fresco,
+// settano solo valori truthy (i fallimenti non avvelenano)
+function cacheGet(key) {
+    var now = Math.floor(Date.now() / 1000);
+    if(cache[key] && (now - cache[key].t) < CACHE_TTL)
+        return cache[key].v;
+    return undefined;
+}
+function cacheSet(key, v) {
+    cachePut(key, v);
 }
 
 
@@ -445,6 +495,20 @@ var favStore = store.create('favorites');
 var uiStore = store.create('uistate');
 var hidChanStore = store.create('hiddenchan');
 var hidGroupStore = store.create('hiddengroups');
+// nascosti nelle pagine browse: gruppi 'vod:id'/'series:id' e
+// singoli elementi (film/serie)
+var hidBrowseGrpStore = store.create('hiddenbrowsegroups');
+var browseOrdStore = store.create('browsegrouporder');
+var hidItemStore = store.create('hiddenitems');
+// preferiti di catalogo (film/serie): chiavi 'vod:id'/'series:id'
+var favItemStore = store.create('itemfavorites');
+
+// Ordine manuale elementi per categoria (browse):
+// {'<kind>:<cat>' -> [vodkey, ...]} — vodkey = '<kind>:<id>'
+var itemOrdStore = store.create('browseitemorder');
+
+// Rinomina elementi (film/serie): {vodkey -> titolo personalizzato}
+var nameItemStore = store.create('itemnames');
 
 // Rinomina canali: {url -> nome personalizzato} nella sola chiave .map
 var renameStore = store.create('renames');
@@ -475,6 +539,33 @@ var remStore = store.create('reminders');
 
 // Episodi visti: {canonicalUrl -> 1}
 var watchStore = store.create('watched');
+
+/*
+ *  Marker "visto" sugli episodi — store 'watched' in chiave
+ *  'map' ({cu: ts}) come gli altri store mappa: le vecchie
+ *  chiavi per-URL restano lette in fallback. Cap a 2000
+ *  entry con eviction delle piu' vecchie, altrimenti il
+ *  file cresce per sempre.
+ */
+function watchMark(cu) {
+    var m = hidMap(watchStore);
+    var nm = {};
+    for(var k in m) nm[k] = m[k];
+    nm[cu] = Math.floor(Date.now() / 1000);
+    var keys = Object.keys(nm);
+    if(keys.length > 2000) {
+        keys.sort(function(a, b) { return (nm[a] || 0) - (nm[b] || 0); });
+        var drop = keys.length - 2000;
+        for(var d = 0; d < drop; d++) delete nm[keys[d]];
+    }
+    watchStore.map = nm;
+}
+
+function watchIs(cu) {
+    var m = hidMap(watchStore);
+    if(m[cu]) return 1;
+    return watchStore[cu] ? 1 : 0;   // chiavi legacy per-URL
+}
 
 /*
  *  Tasti numerici → zap diretto. I tasti 0-9 arrivano come eventi
@@ -584,6 +675,105 @@ function hidSet(st, k, on) {
 function isHiddenChan(u)  { return !!hidMap(hidChanStore)[u]; }
 function isHiddenGroup(c) { return !!hidMap(hidGroupStore)[c]; }
 function isLockedCat(k)   { return !!hidMap(lockStore)[k]; }
+function isHiddenBrowseGroup(kind, c) {
+    return !!hidMap(hidBrowseGrpStore)[kind + ':' + c];
+}
+
+/*
+ *  blockedCatMap — insieme {catid:1} dei gruppi nascosti o
+ *  bloccati dal PIN: i loro contenuti restano esclusi dalle
+ *  viste aggregate (Tutti/Preferiti/Recenti/ricerca) — il gate
+ *  sul solo rail li lascerebbe raggiungibili senza PIN.
+ *  kind: 'vod'|'series'|'live'; cats: [{id|cat,title}] usati
+ *  per l'euristica pinLocked sui nomi gruppo.
+ */
+function blockedCatMap(kind, cats) {
+
+    var m = {};
+    var pfx = kind + ':';
+
+    if(kind == 'live') {
+        // live: 'hiddengroups' usa la chiave cat_id nuda
+        var hg = hidMap(hidGroupStore);
+        for(var hk in hg) if(hg[hk]) m[hk] = 1;
+        if(cfg.pin) {
+            var lg = hidMap(lockStore);
+            for(var lk in lg)
+                if(lg[lk] && lk.indexOf(pfx) == 0)
+                    m[lk.substr(pfx.length)] = 1;
+        }
+    } else {
+        var hg2 = hidMap(hidBrowseGrpStore);
+        for(var hk2 in hg2)
+            if(hg2[hk2] && hk2.indexOf(pfx) == 0)
+                m[hk2.substr(pfx.length)] = 1;
+        if(cfg.pin) {
+            var lg2 = hidMap(lockStore);
+            for(var lk2 in lg2)
+                if(lg2[lk2] && lk2.indexOf(pfx) == 0)
+                    m[lk2.substr(pfx.length)] = 1;
+        }
+    }
+
+    if(cfg.pin && cats)
+        for(var i = 0; i < cats.length; i++)
+            if(cats[i] && pinLocked(cats[i].title)) {
+                var cid = cats[i].id != null ? cats[i].id : cats[i].cat;
+                if(cid != null) m[String(cid)] = 1;
+            }
+    return m;
+}
+function isHiddenBrowseItem(kind, id) {
+    return !!hidMap(hidItemStore)[kind + ':' + id];
+}
+function isFavItem(kind, id) {
+    return !!hidMap(favItemStore)[kind + ':' + id];
+}
+function hasFavItems(kind) {
+    var m = hidMap(favItemStore), p = kind + ':';
+    for(var k in m) if(k.indexOf(p) == 0) return true;
+    return false;
+}
+
+// ordine manuale dei gruppi nelle pagine browse (vod/series)
+function saveBrowseOrder(kind, groups) {
+    var keys = [];
+    for(var i = 0; i < groups.length; i++)
+        keys.push(grpKey(groups[i].cat));
+    browseOrdStore[kind] = keys;
+}
+
+// ordine manuale elementi dentro una categoria browse:
+// itemOrdStore['<kind>:<cat>'] = [vodkey,...]. Le chiavi assenti
+// restano in coda in ordine catalogo (nuovi ingressi provider).
+function applyItemOrder(list, ordKey, kind) {
+    var saved = itemOrdStore[ordKey];
+    if(!saved || !saved.length) return list;
+    var rank = {};
+    for(var i = 0; i < saved.length; i++) rank[saved[i]] = i;
+    var dec = [];
+    for(var i = 0; i < list.length; i++)
+        dec.push({ it: list[i], i: i });
+    dec.sort(function(a, b) {
+        var ra = rank[kind + ':' + a.it.id];
+        var rb = rank[kind + ':' + b.it.id];
+        if(ra === undefined) ra = 1e9;
+        if(rb === undefined) rb = 1e9;
+        return ra != rb ? ra - rb : a.i - b.i;
+    });
+    var out = [];
+    for(var i = 0; i < dec.length; i++) out.push(dec[i].it);
+    return out;
+}
+
+// la categoria e' riordinabile manualmente: fuori da 'history' e
+// 'all' (ordini di grandi numeri / lista derivata) e solo con
+// ordinamento catalogo 'default' (gli altri modi hanno una
+// semantica propria e confliggerebbero)
+function canOrderItems(kind, cat) {
+    return kind != 'eps' && cat != 'history' && cat != 'all' &&
+           cfg.sortMode == 'default';
+}
 
 /*
  *  Rinomina canali — s.otitle conserva il nome originale (usato
@@ -715,7 +905,9 @@ var BACKUP_PATH = ((typeof Core != 'undefined' && Core.storagePath) ?
 var BACKUP_STORES = ['favorites', 'hiddenchan', 'hiddengroups', 'history',
                      'renames', 'lockedcats', 'uistate', 'playlists',
                      'chanorder', 'channums', 'reclist', 'reminders',
-                     'watched', 'recsched'];
+                     'watched', 'recsched', 'hiddenbrowsegroups',
+                     'browsegrouporder', 'hiddenitems', 'itemfavorites',
+                     'browseitemorder', 'itemnames'];
 
 function _fsText(buf) {
     if(!buf) return null;
@@ -818,6 +1010,22 @@ function restoreNow() {
         if(so.watched)
             for(var wk in so.watched)
                 watchStore[wk] = so.watched[wk];
+        // store browse: .map per gli store a mappa unica, copia per
+        // chiave per quelli a chiavi arbitrarie (kvstore proxy)
+        if(so.hiddenbrowsegroups)
+            hidBrowseGrpStore.map = so.hiddenbrowsegroups.map || {};
+        if(so.hiddenitems)
+            hidItemStore.map = so.hiddenitems.map || {};
+        if(so.itemfavorites)
+            favItemStore.map = so.itemfavorites.map || {};
+        if(so.itemnames)
+            nameItemStore.map = so.itemnames.map || {};
+        if(so.browsegrouporder)
+            for(var bo in so.browsegrouporder)
+                browseOrdStore[bo] = so.browsegrouporder[bo];
+        if(so.browseitemorder)
+            for(var io in so.browseitemorder)
+                itemOrdStore[io] = so.browseitemorder[io];
         if(so.playlists) {
             if(so.playlists.list != null)   plStore.list = so.playlists.list;
             if(so.playlists.active != null) plStore.active = so.playlists.active;
@@ -854,9 +1062,9 @@ function restoreNow() {
  */
 function exportFavoritesM3U() {
 
-    try {
-        var live = cached('livestreams', function() { return api().getLiveStreams(); }) || [];
-        var cats = cached('livecats', function() { return api().getLiveCategories(); }) || [];
+    liveStreams(function(live) { liveCats(function(cats) { try {
+        live = live || [];
+        cats = cats || [];
         var catName = {};
         for(var ci = 0; ci < cats.length; ci++)
             catName[String(cats[ci].id)] = cats[ci].title;
@@ -887,7 +1095,7 @@ function exportFavoritesM3U() {
                      tr('canali') + '): ' + out, 6);
     } catch(e) {
         popup.notify(tr('Esportazione fallita') + ': ' + e, 4);
-    }
+    } }); });
 }
 
 
@@ -908,6 +1116,39 @@ function histAdd(title, icon, playUrl, kind) {
     out.unshift({ t: title, i: icon || '', u: playUrl, k: kind });
     if(out.length > HIST_MAX) out.length = HIST_MAX;
     histStore.list = out;
+}
+
+/*
+ *  Scritture store debounced — ad ogni zap si scriverebbero
+ *  due file kvstore (history + uistate): si accumulano e si
+ *  scaricano dopo 4s di quiete. Solo per i path ad alta
+ *  frequenza (cambio canale): le altre scritture restano
+ *  immediate.
+ */
+var debFlushRes = null;
+var debUi = {};
+var debHist = [];
+
+function flushDeb() {
+    debFlushRes = null;
+    try {
+        for(var k in debUi) uiStore[k] = debUi[k];
+        debUi = {};
+        var hs = debHist;
+        debHist = [];
+        for(var i = 0; i < hs.length; i++)
+            histAdd(hs[i].t, hs[i].i, hs[i].u, hs[i].k);
+    } catch(e) {}
+}
+
+function uiSetDeb(k, v) {
+    debUi[k] = v;
+    if(!debFlushRes) debFlushRes = setTimeout(flushDeb, 4000);
+}
+
+function histAddDeb(title, icon, playUrl, kind) {
+    debHist.push({ t: title, i: icon || '', u: playUrl, k: kind });
+    if(!debFlushRes) debFlushRes = setTimeout(flushDeb, 4000);
 }
 
 // URL della pagina impostazioni del plugin (registrata da
@@ -1047,6 +1288,11 @@ function ensureGuide(cb) {
 
         if(guideFresh()) { guideFinish(true); return; }
 
+        // warm parallelo del catalogo live: il filtro wantFor
+        // dell'ingest legge solo la cache — partire subito fa
+        // si' che arrivi prima del documento XMLTV
+        try { liveStreams(function() {}); } catch(e0) {}
+
         var now = Math.floor(Date.now() / 1000);
 
         // disk cache — epg.json: JSON.parse, niente XML
@@ -1066,11 +1312,17 @@ function ensureGuide(cb) {
         var fin = function(body) {
             if(done) return;
             done = true;
-            var ok = false;
-            try { ok = guideIngest(body, true); } catch(e) {
-                console.log('xctv: EPG ingest failed: ' + e);
-            }
-            guideFinish(ok);
+            // ingest solo quando il catalogo live e' in cache:
+            // serve a collectChannelNames per il filtro wantFor.
+            // Il warm e' partito in parallelo al download — di
+            // norma questo callback e' immediato.
+            liveStreams(function() {
+                var ok = false;
+                try { ok = guideIngest(body, true); } catch(e) {
+                    console.log('xctv: EPG ingest failed: ' + e);
+                }
+                guideFinish(ok);
+            });
         };
 
         try {
@@ -1108,12 +1360,16 @@ function epgSourceUrl() {
 
 var lastStreams = null;
 
+// cache di sessione per la sezione Info (account/server):
+// evita un getInfo per ogni apertura delle impostazioni
+var infoStoreCache = {};
+
 // Larghezza della finestra guida in secondi — ore configurabili.
 function gridSpan() { return (cfg.gridHours || 4) * 3600; }
 var GRIDSPAN = 3 * 3600; // fallback: usare gridSpan()
-function collectChannelNames() {
+function collectChannelNames(streams) {
     var names = [];
-    var streams = cached('livestreams', function() { return api().getLiveStreams(); });
+    if(!streams) streams = cacheGet('livestreams');
     if(streams) {
         lastStreams = streams;
         for(var i = 0; i < streams.length; i++) {
@@ -1404,10 +1660,41 @@ function saveGroupOrder(groups) {
     grpOrdStore.list = keys;
 }
 
-function fillLiveGroups(page, activeCat) {
+// categorie live: cache calda o fetch async — cb(cats|false)
+function liveCats(cb) {
+    var w = cacheGet('livecats');
+    if(w) { cb(w); return; }
+    var a = api();
+    var fin = function(cats) {
+        if(cats) cacheSet('livecats', cats);
+        cb(cats);
+    };
+    if(a.getLiveCategoriesAsync) a.getLiveCategoriesAsync(fin);
+    else fin(a.getLiveCategories());
+}
 
-    var cats = cached('livecats', function() { return api().getLiveCategories(); });
-    var groups = [{ cat: 'fav', title: tr('Preferiti') }];
+// liveStreams(cb) — catalogo live via callback: cache-hit
+// sincrono, miss -> fetch async (niente HTTP bloccante sul
+// thread ES da path secondari: export m3u, catch-up, palinsesto).
+function liveStreams(cb) {
+    var w = cacheGet('livestreams');
+    if(w) { cb(w); return; }
+    var a = api();
+    var fin = function(l) {
+        if(l) cacheSet('livestreams', l);
+        cb(l);
+    };
+    if(a.getLiveStreamsAsync) a.getLiveStreamsAsync(fin);
+    else fin(a.getLiveStreams());
+}
+
+function fillLiveGroups(page, groups, activeCat, cats) {
+
+    // groups: array condiviso hookZap <-> liveLoader, mutato in
+    // place — una refill async (categorie arrivate dopo)
+    // riempie lo stesso oggetto e resta visibile a entrambi
+    groups.length = 0;
+    groups.push({ cat: 'fav', title: tr('Preferiti') });
 
     // "Recenti": ultimi canali visti (cronologia kind='live')
     var hist = histStore.list || [];
@@ -1586,6 +1873,7 @@ function fillSettings(page, sec, nodes) {
 
     prop.deleteChilds(page.model.nodes);
     for(var id in nodes) delete nodes[id];
+    nodes.__sec = sec;
 
     function add(meta) {
         var n = optRow(page, meta);
@@ -1771,27 +2059,58 @@ function fillSettings(page, sec, nodes) {
 
         // Blocco per categoria: live / film / serie — una riga per
         // gruppo con toggle. Richiede comunque il PIN impostato.
+        // Le liste arrivano da cache condivisa (livecats/vodcats/
+        // seriescats): a cache fredda si scalda in async e la
+        // sezione si ri-riempe da sola.
         try {
             var lockm = hidMap(lockStore);
             var catsSecs = [
-                ['live', tr('Gruppo live'),
-                 function() { return api().getLiveCategories(); }],
-                ['vod', tr('Categoria film'),
-                 function() { return api().getVodCategories(); }],
-                ['series', tr('Categoria serie'),
-                 function() { return api().getSeriesCategories(); }]
+                ['live', 'livecats', tr('Gruppo live'),
+                 function(cb) { liveCats(cb); }],
+                ['vod', 'vodcats', tr('Categoria film'),
+                 function(cb) {
+                    var a = api();
+                    if(a.getVodCategoriesAsync) a.getVodCategoriesAsync(cb);
+                    else cb(a.getVodCategories());
+                 }],
+                ['series', 'seriescats', tr('Categoria serie'),
+                 function(cb) {
+                    var a = api();
+                    if(a.getSeriesCategoriesAsync) a.getSeriesCategoriesAsync(cb);
+                    else cb(a.getSeriesCategories());
+                 }]
             ];
+            var missing = 0;
             for(var si = 0; si < catsSecs.length; si++) {
-                var lcats = cached('cats4lock:' + catsSecs[si][0], catsSecs[si][2]);
-                if(!lcats) continue;
+                var lcats = cacheGet(catsSecs[si][1]);
+                if(!lcats) {
+                    missing++;
+                    (function(cs) {
+                        cs[3](function(cats) {
+                            if(cats) cacheSet(cs[1], cats);
+                            // ri-riempi solo se la sezione e'
+                            // ancora quella genitori
+                            try {
+                                if(!prop.isZombie(page.root) &&
+                                   nodes.__sec == 'parental')
+                                    fillSettings(page, 'parental', nodes);
+                            } catch(e2) {}
+                        });
+                    })(catsSecs[si]);
+                    continue;
+                }
                 for(var ci = 0; ci < lcats.length; ci++) {
                     var key = catsSecs[si][0] + ':' + lcats[ci].id;
                     add({ id: 'lockcat:' + key, kind: 'bool',
                           title: tr('Blocca') + ': ' + lcats[ci].title,
                           value: !!lockm[key],
-                          hint: catsSecs[si][1] });
+                          hint: catsSecs[si][2] });
                 }
             }
+            if(missing)
+                add({ id: 'lockwait', kind: 'info',
+                      title: tr('Caricamento gruppi…'),
+                      value: '', hint: tr('La lista arriva a breve') });
         } catch(e) {}
         break;
 
@@ -1812,8 +2131,22 @@ function fillSettings(page, sec, nodes) {
 
     case 'info':
 
-        var user = null;
-        try { user = api().getInfo('user'); } catch(e) {}
+        var user = infoStoreCache.user || null;
+        if(!user) {
+            // fetch async + ri-riempi se la sezione e' ancora info
+            try {
+                var a0 = api();
+                if(a0.getInfoAsync)
+                    a0.getInfoAsync('user', function(u) {
+                        if(u) infoStoreCache.user = u;
+                        try {
+                            if(!prop.isZombie(page.root) &&
+                               nodes.__sec == 'info')
+                                fillSettings(page, 'info', nodes);
+                        } catch(e2) {}
+                    });
+            } catch(e0) {}
+        }
 
         add({ id: 'i_ver', kind: 'info', title: tr('Versione'),
               value: tr('XCtv') + ' ' + plugin.version });
@@ -1960,9 +2293,13 @@ function handleSetting(page, id, nodes) {
         break;
     case 'unhideAll':
         var n2 = Object.keys(hidMap(hidChanStore)).length +
-                 Object.keys(hidMap(hidGroupStore)).length;
+                 Object.keys(hidMap(hidGroupStore)).length +
+                 Object.keys(hidMap(hidBrowseGrpStore)).length +
+                 Object.keys(hidMap(hidItemStore)).length;
         hidChanStore.map = {};
         hidGroupStore.map = {};
+        hidBrowseGrpStore.map = {};
+        hidItemStore.map = {};
         popup.notify(n2 ? tr('Ripristinati') + ' ' + n2 + ' ' + tr('elementi') : tr('Nulla da ripristinare'), 3);
         break;
 
@@ -1981,8 +2318,17 @@ function handleSetting(page, id, nodes) {
         break;
 
     case 'verify':
-        var res = makeXtream().checkLogin();
-        popup.notify(res.status ? tr('Connessione OK') : (tr('Errore') + ': ' + res.error), 4);
+        var vx = makeXtream();
+        if(vx.checkLoginAsync) {
+            popup.notify(tr('Verifica in corso…'), 2);
+            vx.checkLoginAsync(function(res) {
+                popup.notify(res.status ? tr('Connessione OK') :
+                    (tr('Errore') + ': ' + res.error), 4);
+            });
+        } else {
+            var res = vx.checkLogin();
+            popup.notify(res.status ? tr('Connessione OK') : (tr('Errore') + ': ' + res.error), 4);
+        }
         break;
 
     case 'pltype':
@@ -2177,8 +2523,7 @@ function hookSettingsPage(page, sections, initial) {
  *  adulto) quando il PIN e' impostato.
  */
 function pinLocked(title) {
-    return cfg.pin && title &&
-        /adult|xxx|18\+|hot|sexy|porn/i.test(title);
+    return cfg.pin && title && ADULT_GROUP_RE.test(title);
 }
 
 
@@ -2191,7 +2536,7 @@ function checkPin() {
 }
 
 
-var ADULT_GROUP_RE = /adult|xxx|18\+|hot|sexy|porn/i;
+var ADULT_GROUP_RE = /adult|xxx|18\+|sexy|porn|erotic|hustler|playboy|penthouse|adulti|eros\b|\bhot\b/i;
 
 
 
@@ -2253,47 +2598,60 @@ function saveChanOrder(ordKey, streams) {
 
 function liveLoader(page, groups) {
 
-    return function(cat) {
+    return function(cat, done) {
 
         var ordKey = (cat == null) ? '_all' : String(cat);
 
-        var live = (cat == 'fav' || cat == 'recent') ?
-            [] :
-            (cat == null ?
-             cached('livestreams', function() { return api().getLiveStreams(); }) :
-             cached('live:' + cat, function() { return api().getLiveStreamsByCategoryId(cat); }));
+        // build(live): da lista canali grezza a risultato materia-
+        // lizzato {streams, items, more, findUrl, hasUrl, total} —
+        // identico al loader sincrono, ora invocabile sia dalla
+        // cache calda sia dalla callback di una fetch async
+        function build(live) {
 
-        if(live) live = live.slice();
+            if(live) live = live.slice();
 
-        // gruppo "Preferiti": filtra lo stream completo con lo store
-        if(cat == 'fav') {
-            var all = cached('livestreams', function() { return api().getLiveStreams(); });
-            if(all)
+            // gruppo "Preferiti": filtra lo stream completo con
+            // lo store (live e' gia' il catalogo intero)
+            if(cat == 'fav') {
+                var all = live || [];
+                live = [];
                 for(var i = 0; i < all.length; i++)
                     if(favStore[all[i].source.url])
                         live.push(all[i]);
-        }
+            }
 
-        // gruppo "Recenti": stream nell'ordine della cronologia
-        if(cat == 'recent') {
-            var rall = cached('livestreams', function() { return api().getLiveStreams(); });
-            var histl = histStore.list || [];
-            if(rall)
+            // gruppo "Recenti": stream nell'ordine della
+            // cronologia — mappa url->stream
+            if(cat == 'recent') {
+                var rall = live || [];
+                live = [];
+                var histl = histStore.list || [];
+                var byUrl = {};
+                for(var j2 = 0; j2 < rall.length; j2++)
+                    byUrl[rall[j2].source.url] = rall[j2];
                 for(var h2 = 0; h2 < histl.length; h2++) {
                     if(histl[h2].k != 'live') continue;
-                    for(var j2 = 0; j2 < rall.length; j2++)
-                        if(rall[j2].source.url == histl[h2].u) {
-                            live.push(rall[j2]);
-                            break;
-                        }
+                    var rs = byUrl[histl[h2].u];
+                    if(rs) live.push(rs);
                 }
-        }
+            }
 
-        if(!live)
-            return null;
+            // viste aggregate: i canali dei gruppi nascosti o
+            // bloccati dal PIN non ci devono comparire — il gate
+            // sul solo rail li lascerebbe raggiungibili
+            if(live && (cat == null || cat == 'fav' || cat == 'recent')) {
+                var bml = blockedCatMap('live', groups);
+                var lf = [];
+                for(var bl = 0; bl < live.length; bl++)
+                    if(!bml[String(live[bl].cat_id)]) lf.push(live[bl]);
+                live = lf;
+            }
 
-        applyChanOrder(live, ordKey);
-        var nums = hidMap(numStore);
+            if(!live)
+                return null;
+
+            applyChanOrder(live, ordKey);
+            var nums = hidMap(numStore);
 
         prop.deleteChilds(page.model.nodes);
 
@@ -2348,7 +2706,15 @@ function liveLoader(page, groups) {
                 items.push(chunkItems[k]);
                 streams.push(chunkStreams[k]);
             }
-            fillPageEpg(chunkItems, chunkStreams, false);
+            // EPG differito di un tick: le righe si dipingono
+            // subito al cambio gruppo, le celle della griglia
+            // (~130 prop-op a canale) arrivano un frame dopo.
+            // Gli zombie-check in fillPageEpg/setChannelEvents
+            // scartano il riempimento se nel frattempo e' partito
+            // un altro cambio gruppo.
+            setTimeout(function() {
+                fillPageEpg(chunkItems, chunkStreams, false);
+            }, 0);
             return pos < live.length;
         }
 
@@ -2378,8 +2744,56 @@ function liveLoader(page, groups) {
                     if(pos >= live.length || guard-- <= 0 || !more())
                         return -1;
                 }
+            },
+            // scansione a costo zero sulla lista sorgente: il
+            // cambio gruppo con un canale in riproduzione chiamava
+            // findUrl, che materializzava fino a 15 chunk da 160
+            // item (prop-op EPG incluse) solo per scoprire che il
+            // canale non c'era — il freeze percepito al click.
+            hasUrl: function(url) {
+                for(var i = 0; i < live.length; i++)
+                    if(live[i].source.url == url) return i;
+                return -1;
+            }
+            };
+        }   // end build
+
+        // sorgente lista: cache calda -> riempimento sincrono;
+        // altrimenti fetch async col loader visibile — niente
+        // piu' _req bloccante sul click del gruppo
+        var whole = (cat == null || cat == 'fav' || cat == 'recent');
+        var key = whole ? 'livestreams' : 'live:' + cat;
+        var warm = cacheGet(key);
+        if(warm) { if(done) done(build(warm)); return; }
+
+        prop.deleteChilds(page.model.nodes);
+        page.model.loadingStatus = tr('Caricamento…');
+        setLoading(page, true);
+
+        var fin = function(list) {
+            try {
+                setLoading(page, false);
+                if(prop.isZombie(page.root)) return;
+                if(list) cacheSet(key, list);
+                if(done) done(list ? build(list) : null);
+            } catch(e) {
+                try { if(done) done(null); } catch(e2) {}
             }
         };
+        try {
+            var a = api();
+            if(whole) {
+                if(a.getLiveStreamsAsync) a.getLiveStreamsAsync(fin);
+                else fin(a.getLiveStreams());
+            } else {
+                if(a.getLiveStreamsByCategoryIdAsync)
+                    a.getLiveStreamsByCategoryIdAsync(cat, fin);
+                else fin(a.getLiveStreamsByCategoryId(cat));
+            }
+        } catch(e) {
+            setLoading(page, false);
+            if(done) done(null);
+        }
     };
 }
 
@@ -2659,34 +3073,51 @@ try {
                pos < parseFloat(info.duration) * 0.9)
                 return;   // interrotto a meta': niente visto/autoplay
 
-            watchStore[cu] = 1;
+            watchMark(cu);
             if(!cfg.autoplayNext) return;
 
             var rest = cu.substring(pfx.length).split(':');
-            var eps = null;
-            try {
-                eps = seriesSort(api().getSeriesInfo(rest[0]) || []);
-            } catch(e) { return; }
-
-            for(var i = 0; i < eps.length; i++) {
-                if(String(eps[i].id) != rest[1]) continue;
-                if(i + 1 < eps.length) {
-                    var nx = eps[i + 1];
-                    popup.notify(tr('Prossimo episodio') + ': ' + nx.title, 3);
-                    // origin = prop della pagina che ha avviato la
-                    // riproduzione; come fallback il prop globale raw
-                    // (prop.global e' un Proxy, backendOpen vuole
-                    // l'oggetto nativo)
-                    var pg = origin;
-                    if(!pg) {
-                        try { pg = require('native/prop').global(); }
-                        catch(e2) { return; }
+            // async: la get_series_info del successivo non blocca
+            // il contesto ES (e la UI) mentre l'episodio finisce
+            var a = api();
+            var fin = function(eps) {
+                try {
+                    if(!eps || !eps.length) return;
+                    for(var i = 0; i < eps.length; i++) {
+                        if(String(eps[i].id) != rest[1]) continue;
+                        if(i + 1 < eps.length) {
+                            var nx = eps[i + 1];
+                            popup.notify(tr('Prossimo episodio') + ': ' + nx.title, 3);
+                            // origin = prop della pagina che ha avviato la
+                            // riproduzione; come fallback il prop globale raw
+                            // (prop.global e' un Proxy, backendOpen vuole
+                            // l'oggetto nativo)
+                            var pg = origin;
+                            if(!pg) {
+                                try { pg = require('native/prop').global(); }
+                                catch(e2) { return; }
+                            }
+                            // la fetch async puo' risolversi dopo che
+                            // l'utente e' uscito dal video: non
+                            // risbatterlo sull'episodio successivo se
+                            // la pagina origine non e' piu' corrente
+                            var ou = '';
+                            try { ou = String(pg.url); } catch(e3) {}
+                            if(ou && currentPageUrl() != ou) return;
+                            require('native/route').backendOpen(
+                                pg, playepUrl(rest[0], nx.id), false);
+                        }
+                        return;
                     }
-                    require('native/route').backendOpen(
-                        pg, playepUrl(rest[0], nx.id), false);
-                }
-                return;
-            }
+                } catch(e) {}
+            };
+            if(a.getSeriesInfoAsync)
+                a.getSeriesInfoAsync(rest[0], function(eps) {
+                    fin(eps ? seriesSort(eps) : eps);
+                });
+            else
+                try { fin(seriesSort(a.getSeriesInfo(rest[0]) || [])); }
+                catch(e) {}
         } catch(e) {}
     });
 } catch(e) {}
@@ -2787,11 +3218,13 @@ function hookZap(page, groups, loader, initialCat) {
         var s = streams[i];
         cur = i;
         curUrl = s.source.url;
-        uiStore.lastChan = s.source.url;
-        uiStore.lastGroup = curCat;
+        // debounce: lo zapping veloce non deve scrivere due
+        // file kvstore per canale
+        uiSetDeb('lastChan', s.source.url);
+        uiSetDeb('lastGroup', curCat);
         // cronologia "Recenti" — i canali live usano lo stesso
         // store della storia VOD con kind 'live'
-        try { histAdd(s.title, s.icon, s.source.url, 'live'); } catch(e) {}
+        try { histAddDeb(s.title, s.icon, s.source.url, 'live'); } catch(e) {}
 
         var canon = plugin.id + ':play:' + encodeURIComponent(s.title) +
                     ':' + encodeURIComponent(s.source.url);
@@ -2861,29 +3294,41 @@ function hookZap(page, groups, loader, initialCat) {
     // Ricarica la lista canali di un gruppo senza fermare lo
     // stream corrente; se il canale in riproduzione esiste nella
     // nuova lista riallinea `cur` così CH± riparte da lì.
+    // Il loader consegna via callback (fetch async a cache
+    // fredda): loadSeq scarta i load superati.
+    var loadSeq = 0;
     function load(cat) {
 
-        var r = loader(cat);
-        if(!r || !r.streams) return;
-        streams = r.streams;
-        items = r.items || [];
-        curCat = cat;
-        curMore = r.more || null;
-        curFind = r.findUrl || null;
-        curTotal = r.total || streams.length;
-        setPageHeader(page, r.title + ' (' + curTotal + ')');
-        for(var g = 0; g < groups.length; g++)
-            groups[g].node.sel = (groups[g].cat == cat) ? 1 : 0;
+        var mySeq = ++loadSeq;
+        loader(cat, function(r) {
+            if(mySeq != loadSeq) return;
+            setLoading(page, false);
+            if(!r || !r.streams) return;
+            streams = r.streams;
+            items = r.items || [];
+            curCat = cat;
+            curMore = r.more || null;
+            curFind = r.findUrl || null;
+            var curHas = r.hasUrl || null;
+            curTotal = r.total || streams.length;
+            setPageHeader(page, r.title + ' (' + curTotal + ')');
+            for(var g = 0; g < groups.length; g++)
+                groups[g].node.sel = (groups[g].cat == cat) ? 1 : 0;
 
-        cur = -1;
-        page.model.zapidx = -1;
-        if(curUrl && curFind) {
-            var ri = curFind(curUrl);
-            if(ri >= 0) {
-                cur = ri;
-                page.model.zapidx = ri;
+            cur = -1;
+            page.model.zapidx = -1;
+            // riallinea `cur` al canale in riproduzione SOLO se e'
+            // nel nuovo gruppo: hasUrl e' una scansione JS pura,
+            // findUrl materializzerebbe chunk di prop per niente
+            if(curUrl && curFind && (!curHas || curHas(curUrl) >= 0)) {
+                var ri = curFind(curUrl);
+                if(ri >= 0) {
+                    cur = ri;
+                    page.model.zapidx = ri;
+                }
             }
-        }
+            boot();
+        });
     }
 
     // gruppo bloccato (regex adulti o scelta utente): chiede il PIN
@@ -3066,7 +3511,7 @@ function hookZap(page, groups, loader, initialCat) {
                     var hideCat = groups[hg].cat;
                     hidSet(hidGroupStore, hideCat, 1);
                     popup.notify(tr('Gruppo nascosto (ripristina dalle Impostazioni)'), 3);
-                    groups = fillLiveGroups(page, curCat);
+                    groups = fillLiveGroups(page, groups, curCat, cacheGet('livecats'));
                     load(curCat === hideCat ? null : curCat);
                 }
             } else if(val.indexOf('gmoveup:') == 0) {
@@ -3076,7 +3521,7 @@ function hookZap(page, groups, loader, initialCat) {
                     groups[gu - 1] = groups[gu];
                     groups[gu] = gt1;
                     saveGroupOrder(groups);
-                    groups = fillLiveGroups(page, groups[gu - 1].cat);
+                    groups = fillLiveGroups(page, groups, groups[gu - 1].cat, cacheGet('livecats'));
                 }
             } else if(val.indexOf('gmovedown:') == 0) {
                 var gd = parseInt(val.substr(10), 10);
@@ -3085,7 +3530,7 @@ function hookZap(page, groups, loader, initialCat) {
                     groups[gd + 1] = groups[gd];
                     groups[gd] = gt2;
                     saveGroupOrder(groups);
-                    groups = fillLiveGroups(page, groups[gd + 1].cat);
+                    groups = fillLiveGroups(page, groups, groups[gd + 1].cat, cacheGet('livecats'));
                 }
             } else if(val.indexOf('unhide:') == 0) {
                 var nh = Object.keys(hidMap(hidChanStore)).length +
@@ -3094,7 +3539,7 @@ function hookZap(page, groups, loader, initialCat) {
                 hidGroupStore.map = {};
                 popup.notify(nh ? tr('Ripristinati') + ' ' + nh + ' ' + tr('elementi') :
                              tr('Nulla da ripristinare'), 3);
-                groups = fillLiveGroups(page, curCat);
+                groups = fillLiveGroups(page, groups, curCat, cacheGet('livecats'));
                 load(curCat);
             } else if(val.indexOf('group:') == 0) {
                 var gi = parseInt(val.substr(6), 10);
@@ -3109,20 +3554,33 @@ function hookZap(page, groups, loader, initialCat) {
     // Start playing the first channel immediately,
     // the list overlay is drawn over it. Con "ultimo canale"
     // attivo si riparte dal gruppo/canale dell'ultima sessione.
-    var startIdx = -1;
-    if(cfg.lastChan && uiStore.lastChan) {
-        if(uiStore.lastGroup !== undefined && uiStore.lastGroup !== null &&
-           uiStore.lastGroup !== initialCat)
-            gatedLoad(uiStore.lastGroup);
-        if(!streams.length)
-            gatedLoad(initialCat);
-        // materializza i chunk fino al canale (capped dentro findUrl)
-        if(curFind)
+    // Con cache fredda il loader risponde in callback: l'avvio
+    // e' differito al primo load che porta streams non vuoti.
+    var booted = false;
+    function boot() {
+        if(booted) return;
+        var startIdx = -1;
+        if(cfg.lastChan && uiStore.lastChan && curFind)
+            // materializza i chunk fino al canale (capped dentro
+            // findUrl)
             startIdx = curFind(uiStore.lastChan);
+        // il gruppo di restore non ha prodotto canali -> default
+        if(!streams.length && curCat !== initialCat) {
+            gatedLoad(initialCat);
+            return;
+        }
+        if(!streams.length) return;   // load fallito/vuoto: ritenta
+        booted = true;
+        apply(startIdx >= 0 ? startIdx : 0);
     }
-    if(!streams.length)
-        gatedLoad(initialCat);
-    apply(startIdx >= 0 ? startIdx : 0);
+
+    var startCat = initialCat;
+    if(cfg.lastChan && uiStore.lastChan &&
+       uiStore.lastGroup !== undefined && uiStore.lastGroup !== null &&
+       uiStore.lastGroup !== initialCat)
+        startCat = uiStore.lastGroup;
+    gatedLoad(startCat);
+    boot();   // cache calda: streams gia' presenti, avvio subito
 
     // Quando un'altra pagina copre questa (es. Impostazioni o la
     // home) il widget video resta vivo e continuerebbe a suonare
@@ -3151,7 +3609,17 @@ function hookZap(page, groups, loader, initialCat) {
                 m.zapurl = '';
             }
         } catch(e) {}
-    }, 500);
+    }, 1000);
+
+    return {
+        // refill del rail quando le categorie arrivano in async:
+        // stesso array condiviso con liveLoader — il cambio
+        // gruppo successivo vede gia' le nuove voci
+        refill: function(cats) {
+            if(prop.isZombie(page.root)) return;
+            groups = fillLiveGroups(page, groups, curCat, cats);
+        }
+    };
 }
 
 
@@ -3172,15 +3640,46 @@ function fillRail(page, cats, activeCat, kind) {
     if(hasHist)
         groups.push({ cat: 'history', title: tr('Continua a guardare') });
 
+    // pseudo-categoria "Preferiti": solo se ci sono elementi
+    // marcati di questo tipo
+    if(hasFavItems(kind))
+        groups.push({ cat: 'fav', title: tr('Preferiti') });
+
     groups.push({ cat: 'all', title: tr('Tutti') });
     if(cats)
-        for(var i = 0; i < cats.length; i++)
+        for(var i = 0; i < cats.length; i++) {
+            if(isHiddenBrowseGroup(kind, cats[i].id)) continue;
             groups.push({ cat: cats[i].id, title: cats[i].title });
+        }
+
+    // ordine manuale salvato (browseOrdStore[kind] = chiavi)
+    var gkeys = browseOrdStore[kind];
+    if(gkeys && gkeys.length) {
+        var rank = {};
+        for(var ri = 0; ri < gkeys.length; ri++) rank[gkeys[ri]] = ri;
+        var dec = [];
+        for(var di = 0; di < groups.length; di++)
+            dec.push({ g: groups[di], i: di });
+        dec.sort(function(a, b) {
+            var ra = rank[grpKey(a.g.cat)];
+            var rb = rank[grpKey(b.g.cat)];
+            if(ra === undefined) ra = 9999;
+            if(rb === undefined) rb = 9999;
+            return ra != rb ? ra - rb : a.i - b.i;
+        });
+        var sorted = [];
+        for(var si = 0; si < dec.length; si++) sorted.push(dec[si].g);
+        groups = sorted;
+    }
 
     prop.deleteChilds(page.model.groups);
     for(var i = 0; i < groups.length; i++) {
         var n = prop.createRoot();
         n.metadata.title = groups[i].title;
+        // gli pseudo-gruppi (Continua/Tutti) non si nascondono
+        n.metadata.canhide = (groups[i].cat != 'history' &&
+                              groups[i].cat != 'fav' &&
+                              groups[i].cat != 'all') ? 1 : 0;
         n.xidx = i;
         n.sel = (groups[i].cat == activeCat) ? 1 : 0;
         groups[i].node = n;
@@ -3194,11 +3693,23 @@ function fillRail(page, cats, activeCat, kind) {
  *  browseLoader — ripopola page.model.nodes con i titoli della
  *  categoria selezionata (vod o serie). kind = 'vod'|'series'.
  */
-function browseLoader(page, kind) {
+function browseLoader(page, kind, cats) {
 
-    return function(cat) {
+    // catLoader.keys: chiavi vodkey degli elementi nell'ordine
+    // mostrato — serve al menu contestuale per gli swap su/giu'
+    // catLoader.seq: generation counter — due click rapidi su
+    // categorie diverse lasciano in volo due fetch: solo la piu'
+    // recente puo' riempire la pagina (altrimenti si vedono gli
+    // item del gruppo sbagliato col rail selezionato su un altro)
+    return function catLoader(cat, done) {
 
-        var list;
+        var mySeq = (catLoader.seq = (catLoader.seq || 0) + 1);
+
+        // done(err, count): err='fail' se la fetch non riesce.
+        // Cache calda -> riempimento sincrono; altrimenti fetch
+        // async e la pagina mostra "Caricamento" finche' i dati
+        // non arrivano.
+
         if(cat == 'history') {
             // "Continua a guardare": items dalla cronologia con
             // url diretto di riproduzione
@@ -3214,53 +3725,172 @@ function browseLoader(page, kind) {
                       source: { url: hist[i].u } });
                 n++;
             }
-            return { count: n };
+            done(null, n);
+            return;
         }
 
-        if(kind == 'series')
-            list = cat == 'all' ?
-                cached('series', function() { return api().getSeries(); }) :
-                cached('series:' + cat, function() { return api().getSeriesByCategoryId(cat); });
-        else
-            list = cat == 'all' ?
-                cached('vodstreams', function() { return api().getVodStreams(); }) :
-                cached('vod:' + cat, function() { return api().getVodStreamsByCategoryId(cat); });
+        var isSeries = kind == 'series';
+        // 'all' e 'fav' riusano le chiavi condivise col searcher
+        var key = (cat == 'all' || cat == 'fav') ?
+                  (isSeries ? 'series' : 'vodstreams')
+                               : (isSeries ? 'series:' : 'vod:') + cat;
 
-        if(!list)
-            return null;
+        function fill(list) {
 
-        // ordinamento catalogo (la cache va copiata, non mutata)
-        if(cfg.sortMode != 'default') {
-            list = list.slice();
-            if(cfg.sortMode == 'name')
-                list.sort(function(a, b) {
-                    return a.title.toLowerCase() < b.title.toLowerCase() ? -1 :
-                           (a.title.toLowerCase() > b.title.toLowerCase() ? 1 : 0);
-                });
-            else if(cfg.sortMode == 'added')
-                list.sort(function(a, b) { return (b.added || 0) - (a.added || 0); });
-            else if(cfg.sortMode == 'rating')
-                list.sort(function(a, b) {
-                    return (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0);
-                });
+            // 'fav': solo gli elementi marcati preferiti
+            if(cat == 'fav') {
+                var favs = [];
+                for(var fi = 0; fi < list.length; fi++)
+                    if(isFavItem(kind, list[fi].id)) favs.push(list[fi]);
+                list = favs;
+            }
+
+            // i contenuti dei gruppi nascosti o bloccati dal PIN
+            // restano esclusi dalle viste aggregate — il gate sul
+            // solo rail li lascerebbe raggiungibili senza PIN
+            if(cat == 'all' || cat == 'fav') {
+                var bm = blockedCatMap(kind, cats);
+                var hasBm = false;
+                for(var bk in bm) { hasBm = true; break; }
+                if(hasBm) {
+                    var bf = [];
+                    for(var bi = 0; bi < list.length; bi++)
+                        if(!bm[String(list[bi].cat_id)])
+                            bf.push(list[bi]);
+                    list = bf;
+                }
+            }
+
+            // ordinamento catalogo (la cache va copiata, non mutata)
+            if(cfg.sortMode != 'default') {
+                list = list.slice();
+                if(cfg.sortMode == 'name')
+                    list.sort(function(a, b) {
+                        return a.title.toLowerCase() < b.title.toLowerCase() ? -1 :
+                               (a.title.toLowerCase() > b.title.toLowerCase() ? 1 : 0);
+                    });
+                else if(cfg.sortMode == 'added')
+                    list.sort(function(a, b) { return (b.added || 0) - (a.added || 0); });
+                else if(cfg.sortMode == 'rating')
+                    list.sort(function(a, b) {
+                        return (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0);
+                    });
+            }
+
+            prop.deleteChilds(page.model.nodes);
+
+            // gli elementi nascosti singolarmente non si
+            // materializzano (il catalogo in cache resta integro)
+            var disp = [];
+            for(var di = 0; di < list.length; di++)
+                if(!isHiddenBrowseItem(kind, list[di].id))
+                    disp.push(list[di]);
+            list = disp;
+
+            // ordine manuale salvato (riordino da menu contestuale)
+            if(canOrderItems(kind, cat))
+                list = applyItemOrder(list, kind + ':' + cat, kind);
+
+            var total = list.length;
+            if(!total) {
+                page.appendPassiveItem('separator', '', {
+                    title: tr('Nessun elemento') });
+                page.paginator = function() { return false; };
+                prop.haveMore(page.model.nodes, false);
+                return 0;
+            }
+
+            // paginazione come liveLoader: decine di migliaia di
+            // poster non si appendono in un colpo — primo chunk
+            // piccolo, il resto via paginator scrollando
+            var pos = 0, first = true;
+            function more() {
+                var end = Math.min(pos + (first ? 60 : 240), total);
+                first = false;
+                for(; pos < end; pos++) {
+                    var it = list[pos];
+                    var u = isSeries ?
+                        plugin.id + ':seriesinfo:' + encodeURIComponent(it.title) + ':' + it.id :
+                        plugin.id + ':vodinfo:' + encodeURIComponent(it.title) + ':' + it.id;
+                    // playurl: riproduzione diretta dal menu
+                    // contestuale (solo VOD — le serie aprono la
+                    // pagina episodi); vodkey: nascondi elemento
+                    it.vodkey = kind + ':' + it.id;
+                    // rinomina elemento: otitle conserva l'originale
+                    // (usato anche per l'URL di playurl)
+                    if(it.otitle === undefined) it.otitle = it.title;
+                    it.title = hidMap(nameItemStore)[it.vodkey] || it.otitle;
+                    it.playurl = (!isSeries && it.source && it.source.url) ?
+                        plugin.id + ':play:' + encodeURIComponent(it.otitle) + ':' +
+                        encodeURIComponent(it.source.url) : '';
+                    it.fav = isFavItem(kind, it.id) ? 1 : 0;
+                    page.appendItem(u, 'directory', it);
+                }
+                return pos < total;
+            }
+            // chiavi nell'ordine mostrato — il menu contestuale le
+            // usa per gli swap Sposta su/giu'
+            var dkeys = [];
+            for(var dk = 0; dk < list.length; dk++)
+                dkeys.push(kind + ':' + list[dk].id);
+            catLoader.keys = dkeys;
+
+            more();
+            page.paginator = more;
+            if(pos >= total)
+                prop.haveMore(page.model.nodes, false);
+            return total;
         }
 
+        var hit = cacheGet(key);
+        if(hit) { done(null, fill(hit)); return; }
+
+        // loader standard di Movian (throbber + status) finche'
+        // la fetch async non completa — niente riga di testo
         prop.deleteChilds(page.model.nodes);
+        page.model.loadingStatus = tr('Caricamento…');
+        setLoading(page, true);
 
-        var n = 0;
-        for(var i in list) {
-            var u = kind == 'series' ?
-                plugin.id + ':seriesinfo:' + encodeURIComponent(list[i].title) + ':' + list[i].id :
-                plugin.id + ':vodinfo:' + encodeURIComponent(list[i].title) + ':' + list[i].id;
-            // playurl: riproduzione diretta dal menu contestuale
-            // (solo VOD — le serie aprono la pagina episodi)
-            list[i].playurl = (kind == 'vod' && list[i].source && list[i].source.url) ?
-                plugin.id + ':play:' + encodeURIComponent(list[i].title) + ':' +
-                encodeURIComponent(list[i].source.url) : '';
-            page.appendItem(u, 'directory', list[i]);
-            n++;
+        var fin = function(list) {
+            // risposta tardiva di un load superato: scarta tutto,
+            // la pagina la riempie il load corrente
+            if(mySeq != catLoader.seq) return;
+            try {
+                setLoading(page, false);
+                console.log('xctv: browse ' + kind + ' cat=' + cat +
+                            ' -> ' + (list ? list.length : list));
+                if(prop.isZombie(page.root)) return;
+                if(list) cacheSet(key, list);
+                done(list ? null : 'fail', list ? fill(list) : -1);
+            } catch(e) {
+                console.log('xctv: browse fin: ' + e);
+                try { done('fail', -1); } catch(e2) {}
+            }
+        };
+        try {
+            // fallback sync per le lib senza varianti Async
+            // (m3u/stalker lavorano su liste locali, non servono)
+            var a = api();
+            var wholeCat = (cat == 'all' || cat == 'fav');
+            if(isSeries) {
+                if(wholeCat)
+                    if(a.getSeriesAsync) a.getSeriesAsync(fin);
+                    else fin(a.getSeries());
+                else
+                    if(a.getSeriesByCategoryIdAsync) a.getSeriesByCategoryIdAsync(cat, fin);
+                    else fin(a.getSeriesByCategoryId(cat));
+            } else {
+                if(wholeCat)
+                    if(a.getVodStreamsAsync) a.getVodStreamsAsync(fin);
+                    else fin(a.getVodStreams());
+                else
+                    if(a.getVodStreamsByCategoryIdAsync) a.getVodStreamsByCategoryIdAsync(cat, fin);
+                    else fin(a.getVodStreamsByCategoryId(cat));
+            }
+        } catch(e) {
+            setLoading(page, false);
+            done('fail', -1);
         }
-        return { count: n };
     };
 }
 
@@ -3268,24 +3898,59 @@ function browseLoader(page, kind) {
 /*
  *  hookBrowse — cambio categoria in-place per le pagine
  *  Film/Serie (eventSink "group:N"), senza stream attivo.
+ *  Gestisce anche il menu contestuale gruppo: gmoveup:/gmovedown:
+ *  (ordine manuale), hidegroup:/unhide: (nascosti) e hideitem:
+ *  (singolo elemento dal menu del poster).
  */
-function hookBrowse(page, groups, loader, initialCat, keepTitle, kind) {
+function hookBrowse(page, groups, loader, initialCat, keepTitle, kind, cats) {
 
-    var kindPref = (kind == 'series') ? 'series:' : 'vod:';
+    var kindPref = (kind == 'series') ? 'series:' :
+                   (kind == 'eps') ? 'eps:' : 'vod:';
+    var curCat = initialCat;
+    var loadSeq = 0;
 
     function load(cat) {
 
-        var r = loader(cat);
-        if(!r) return;
-
-        var title = '';
-        for(var g = 0; g < groups.length; g++) {
-            if(groups[g].cat == cat)
-                title = groups[g].title;
+        curCat = cat;
+        var myLoad = ++loadSeq;
+        // la view mostra "Sposta su/giu'" solo su categorie
+        // riordinabili (fuori da history/all, sort di default)
+        try {
+            page.model.canitemorder = canOrderItems(kind, cat) ? 1 : 0;
+        } catch(e) {}
+        // sel subito: feedback istantaneo al click sul rail, i
+        // contenuti arrivano dalla callback del loader
+        for(var g = 0; g < groups.length; g++)
             groups[g].node.sel = (groups[g].cat == cat) ? 1 : 0;
-        }
-        if(!keepTitle)
-            setPageHeader(page, title + ' (' + r.count + ')');
+
+        loader(cat, function(err, count) {
+            // load superato nel frattempo: il nuovo load governa
+            // loader/titolo/nodi
+            if(myLoad != loadSeq) return;
+            try {
+                // il loader e' attivo solo durante fetch async: qui
+                // si spegne per entrambi i path (cache hit e rete)
+                setLoading(page, false);
+                if(prop.isZombie(page.root)) return;
+                if(err) {
+                    prop.deleteChilds(page.model.nodes);
+                    page.appendPassiveItem('separator', '', {
+                        title: tr('Caricamento fallito — riprova') });
+                    setPageHeader(page, tr('Errore'));
+                    // niente paginator stale: scrollando, la vecchia
+                    // closure more() appenderebbe item della lista
+                    // precedente sotto l'errore
+                    page.paginator = function() { return false; };
+                    prop.haveMore(page.model.nodes, false);
+                    return;
+                }
+                var title = '';
+                for(var g = 0; g < groups.length; g++)
+                    if(groups[g].cat == cat) title = groups[g].title;
+                if(!keepTitle)
+                    setPageHeader(page, title + ' (' + count + ')');
+            } catch(e) {}
+        });
     }
 
     var unlockedGroups = {};
@@ -3316,8 +3981,104 @@ function hookBrowse(page, groups, loader, initialCat, keepTitle, kind) {
                 var gi = parseInt(val.substr(6), 10);
                 if(gi >= 0 && gi < groups.length)
                     gatedLoad(groups[gi].cat);
+            } else if(val.indexOf('gmoveup:') == 0) {
+                var gu = parseInt(val.substr(8), 10);
+                if(gu > 0 && gu < groups.length) {
+                    var gt1 = groups[gu - 1];
+                    groups[gu - 1] = groups[gu];
+                    groups[gu] = gt1;
+                    saveBrowseOrder(kind, groups);
+                    groups = fillRail(page, cats, groups[gu - 1].cat, kind);
+                }
+            } else if(val.indexOf('gmovedown:') == 0) {
+                var gd = parseInt(val.substr(10), 10);
+                if(gd >= 0 && gd < groups.length - 1) {
+                    var gt2 = groups[gd + 1];
+                    groups[gd + 1] = groups[gd];
+                    groups[gd] = gt2;
+                    saveBrowseOrder(kind, groups);
+                    groups = fillRail(page, cats, groups[gd + 1].cat, kind);
+                }
+            } else if(val.indexOf('hidegroup:') == 0) {
+                var hg = parseInt(val.substr(10), 10);
+                if(hg >= 0 && hg < groups.length &&
+                   groups[hg].cat != 'all' && groups[hg].cat != 'fav' &&
+                   groups[hg].cat != 'history') {
+                    var hideCat = groups[hg].cat;
+                    hidSet(hidBrowseGrpStore, kindPref + hideCat, 1);
+                    popup.notify(tr('Gruppo nascosto (ripristina dalle Impostazioni)'), 3);
+                    groups = fillRail(page, cats, 'all', kind);
+                    load(curCat === hideCat ? 'all' : curCat);
+                }
+            } else if(val.indexOf('favitem:') == 0) {
+                var fkey = val.substr(8);
+                if(fkey) {
+                    var fm = hidMap(favItemStore);
+                    var on = fm[fkey] ? 0 : 1;
+                    hidSet(favItemStore, fkey, on);
+                    popup.notify(on ? tr('Aggiunto ai preferiti') :
+                                 tr('Rimosso dai preferiti'), 2);
+                    // la voce di rail compare/sparisce col refill;
+                    // il contenuto si ricarica solo dentro 'fav'
+                    var stayCat = curCat;
+                    if(curCat === 'fav' && !on && !hasFavItems(kind))
+                        stayCat = 'all';
+                    groups = fillRail(page, cats, stayCat, kind);
+                    if(curCat === 'fav') load(stayCat);
+                }
+            } else if(val.indexOf('hideitem:') == 0) {
+                var ikey = val.substr(9);
+                // ikey = 'vod:id' / 'series:id' gia' con prefisso
+                if(ikey) {
+                    hidSet(hidItemStore, ikey, 1);
+                    popup.notify(tr('Elemento nascosto (ripristina dalle Impostazioni)'), 3);
+                    load(curCat);
+                }
+            } else if(val.indexOf('imoveup:') == 0 ||
+                      val.indexOf('imovedown:') == 0) {
+                // riordino manuale: swap con l'elemento adiacente
+                // nell'ordine mostrato (catLoader.keys), persistito
+                // in itemOrdStore come nel chanorder live
+                var iup = val.indexOf('imoveup:') == 0;
+                var ikey = val.substr(iup ? 8 : 10);
+                var ks = loader.keys || [];
+                var ii = -1;
+                for(var ki = 0; ki < ks.length; ki++)
+                    if(ks[ki] == ikey) { ii = ki; break; }
+                var jj = iup ? ii - 1 : ii + 1;
+                if(ii >= 0 && jj >= 0 && jj < ks.length) {
+                    var tmpk = ks[ii]; ks[ii] = ks[jj]; ks[jj] = tmpk;
+                    itemOrdStore[kind + ':' + curCat] = ks;
+                    load(curCat);
+                }
+            } else if(val.indexOf('renameitem:') == 0) {
+                var rkey = val.substr(11);
+                var rr = popup.textDialog(
+                    tr('Nuovo nome (vuoto = originale)') + ': ', true, true);
+                if(!rr.rejected) {
+                    var nm = (rr.input == null) ? '' : String(rr.input);
+                    var nm2 = {};
+                    var onm = hidMap(nameItemStore);
+                    for(var xn2 in onm) nm2[xn2] = onm[xn2];
+                    if(nm) nm2[rkey] = nm; else delete nm2[rkey];
+                    nameItemStore.map = nm2;
+                    popup.notify(nm ? tr('Elemento rinominato') :
+                                 tr('Nome originale ripristinato'), 2);
+                    load(curCat);
+                }
+            } else if(val.indexOf('unhide:') == 0) {
+                var nh = Object.keys(hidMap(hidBrowseGrpStore)).length +
+                         Object.keys(hidMap(hidItemStore)).length;
+                hidBrowseGrpStore.map = {};
+                hidItemStore.map = {};
+                popup.notify(nh ? tr('Ripristinati') + ' ' + nh + ' ' + tr('elementi') :
+                             tr('Nulla da ripristinare'), 3);
+                groups = fillRail(page, cats, curCat, kind);
+                load(curCat);
             }
-        } catch(e) {}
+        } catch(e) {
+            console.log('xctv: browse event: ' + e);
+        }
     }, {
         autoDestroy: true,
     });
@@ -3335,17 +4096,49 @@ function openBrowse(page, kind, cat, defTitle) {
     setPageHeader(page, defTitle);
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/browse.view";
-    page.loading = true;
+    setLoading(page, true);
+    page.model.loadingStatus = tr('Caricamento…');
 
-    var cats = kind == 'series' ?
-        cached('seriescats', function() { return api().getSeriesCategories(); }) :
-        cached('vodcats', function() { return api().getVodCategories(); });
+    var start = function(cats) {
+        try {
+            if(prop.isZombie(page.root)) return;
+            cats = cats || [];
+            var groups = fillRail(page, cats, cat, kind);
+            fillAppMenu(page, kind);
+            // il setLoading(true) iniziale si spegne nella done()
+            // di hookBrowse: qui si spegnerebbe dopo il SET del
+            // fetch async
+            hookBrowse(page, groups, browseLoader(page, kind, cats),
+                       cat, false, kind, cats);
+        } catch(e) {
+            setLoading(page, false);
+        }
+    };
 
-    var groups = fillRail(page, cats, cat, kind);
-    fillAppMenu(page, kind);
-    hookBrowse(page, groups, browseLoader(page, kind), cat, false, kind);
+    // categorie in async: la pagina mostra il loader finche' non
+    // arrivano (anche il rail era un _req bloccante all'apertura)
+    var key = kind == 'series' ? 'seriescats' : 'vodcats';
+    var warm = cacheGet(key);
+    if(warm) { start(warm); return; }
 
-    page.loading = false;
+    var a = api();
+    var fin = function(cats) {
+        try {
+            if(cats) cacheSet(key, cats);
+            start(cats);
+        } catch(e) {
+            try { setLoading(page, false); } catch(e2) {}
+        }
+    };
+    try {
+        if(kind == 'series') {
+            if(a.getSeriesCategoriesAsync) a.getSeriesCategoriesAsync(fin);
+            else fin(a.getSeriesCategories());
+        } else {
+            if(a.getVodCategoriesAsync) a.getVodCategoriesAsync(fin);
+            else fin(a.getVodCategories());
+        }
+    } catch(e) { fin(null); }
 }
 
 
@@ -3375,7 +4168,7 @@ new page.Route(plugin.id + ":searchui:(.*)", function(page) {
     setPageHeader(page, tr('Cerca'));
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/searchui.view";
-    page.loading = false;
+    setLoading(page, false);
 });
 
 
@@ -3388,7 +4181,7 @@ new page.Route(plugin.id + ":settings", function(page) {
     setPageHeader(page, tr('Impostazioni'));
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/settingsui.view";
-    page.loading = true;
+    setLoading(page, true);
 
     var secs = [
         { id: 'playlist',   title: tr('Playlist') },
@@ -3402,7 +4195,7 @@ new page.Route(plugin.id + ":settings", function(page) {
 
     hookSettingsPage(page, secs, 0);
     fillAppMenu(page, 'settings');
-    page.loading = false;
+    setLoading(page, false);
 });
 
 
@@ -3422,7 +4215,7 @@ function addPlaylistPage(page, idxStr) {
     setPageHeader(page, editIdx != null ? tr('Modifica playlist') : tr('Aggiungi playlist'));
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/settingsui.view";
-    page.loading = true;
+    setLoading(page, true);
 
     // valori del form: playlist in modifica oppure credenziali attive
     var src = (editIdx != null) ? plList()[editIdx] : null;
@@ -3539,20 +4332,30 @@ function addPlaylistPage(page, idxStr) {
                 setPass.model.value = form.password;
                 setEpgUrl.model.value = form.epgUrl;
 
-                var res = makeProvider(form.plType, form).checkLogin();
-                if(!res.status) {
-                    popup.notify(tr('Connessione fallita') + ': ' + res.error, 4);
-                    return;
-                }
+                var finish = function(res) {
+                    if(!res || !res.status) {
+                        popup.notify(tr('Connessione fallita') + ': ' +
+                            (res ? res.error : '?'), 4);
+                        return;
+                    }
 
-                var savedIdx = savePlEntry(form.playName, form.server,
-                                           form.username, form.password,
-                                           form.epgUrl, editIdx,
-                                           form.plType);
-                applyPlaylist(savedIdx);
-                popup.notify(editIdx != null ? tr('Playlist aggiornata') :
-                                               tr('Playlist aggiunta'), 2);
-                page.redirect(plugin.id + ':start');
+                    var savedIdx = savePlEntry(form.playName, form.server,
+                                               form.username, form.password,
+                                               form.epgUrl, editIdx,
+                                               form.plType);
+                    applyPlaylist(savedIdx);
+                    popup.notify(editIdx != null ? tr('Playlist aggiornata') :
+                                                   tr('Playlist aggiunta'), 2);
+                    page.redirect(plugin.id + ':start');
+                };
+
+                var fp = makeProvider(form.plType, form);
+                if(fp.checkLoginAsync) {
+                    popup.notify(tr('Verifica in corso…'), 2);
+                    fp.checkLoginAsync(finish);
+                } else {
+                    finish(fp.checkLogin());
+                }
                 return;
             }
 
@@ -3570,7 +4373,7 @@ function addPlaylistPage(page, idxStr) {
         autoDestroy: true,
     });
 
-    page.loading = false;
+    setLoading(page, false);
 }
 
 new page.Route(plugin.id + ":addplaylist", function(page) {
@@ -3615,13 +4418,13 @@ new page.Route(plugin.id + ":results:(.*)", function(page, query) {
     query = decodeURIComponent(query);
     setPageHeader(page, tr('Cerca') + ': ' + query);
     page.type = 'directory';
-    page.loading = true;
+    setLoading(page, true);
     try {
         xctvSearch(page, query);
     } catch(e) {
         console.log('xctv: results route error: ' + e);
     }
-    page.loading = false;
+    setLoading(page, false);
 });
 
 function xctvSearch(page, query) {
@@ -3635,9 +4438,23 @@ function xctvSearch(page, query) {
         return s && s.toLowerCase().indexOf(query) != -1;
     }
 
-    var live = cached('livestreams', function() { return api().getLiveStreams(); });
+    // niente contenuti di gruppi nascosti/bloccati nei
+    // risultati (ne' canali nascosti singolarmente)
+    var bml = blockedCatMap('live', cacheGet('livecats'));
+    var bmv = blockedCatMap('vod', cacheGet('vodcats'));
+    var bms = blockedCatMap('series', cacheGet('seriescats'));
+
+    // come vod/series: niente fetch sync durante la digitazione;
+    // a cache fredda si scalda in background
+    var live = cacheGet('livestreams');
+    if(!live && api().getLiveStreamsAsync)
+        api().getLiveStreamsAsync(function(l) {
+            if(l) cacheSet('livestreams', l);
+        });
     if(live) {
         for(var i = 0; i < live.length && hits < 200; i++) {
+            if(bml[String(live[i].cat_id)] ||
+               isHiddenChan(live[i].source.url)) continue;
             applyRename(live[i]);
             if(match(live[i].title)) {
                 var it = page.appendItem(plugin.id + ':play:' + encodeURIComponent(live[i].title) + ':' + encodeURIComponent(live[i].source.url), 'video', live[i]);
@@ -3647,9 +4464,19 @@ function xctvSearch(page, query) {
         }
     }
 
-    var vod = cached('vodstreams', function() { return api().getVodStreams(); });
+    // cacheGet: la ricerca non scarica il catalogo intero in
+    // sync (decine di MB = freeze). Se assente si scalda in
+    // background via async e i risultati compaiono dalla
+    // ricerca successiva.
+    var vod = cacheGet('vodstreams');
+    if(!vod && api().getVodStreamsAsync)
+        api().getVodStreamsAsync(function(l) {
+            if(l) cacheSet('vodstreams', l);
+        });
     if(vod) {
         for(var i = 0; i < vod.length && hits < 200; i++) {
+            if(bmv[String(vod[i].cat_id)] ||
+               isHiddenBrowseItem('vod', vod[i].id)) continue;
             if(match(vod[i].title)) {
                 page.appendItem(plugin.id + ':vodinfo:' + encodeURIComponent(vod[i].title) + ':' + vod[i].id, 'directory', vod[i]);
                 hits++;
@@ -3657,9 +4484,15 @@ function xctvSearch(page, query) {
         }
     }
 
-    var series = cached('series', function() { return api().getSeries(); });
+    var series = cacheGet('series');
+    if(!series && api().getSeriesAsync)
+        api().getSeriesAsync(function(l) {
+            if(l) cacheSet('series', l);
+        });
     if(series) {
         for(var i = 0; i < series.length && hits < 200; i++) {
+            if(bms[String(series[i].cat_id)] ||
+               isHiddenBrowseItem('series', series[i].id)) continue;
             if(match(series[i].title)) {
                 page.appendItem(plugin.id + ':seriesinfo:' + encodeURIComponent(series[i].title) + ':' + series[i].id, 'directory', series[i]);
                 hits++;
@@ -3674,8 +4507,7 @@ function xctvSearch(page, query) {
  */
 new page.Route(plugin.id + ":play:(.*):(.*)", function(page, title, url) {
 
-    page.loading = false;
-    var no_subtitle_scan = true;
+    setLoading(page, false);
     page.type = 'video';
 
     // cronologia "Continua a guardare": solo film/episodi
@@ -3685,9 +4517,7 @@ new page.Route(plugin.id + ":play:(.*):(.*)", function(page, title, url) {
                    (du.indexOf('/series/') >= 0 ? 'series' : null);
         if(kind) {
             var icon = '';
-            var src = kind == 'vod' ?
-                cached('vodstreams', function() { return api().getVodStreams(); }) :
-                cached('serieseps', function() { return []; });
+            var src = kind == 'vod' ? cacheGet('vodstreams') : null;
             if(kind == 'vod' && src)
                 for(var hi = 0; hi < src.length; hi++)
                     if(src[hi].source && src[hi].source.url == du) {
@@ -3703,7 +4533,9 @@ new page.Route(plugin.id + ":play:(.*):(.*)", function(page, title, url) {
         title: decodeURIComponent(title),
         canonicalUrl: plugin.id + ':play:' + decodeURIComponent(title) + ':' + decodeURIComponent(url),
         sources: [{url:  du2}],
-        no_subtitle_scan: no_subtitle_scan,
+        // sub scan disattivo solo sui live (rallenta lo zapping):
+        // su VOD/serie/catch-up serve per trovare le tracce sub
+        no_subtitle_scan: du2.indexOf('/live/') != -1,
         // canale live Xtream: niente prompt "continua/riavvia" —
         // il resume resta solo per contenuti on-demand.
         live: du2.indexOf('/live/') != -1
@@ -3718,7 +4550,7 @@ new page.Route(plugin.id + ":play:(.*):(.*)", function(page, title, url) {
  */
 new page.Route(plugin.id + ":playcatchup:(.*):(.*):(.*):(.*)", function(page, title, stream_id, start, stop) {
 
-    page.loading = false;
+    setLoading(page, false);
     page.type = 'video';
 
     var url = api().getCatchupUrl(stream_id, parseInt(start, 10),
@@ -3729,7 +4561,7 @@ new page.Route(plugin.id + ":playcatchup:(.*):(.*):(.*):(.*)", function(page, ti
         canonicalUrl: plugin.id + ':playcatchup:' + title + ':' + stream_id +
                       ':' + start + ':' + stop,
         sources: [{url: url}],
-        no_subtitle_scan: true
+        no_subtitle_scan: false   // catch-up = VOD: i sub servono
     });
 });
 
@@ -3765,11 +4597,13 @@ new page.Route(plugin.id + ":seriesinfo:(.*):(.*)", function(page,title,series_i
     setPageHeader(page, title);
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/episodes.view";
-    page.loading = true;
+    setLoading(page, true);
+    page.model.loadingStatus = tr('Caricamento…');
 
-    // metadati della serie (poster, trama) dalla cache generale
+    // metadati della serie (poster, trama) dalla cache generale —
+    // cacheGet: niente download sync del catalogo solo per la trama
     try {
-        var all = cached('series', function() { return api().getSeries(); });
+        var all = cacheGet('series');
         if(all)
             for(var i = 0; i < all.length; i++)
                 if(String(all[i].id) == String(series_id)) {
@@ -3781,12 +4615,15 @@ new page.Route(plugin.id + ":seriesinfo:(.*):(.*)", function(page,title,series_i
                 }
     } catch(e) {}
 
-    var series = seriesSort(api().getSeriesInfo(series_id) || []);
+    function build(series) {
 
-    // Rail stagioni : "Tutti" + Stagione N
-    // in page.model.groups; il cambio stagione e' in-place
-    // via eventSink "group:N" come le categorie browse.
-    var seasons = [];
+        if(prop.isZombie(page.root)) return;
+        series = seriesSort(series || []);
+
+        // Rail stagioni : "Tutti" + Stagione N
+        // in page.model.groups; il cambio stagione e' in-place
+        // via eventSink "group:N" come le categorie browse.
+        var seasons = [];
     var seen = {};
     for(var i = 0; i < series.length; i++) {
         var sn = series[i].season && series[i].season.number != null ?
@@ -3797,7 +4634,7 @@ new page.Route(plugin.id + ":seriesinfo:(.*):(.*)", function(page,title,series_i
     }
     seasons.sort(function(a, b) { return parseInt(a.id, 10) - parseInt(b.id, 10); });
 
-    function epLoader(cat) {
+    function epLoader(cat, done) {
 
         prop.deleteChilds(page.model.nodes);
 
@@ -3807,16 +4644,48 @@ new page.Route(plugin.id + ":seriesinfo:(.*):(.*)", function(page,title,series_i
                 String(series[i].season.number) : '0';
             if(cat != 'all' && sn != cat) continue;
             var cu = playepUrl(series_id, series[i].id);
-            series[i].watched = watchStore[cu] ? 1 : 0;
+            series[i].watched = watchIs(cu);
             page.appendItem(cu, 'video', series[i]);
             n++;
         }
+        if(!n)
+            page.appendPassiveItem('separator', '', {
+                title: tr('Nessun elemento') });
+        if(done) done(null, n);
         return { count: n };
     }
 
-    var groups = fillRail(page, seasons, 'all');
-    hookBrowse(page, groups, epLoader, 'all', true, 'series');
-    page.loading = false;
+        // kind 'eps': nessuna collisione PIN/nascosti con le
+        // categorie serie ('series:id' ha un id diverso dalla
+        // stagione numerica)
+        var groups = fillRail(page, seasons, 'all', 'eps');
+        hookBrowse(page, groups, epLoader, 'all', true, 'eps', seasons);
+        setLoading(page, false);
+    }
+
+    // fetch async: la pagina resta col loader finche' non
+    // arrivano gli episodi (la sync bloccava l'apertura)
+    var a = api();
+    if(a.getSeriesInfoAsync) {
+        a.getSeriesInfoAsync(series_id, function(eps) {
+            try {
+                if(prop.isZombie(page.root)) return;
+                if(!eps) {
+                    setLoading(page, false);
+                    prop.deleteChilds(page.model.nodes);
+                    page.appendPassiveItem('separator', '', {
+                        title: tr('Caricamento fallito — riprova') });
+                    return;
+                }
+                build(eps);
+            } catch(e) {
+                try { setLoading(page, false); } catch(e2) {}
+            }
+        });
+    } else {
+        try { build(a.getSeriesInfo(series_id)); }
+        catch(e) { setLoading(page, false); }
+    }
 
 });
 
@@ -3828,32 +4697,52 @@ new page.Route(plugin.id + ":seriesinfo:(.*):(.*)", function(page,title,series_i
  */
 new page.Route(plugin.id + ":playep:(.*):(.*)", function(page, series_id, epid) {
 
-    page.loading = false;
-    var eps = [];
-    try { eps = seriesSort(api().getSeriesInfo(series_id) || []); }
-    catch(e) {}
+    page.type = 'video';
+    setLoading(page, true);
 
-    var ep = null;
-    for(var i = 0; i < eps.length; i++)
-        if(String(eps[i].id) == epid) { ep = eps[i]; break; }
-
-    if(!ep) {
+    function fail() {
         popup.notify(tr('Episodio non trovato'), 3);
-        page.redirect(plugin.id + ':seriesinfo:' +
-                      encodeURIComponent(ep && ep.title ? ep.title : '') +
-                      ':' + encodeURIComponent(series_id));
-        return;
+        try {
+            page.redirect(plugin.id + ':seriesinfo:' +
+                          encodeURIComponent('') +
+                          ':' + encodeURIComponent(series_id));
+        } catch(e) {}
     }
 
-    var st = ep.season && ep.season.number != null ? ep.season.number : '';
-    var en = ep.episode && ep.episode.number != null ? ep.episode.number : '';
-    page.type = 'video';
-    page.source = 'videoparams:' + JSON.stringify({
-        title: 'S' + st + 'E' + en + ' — ' + ep.title,
-        canonicalUrl: playepUrl(series_id, epid),
-        sources: [{ url: ep.source.url }],
-        no_subtitle_scan: true
-    });
+    function start(eps) {
+
+        if(prop.isZombie(page.root)) return;
+        var ep = null;
+        for(var i = 0; i < eps.length; i++)
+            if(String(eps[i].id) == epid) { ep = eps[i]; break; }
+
+        if(!ep) { fail(); return; }
+
+        var st = ep.season && ep.season.number != null ? ep.season.number : '';
+        var en = ep.episode && ep.episode.number != null ? ep.episode.number : '';
+        setLoading(page, false);
+        page.source = 'videoparams:' + JSON.stringify({
+            title: 'S' + st + 'E' + en + ' — ' + ep.title,
+            canonicalUrl: playepUrl(series_id, epid),
+            sources: [{ url: ep.source.url }],
+            no_subtitle_scan: false   // episodi: i sub servono
+        });
+    }
+
+    // async: l'autoplay e il click episodio non bloccano piu'
+    // l'apertura in attesa della get_series_info
+    var a = api();
+    if(a.getSeriesInfoAsync) {
+        a.getSeriesInfoAsync(series_id, function(eps) {
+            try {
+                if(!eps) { fail(); return; }
+                start(seriesSort(eps));
+            } catch(e) { fail(); }
+        });
+    } else {
+        try { start(seriesSort(a.getSeriesInfo(series_id) || [])); }
+        catch(e) { fail(); }
+    }
 });
 
 
@@ -3884,26 +4773,43 @@ new page.Route(plugin.id + ":vodinfo:(.*):(.*)", function(page,title,vod_id) {
     setPageHeader(page, title);
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/moviedetail.view";
-    page.loading = true;
+    setLoading(page, true);
+    page.model.loadingStatus = tr('Caricamento…');
 
-    var vod = api().getVodInfo(vod_id);
+    function build(vod) {
 
-    if(vod) {
+        if(prop.isZombie(page.root)) return;
+        setLoading(page, false);
 
-        // metadati pagina per moviedetail.view
-        page.metadata.poster = vod.icon;
-        page.metadata.backdrop = vod.backdrop || vod.icon;
-        page.metadata.tagline = vod.tagline;
-        page.metadata.genre = vod.genre;
-        page.metadata.year = vod.year;
-        page.metadata.duration = vod.duration;
-        page.metadata.description = vod.description;
+        if(vod) {
 
-        page.appendItem(plugin.id + ':play:' + encodeURIComponent(vod.title) + ':' + encodeURIComponent(vod.source.url), 'video', vod);
-    } else {
-        page.appendPassiveItem('separator', '', { title: tr('Informazioni non disponibili') });
+            // metadati pagina per moviedetail.view
+            page.metadata.poster = vod.icon;
+            page.metadata.backdrop = vod.backdrop || vod.icon;
+            page.metadata.tagline = vod.tagline;
+            page.metadata.genre = vod.genre;
+            page.metadata.year = vod.year;
+            page.metadata.duration = vod.duration;
+            page.metadata.description = vod.description;
+
+            page.appendItem(plugin.id + ':play:' + encodeURIComponent(vod.title) + ':' + encodeURIComponent(vod.source.url), 'video', vod);
+        } else {
+            page.appendPassiveItem('separator', '', { title: tr('Informazioni non disponibili') });
+        }
     }
-    page.loading = false;
+
+    // fetch async: il click sul poster non blocca piu' l'apertura
+    // in attesa della get_vod_info
+    var a = api();
+    if(a.getVodInfoAsync) {
+        a.getVodInfoAsync(vod_id, function(vod) {
+            try { build(vod); }
+            catch(e) { try { setLoading(page, false); } catch(e2) {} }
+        });
+    } else {
+        try { build(a.getVodInfo(vod_id)); }
+        catch(e) { setLoading(page, false); }
+    }
 
 });
 
@@ -3932,13 +4838,18 @@ new page.Route(plugin.id + ":livestreams:(.*):(.*)", function(page,title,cat_id)
     setPageHeader(page, decodeURIComponent(title));
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/livetv.view";
-    page.loading = true;
+    setLoading(page, true);
+    page.model.loadingStatus = tr('Caricamento…');
 
-    var groups = fillLiveGroups(page, cat_id);
+    var groups = [];
+    fillLiveGroups(page, groups, cat_id, cacheGet('livecats'));
     fillAppMenu(page, 'live');
-    hookZap(page, groups, liveLoader(page, groups), cat_id);
-
-    page.loading = false;
+    var hk = hookZap(page, groups, liveLoader(page, groups), cat_id);
+    // categorie in async: il rail si riempie quando arrivano,
+    // il loader lo governa il primo load
+    liveCats(function(cats) {
+        if(cats && hk) hk.refill(cats);
+    });
 });
 
 
@@ -3949,13 +4860,16 @@ new page.Route(plugin.id + ":alllivestreams:(.*)", function(page,title) {
 
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/livetv.view";
-    page.loading = true;
+    setLoading(page, true);
+    page.model.loadingStatus = tr('Caricamento…');
 
-    var groups = fillLiveGroups(page, null);
+    var groups = [];
+    fillLiveGroups(page, groups, null, cacheGet('livecats'));
     fillAppMenu(page, 'live');
-    hookZap(page, groups, liveLoader(page, groups), null);
-
-    page.loading = false;
+    var hk2 = hookZap(page, groups, liveLoader(page, groups), null);
+    liveCats(function(cats) {
+        if(cats && hk2) hk2.refill(cats);
+    });
 });
 
 
@@ -3972,7 +4886,7 @@ new page.Route(plugin.id + ":multiview", function(page) {
     setPageHeader(page, tr('Multi-view'));
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/multiview.view";
-    page.loading = true;
+    setLoading(page, true);
 
     var m = page.model;
     m.palpha = (cfg.panelAlpha || 85) / 100;
@@ -3986,10 +4900,19 @@ new page.Route(plugin.id + ":multiview", function(page) {
     }
     m.mvfocus = 0;
 
-    var groups = fillLiveGroups(page, null);
+    var groups = [];
+    fillLiveGroups(page, groups, null, cacheGet('livecats'));
     var loader = liveLoader(page, groups);
-    var lr = loader(null);        // "Tutti i canali" nella rail
-    var mstreams = (lr && lr.streams) ? lr.streams : [];
+    var mstreams = [];
+    // "Tutti i canali" nella rail — la callback arriva subito a
+    // cache calda o al termine della fetch: i tile si sintonizzano
+    // solo quando la lista e' pronta (mvtune guarda mstreams)
+    loader(null, function(lr) {
+        try {
+            if(lr && lr.streams) mstreams = lr.streams;
+            setLoading(page, false);
+        } catch(e) {}
+    });
 
     function tuneTile(t, s) {
         if(t < 0 || t > 3 || !s || !s.source || !s.source.url) return;
@@ -4061,9 +4984,7 @@ new page.Route(plugin.id + ":multiview", function(page) {
                 }
             }
         } catch(e) {}
-    }, 500);
-
-    page.loading = false;
+    }, 1000);
 });
 
 
@@ -4077,7 +4998,7 @@ new page.Route(plugin.id + ":chanepg:(.*):(.*):(.*)", function(page,title,stream
     setPageHeader(page, title);
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/schedule.view";
-    page.loading = true;
+    setLoading(page, true);
 
     ensureGuide(function(ok) {
 
@@ -4097,32 +5018,28 @@ new page.Route(plugin.id + ":chanepg:(.*):(.*):(.*)", function(page,title,stream
             // gia' i tempi corretti)
             evs = shiftEvs(evs);
 
-            if(!evs.length) {
-                try {
-                    evs = api().getShortEpg(stream_id, 100);
-                } catch(e) {
-                    evs = [];
-                }
-            }
+            var go = function() {
 
             if(!evs.length) {
                 page.appendPassiveItem('separator', '', { title: tr('Nessuna informazione palinsesto per questo canale') });
             }
 
             // il canale ha un archivio? i programmi finiti diventano
-            // riproducibili via catch-up
+            // riproducibili via catch-up — lookup async, niente
+            // fetch bloccante a cache fredda
+            liveStreams(function(all) { try {
+
+            if(prop.isZombie(page.root)) return;
+
             var hasArchive = false;
             var sref = null;
-            try {
-                var all = cached('livestreams', function() { return api().getLiveStreams(); });
-                if(all)
-                    for(var k = 0; k < all.length; k++)
-                        if(String(all[k].id) == String(stream_id)) {
-                            sref = all[k];
-                            hasArchive = !!all[k].archive;
-                            break;
-                        }
-            } catch(e2) {}
+            if(all)
+                for(var k = 0; k < all.length; k++)
+                    if(String(all[k].id) == String(stream_id)) {
+                        sref = all[k];
+                        hasArchive = !!all[k].archive;
+                        break;
+                    }
 
             var surl = sref && sref.source ? sref.source.url : '';
             for(var i = 0; i < evs.length; i++) {
@@ -4161,7 +5078,32 @@ new page.Route(plugin.id + ":chanepg:(.*):(.*):(.*)", function(page,title,stream
                     page.appendPassiveItem('event', '', meta);
             }
 
-            page.loading = false;
+            setLoading(page, false);
+
+            } catch(e2) { console.log('xctv: chanepg items: ' + e2); }
+            });
+
+            };
+
+            // niente eventi in guida -> short_epg async come
+            // fallback (era un _req bloccante)
+            if(!evs.length) {
+                var fellBack = false;
+                try {
+                    if(api().getShortEpgAsync) {
+                        fellBack = true;
+                        api().getShortEpgAsync(stream_id, 100, function(sevs) {
+                            evs = sevs || [];
+                            go();
+                        });
+                    }
+                } catch(e3) { fellBack = false; }
+                if(!fellBack) {
+                    try { evs = api().getShortEpg(stream_id, 100); }
+                    catch(e4) { evs = []; }
+                    go();
+                }
+            } else go();
 
         } catch(e) {
             console.log('xctv: chanepg: ' + e);
@@ -4182,16 +5124,15 @@ new page.Route(plugin.id + ":schedrec:(.*):(.*):(.*):(.*):(.*):(.*)",
     var evt = decodeURIComponent(evtitle);
     var st = parseInt(start, 10), sp = parseInt(stop, 10);
 
+    liveStreams(function(all) {
+
     var surl = '';
-    try {
-        var all = cached('livestreams', function() { return api().getLiveStreams(); });
-        if(all)
-            for(var k = 0; k < all.length; k++)
-                if(String(all[k].id) == String(stream_id)) {
-                    surl = all[k].source.url;
-                    break;
-                }
-    } catch(e) {}
+    if(all)
+        for(var k = 0; k < all.length; k++)
+            if(String(all[k].id) == String(stream_id)) {
+                surl = all[k].source.url;
+                break;
+            }
 
     var list = schedStore.list || [];
     var idx = schedFind(surl, st);
@@ -4212,6 +5153,7 @@ new page.Route(plugin.id + ":schedrec:(.*):(.*):(.*):(.*):(.*):(.*)",
 
     page.redirect(plugin.id + ':chanepg:' + chantitle + ':' +
         stream_id + ':' + epgid);
+    });
 });
 
 
@@ -4239,32 +5181,53 @@ new page.Route(plugin.id + ":evact:(.*):(.*):(.*):(.*):(.*):(.*)",
             tr('Avvisami quando inizia')
     });
 
-    // conta gli episodi futuri con lo stesso titolo in palinsesto
-    var nsame = 0;
-    try {
-        var now2 = Math.floor(Date.now() / 1000);
-        var evs2 = guideFresh() ?
-            shiftEvs(guide.eventsFor(decodeURIComponent(epgid) || ct,
-                                   now2, now2 + 7 * 86400)) :
-            api().getShortEpg(stream_id, 200);
-        var want = evt.replace(/\s+/g, ' ').toLowerCase();
-        for(var i = 0; i < evs2.length; i++)
-            if(evs2[i].start > now2 &&
-               String(evs2[i].title || '').replace(/\s+/g, ' ').toLowerCase() == want)
-                nsame++;
-    } catch(e) {}
+    // conta gli episodi futuri con lo stesso titolo in palinsesto —
+    // short_epg in async (era un _req bloccante se guida non fresca)
+    var renderSeries = function(evs2, now2) {
+        if(prop.isZombie(page.root)) return;
+        var nsame = 0;
+        try {
+            var want = evt.replace(/\s+/g, ' ').toLowerCase();
+            for(var i = 0; i < evs2.length; i++)
+                if(evs2[i].start > now2 &&
+                   String(evs2[i].title || '').replace(/\s+/g, ' ').toLowerCase() == want)
+                    nsame++;
+        } catch(e) {}
 
-    if(nsame > 1)
-        page.appendItem(plugin.id + ':schedrecseries:' + chantitle + ':' +
-            stream_id + ':' + epgid + ':' + evtitle, 'action', {
-            title: tr('Registra tutta la serie'),
-            description: nsame + ' ' + tr('puntate in palinsesto')
-        });
-    else
-        page.appendPassiveItem('separator', '', {
-            title: tr('Registra tutta la serie'),
-            description: tr('Nessun\'altra puntata in palinsesto')
-        });
+        if(nsame > 1)
+            page.appendItem(plugin.id + ':schedrecseries:' + chantitle + ':' +
+                stream_id + ':' + epgid + ':' + evtitle, 'action', {
+                title: tr('Registra tutta la serie'),
+                description: nsame + ' ' + tr('puntate in palinsesto')
+            });
+        else
+            page.appendPassiveItem('separator', '', {
+                title: tr('Registra tutta la serie'),
+                description: tr('Nessun\'altra puntata in palinsesto')
+            });
+    };
+
+    var now2 = Math.floor(Date.now() / 1000);
+    if(guideFresh()) {
+        try {
+            renderSeries(shiftEvs(guide.eventsFor(
+                decodeURIComponent(epgid) || ct, now2, now2 + 7 * 86400)),
+                now2);
+        } catch(e) { renderSeries([], now2); }
+    } else {
+        var fired = false;
+        try {
+            if(api().getShortEpgAsync) {
+                fired = true;
+                api().getShortEpgAsync(stream_id, 200, function(evs2) {
+                    renderSeries(evs2 || [], now2);
+                });
+            }
+        } catch(e2) { fired = false; }
+        if(!fired)
+            try { renderSeries(api().getShortEpg(stream_id, 200), now2); }
+            catch(e3) { renderSeries([], now2); }
+    }
 
     page.appendPassiveItem('separator', '', {
         title: tr('Registrazione singola puntata'),
@@ -4312,25 +5275,19 @@ new page.Route(plugin.id + ":schedrecseries:(.*):(.*):(.*):(.*)",
     var want = decodeURIComponent(evtitle).replace(/\s+/g, ' ').toLowerCase();
     var now = Math.floor(Date.now() / 1000);
 
-    var surl = '';
-    try {
-        var all = cached('livestreams', function() { return api().getLiveStreams(); });
-        if(all)
-            for(var k = 0; k < all.length; k++)
-                if(String(all[k].id) == String(stream_id)) {
-                    surl = all[k].source.url;
-                    break;
-                }
-    } catch(e) {}
+    liveStreams(function(all) {
 
-    var n = 0;
-    if(surl) {
-        var evs = [];
-        try {
-            evs = guideFresh() ?
-                shiftEvs(guide.eventsFor(eg || ct, now, now + 7 * 86400)) :
-                api().getShortEpg(stream_id, 200);
-        } catch(e2) {}
+    var surl = '';
+    if(all)
+        for(var k = 0; k < all.length; k++)
+            if(String(all[k].id) == String(stream_id)) {
+                surl = all[k].source.url;
+                break;
+            }
+
+    var applyEvs = function(evs) {
+        var n = 0;
+        if(surl) {
         var list = schedStore.list || [];
         for(var i = 0; i < evs.length; i++) {
             var e = evs[i];
@@ -4343,15 +5300,38 @@ new page.Route(plugin.id + ":schedrecseries:(.*):(.*):(.*):(.*)",
             n++;
         }
         schedStore.list = list;
+        }
+
+        popup.notify(n ? tr('Registrazioni programmate') + ': ' + n + ' ' +
+                         tr('puntate')
+                       : tr('Nessuna puntata futura da registrare'), 3);
+
+        // torna al palinsesto del canale
+        page.redirect(plugin.id + ':chanepg:' + chantitle + ':' +
+                      stream_id + ':' + epgid);
+    };
+
+    // palinsesto: guida in memoria, altrimenti short_epg async
+    if(guideFresh()) {
+        try {
+            applyEvs(shiftEvs(guide.eventsFor(eg || ct, now,
+                                            now + 7 * 86400)));
+        } catch(e2) { applyEvs([]); }
+    } else {
+        var fired = false;
+        try {
+            if(api().getShortEpgAsync) {
+                fired = true;
+                api().getShortEpgAsync(stream_id, 200, function(evs) {
+                    applyEvs(evs || []);
+                });
+            }
+        } catch(e3) { fired = false; }
+        if(!fired)
+            try { applyEvs(api().getShortEpg(stream_id, 200)); }
+            catch(e4) { applyEvs([]); }
     }
-
-    popup.notify(n ? tr('Registrazioni programmate') + ': ' + n + ' ' +
-                     tr('puntate')
-                   : tr('Nessuna puntata futura da registrare'), 3);
-
-    // torna al palinsesto del canale
-    page.redirect(plugin.id + ':chanepg:' + chantitle + ':' +
-                  stream_id + ':' + epgid);
+    });
 });
 
 
@@ -4450,7 +5430,7 @@ new page.Route(plugin.id + ":recs", function(page) {
             description: fmtRecDate(rme.st)
         });
     }
-    page.loading = false;
+    setLoading(page, false);
 });
 
 
@@ -4460,14 +5440,14 @@ new page.Route(plugin.id + ":recs", function(page) {
 new page.Route(plugin.id + ":playrec:(.*)", function(page, idx) {
     var rl = recListStore.list || [];
     var f = rl[parseInt(idx, 10)];
-    page.loading = false;
+    setLoading(page, false);
     if(!f) { page.redirect(plugin.id + ':recs'); return; }
     page.type = 'video';
     page.source = 'videoparams:' + JSON.stringify({
         title: f.t,
         canonicalUrl: plugin.id + ':playrec:' + idx,
         sources: [{ url: f.p }],
-        no_subtitle_scan: true
+        no_subtitle_scan: false   // i .ts possono avere sub DVB
     });
 });
 
@@ -4606,10 +5586,27 @@ new page.Route(plugin.id + ":info:(.*)", function(page, title) {
     setPageHeader(page, decodeURIComponent(title));
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/info.view";
-    page.loading = true;
+    setLoading(page, true);
 
-    var user = api().getInfo('user');
-    var server = api().getInfo('server');
+    var user = null, server = null, pending = 2;
+    var done = function() {
+        if(--pending) return;
+        try { if(prop.isZombie(page.root)) return; } catch(e) { return; }
+        fill();
+        setLoading(page, false);
+    };
+    try {
+        var ai = api();
+        if(ai.getInfoAsync) {
+            ai.getInfoAsync('user',   function(u) { user = u;   done(); });
+            ai.getInfoAsync('server', function(s) { server = s; done(); });
+        } else {
+            user = ai.getInfo('user'); server = ai.getInfo('server');
+            pending = 1; done();
+        }
+    } catch(e) { pending = 1; done(); }
+
+    function fill() {
 
     if(user) {
         var exp = user.exp_date ? new Date(parseInt(user.exp_date) * 1000) : null;
@@ -4634,7 +5631,7 @@ new page.Route(plugin.id + ":info:(.*)", function(page, title) {
             new Date(guideFetchedAt * 1000).toLocaleString();
     page.appendPassiveItem('info', '', { title: tr('EPG'), description: g });
 
-    page.loading = false;
+    }
 
 });
 
@@ -4647,31 +5644,36 @@ new page.Route(plugin.id + ":start", function(page) {
 
     setPageHeader(page, tr('XCtv'));
     page.type = "directory";
+    setLoading(page, true);
+    page.model.loadingStatus = tr('Caricamento…');
 
     syncActivePl();
     applyNetTuning();
     armAutoRefresh();
 
     // Credenziali assenti o login fallito → schermata di benvenuto:
-    // "Aggiungi playlist" + "Impostazioni".
-    var checkLogin = (cfg.server && cfg.username) ?
-        api().checkLogin() : { status: false, error: '' };
+    // "Aggiungi playlist" + "Impostazioni". Il check e' async:
+    // con server irraggiungibile la pagina resta in loading e
+    // non si congela il thread ES fino al timeout.
+    var decide = function(checkLogin) {
 
-    if(checkLogin.status) {
+        if(prop.isZombie(page.root)) return;
 
-        // Il plugin si apre direttamente sulla guida TV
-        // (live), non su una home a tessere.
-        // epgOnStart: avvia il caricamento della guida SOLO se il
-        // TTL (disco/memoria) e' scaduto — niente download forzato
-        // ad ogni lancio.
-        if(cfg.epgOnStart)
-            ensureGuide(function(ok) {});
-        page.redirect(plugin.id + ':alllivestreams:Diretta');
-        return;
-    }
+        if(checkLogin.status) {
+
+            // Il plugin si apre direttamente sulla guida TV
+            // (live), non su una home a tessere.
+            // epgOnStart: avvia il caricamento della guida SOLO se
+            // il TTL (disco/memoria) e' scaduto — niente download
+            // forzato ad ogni lancio.
+            if(cfg.epgOnStart)
+                ensureGuide(function(ok) {});
+            page.redirect(plugin.id + ':alllivestreams:Diretta');
+            return;
+        }
 
     page.metadata.glwview = Plugin.path + "views/welcome.view";
-    page.loading = false;
+    setLoading(page, false);
 
     if(checkLogin.error)
         page.model.errmsg = checkLogin.error;
@@ -4711,5 +5713,22 @@ new page.Route(plugin.id + ":start", function(page) {
     }, {
         autoDestroy: true,
     });
+
+    };
+
+    if(!(cfg.server && cfg.username)) {
+        decide({ status: false, error: '' });
+    } else {
+        var a0 = api();
+        if(a0.checkLoginAsync) {
+            a0.checkLoginAsync(function(res) {
+                decide(res || { status: false,
+                                error: tr('Nessuna risposta dal server') });
+            });
+        } else {
+            try { decide(a0.checkLogin()); }
+            catch(e) { decide({ status: false, error: String(e) }); }
+        }
+    }
 
 });

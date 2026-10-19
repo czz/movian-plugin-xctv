@@ -974,3 +974,27 @@ msg: afsnit
 id: puntate in palinsesto
 msg: afsnit i oversigten
 
+id: Caricamento…
+msg: Indlæser…
+
+id: Caricamento fallito — riprova
+msg: Indlæsning mislykkedes — prøv igen
+
+id: Nessun elemento
+msg: Ingen elementer
+
+id: Nascondi elemento
+msg: Skjul element
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Element skjult (gendan i Indstillinger)
+
+
+id: Rinomina
+msg: Omdøb
+
+id: Nuovo nome (vuoto = originale)
+msg: Nyt navn (tom = original)
+
+id: Elemento rinominato
+msg: Element omdøbt

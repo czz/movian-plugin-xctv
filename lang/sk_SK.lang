@@ -974,3 +974,27 @@ msg: diely
 id: puntate in palinsesto
 msg: diely v programe
 
+id: Caricamento…
+msg: Načítavanie…
+
+id: Caricamento fallito — riprova
+msg: Načítanie zlyhalo — skúste znova
+
+id: Nessun elemento
+msg: Žiadne položky
+
+id: Nascondi elemento
+msg: Skryt polozku
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Polozka skryta (obnovte v Nastaveniach)
+
+
+id: Rinomina
+msg: Premenovať
+
+id: Nuovo nome (vuoto = originale)
+msg: Nový názov (prázdny = pôvodný)
+
+id: Elemento rinominato
+msg: Položka premenovaná

@@ -974,3 +974,27 @@ msg: 集
 id: puntate in palinsesto
 msg: 节目表中的剧集
 
+id: Caricamento…
+msg: 加载中…
+
+id: Caricamento fallito — riprova
+msg: 加载失败——重试
+
+id: Nessun elemento
+msg: 没有项目
+
+id: Nascondi elemento
+msg: 隐藏项目
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: 项目已隐藏（可在设置中恢复）
+
+
+id: Rinomina
+msg: 重命名
+
+id: Nuovo nome (vuoto = originale)
+msg: 新名称（留空 = 原名）
+
+id: Elemento rinominato
+msg: 项目已重命名

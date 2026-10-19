@@ -974,3 +974,27 @@ msg: avsnitt
 id: puntate in palinsesto
 msg: avsnitt i tablån
 
+id: Caricamento…
+msg: Laddar…
+
+id: Caricamento fallito — riprova
+msg: Laddningen misslyckades — försök igen
+
+id: Nessun elemento
+msg: Inga objekt
+
+id: Nascondi elemento
+msg: Dolj objekt
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Objekt dolt (aterstall via Installningar)
+
+
+id: Rinomina
+msg: Byt namn
+
+id: Nuovo nome (vuoto = originale)
+msg: Nytt namn (tomt = ursprungligt)
+
+id: Elemento rinominato
+msg: Objektet har bytt namn

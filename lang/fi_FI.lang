@@ -974,3 +974,27 @@ msg: jaksot
 id: puntate in palinsesto
 msg: jaksot ohjelmistossa
 
+id: Caricamento…
+msg: Ladataan…
+
+id: Caricamento fallito — riprova
+msg: Lataus epäonnistui — yritä uudelleen
+
+id: Nessun elemento
+msg: Ei kohteita
+
+id: Nascondi elemento
+msg: Piilota kohde
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Kohde piilotettu (palauta Asetuksista)
+
+
+id: Rinomina
+msg: Nimeä uudelleen
+
+id: Nuovo nome (vuoto = originale)
+msg: Uusi nimi (tyhjä = alkuperäinen)
+
+id: Elemento rinominato
+msg: Kohde nimetty uudelleen

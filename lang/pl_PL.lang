@@ -974,3 +974,27 @@ msg: odcinki
 id: puntate in palinsesto
 msg: odcinki w ramówce
 
+id: Caricamento…
+msg: Ładowanie…
+
+id: Caricamento fallito — riprova
+msg: Ładowanie nie powiodło się — spróbuj ponownie
+
+id: Nessun elemento
+msg: Brak elementów
+
+id: Nascondi elemento
+msg: Ukryj element
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Element ukryty (przywroc w Ustawieniach)
+
+
+id: Rinomina
+msg: Zmień nazwę
+
+id: Nuovo nome (vuoto = originale)
+msg: Nowa nazwa (puste = oryginalna)
+
+id: Elemento rinominato
+msg: Zmieniono nazwę elementu

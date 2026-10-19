@@ -974,3 +974,27 @@ msg: επεισόδια
 id: puntate in palinsesto
 msg: επεισόδια στο πρόγραμμα
 
+id: Caricamento…
+msg: Φόρτωση…
+
+id: Caricamento fallito — riprova
+msg: Η φόρτωση απέτυχε — δοκίμασε ξανά
+
+id: Nessun elemento
+msg: Κανένα στοιχείο
+
+id: Nascondi elemento
+msg: Krypsi stoicheio
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Stoicheio krymmeno (epanafora apo Rythmiseis)
+
+
+id: Rinomina
+msg: Μετονομασία
+
+id: Nuovo nome (vuoto = originale)
+msg: Νέο όνομα (κενό = αρχικό)
+
+id: Elemento rinominato
+msg: Το στοιχείο μετονομάστηκε

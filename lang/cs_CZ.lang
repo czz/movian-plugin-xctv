@@ -974,3 +974,27 @@ msg: díly
 id: puntate in palinsesto
 msg: díly v programu
 
+id: Caricamento…
+msg: Načítání…
+
+id: Caricamento fallito — riprova
+msg: Načtení selhalo — zkuste znovu
+
+id: Nessun elemento
+msg: Žádné položky
+
+id: Nascondi elemento
+msg: Skryt polozku
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Polozka skryta (obnovte v Nastaveni)
+
+
+id: Rinomina
+msg: Přejmenovat
+
+id: Nuovo nome (vuoto = originale)
+msg: Nový název (prázdný = původní)
+
+id: Elemento rinominato
+msg: Položka přejmenována

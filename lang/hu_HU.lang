@@ -974,3 +974,27 @@ msg: epizódok
 id: puntate in palinsesto
 msg: epizódok a műsorban
 
+id: Caricamento…
+msg: Betöltés…
+
+id: Caricamento fallito — riprova
+msg: Betöltés sikertelen — próbáld újra
+
+id: Nessun elemento
+msg: Nincs elem
+
+id: Nascondi elemento
+msg: Elem elrejtese
+
+id: Elemento nascosto (ripristina dalle Impostazioni)
+msg: Elem elrejtve (visszaallitas a Beallitasokban)
+
+
+id: Rinomina
+msg: Átnevezés
+
+id: Nuovo nome (vuoto = originale)
+msg: Új név (üres = eredeti)
+
+id: Elemento rinominato
+msg: Elem átnevezve

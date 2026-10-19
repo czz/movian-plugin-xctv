@@ -1,15 +1,16 @@
 {
-	"description": "<p>AnonymousTv beta version</p>",
+	"description": "<p>XCtv — client Xtream Codes per Movian. Live TV con EPG, film e serie on demand.</p>",
 	"author": "czz78", 
 	"homepage": "",
 	"title": "Xctv",
-	"synopsis": "xctv",
-	"version": "0.0.2",
+	"synopsis": "Xtream Codes IPTV client con EPG",
+	"version": "1.0.0",
         "file": "xctv.js",
-	"showtimeVersion": "4.8",
+	"showtimeVersion": "8.3.0",
 	"type": "ecmascript",
 	"id": "xctv",
 	"icon": "logo.png",
 	"category": "video",
+	"entitlements": { "bypassFileACLRead": true, "bypassFileACLWrite": true },
 	"apiversion":2
 }

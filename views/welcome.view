@@ -1,0 +1,112 @@
+#import "skin://theme.view"
+
+// XCtv welcome — primo avvio:
+// schermata centrale con "Aggiungi playlist" e
+// "Impostazioni". Le voci sono page.model.nodes con
+// metadata {title,description} e prop .event inviata
+// su model.eventSink all'activate.
+
+widget(container_z, {
+
+  // sfondo scuro pieno
+  widget(quad, {
+    color: [0.05, 0.06, 0.08];
+  });
+
+  widget(container_y, {
+    align: center;
+    spacing: 1.4em;
+
+    // logo + nome
+    widget(container_y, {
+      align: center;
+      spacing: 0.4em;
+
+      widget(image, {
+        source: $self.model.metadata.logo;
+        height: 5em;
+      });
+
+      widget(label, {
+        caption: "XCtv";
+        size: 2em;
+        color: [0.565, 0.792, 0.976];
+        align: center;
+        font: "skin://fonts/RobotoCondensed-Light.ttf";
+      });
+
+      widget(label, {
+        caption: "Client IPTV Xtream Codes";
+        size: 1em;
+        color: 0.55;
+        align: center;
+      });
+
+      widget(label, {
+        caption: $self.model.errmsg;
+        size: 0.85em;
+        color: [0.9, 0.45, 0.4];
+        align: center;
+        hidden: isVoid($self.model.errmsg);
+      });
+    });
+
+    // opzioni
+    widget(container_x, {
+      align: center;
+
+      widget(list_y, {
+        id: "welcomelist";
+        width: 24em;
+        spacing: 0.8em;
+        navWrap: true;
+        chaseFocus: true;
+
+        cloner($self.model.nodes, container_z, {
+
+          height: 4.6em;
+          focusable: true;
+          selectOnFocus: true;
+          suggestFocus($self.xidx == 0);
+
+          ListItemBevel();
+          ListItemHighlight();
+
+          onEvent(activate, {
+            fireEvent(deliverEvent($parent.model.eventSink, $self.event));
+          });
+
+          widget(quad, {
+            color: [0.10, 0.12, 0.15];
+            alpha: select(isNavFocused(), 0.95, 0.8);
+          });
+
+          widget(border, {
+            border: 0.05em;
+            color: select(isNavFocused(), [0.565, 0.792, 0.976], 0.18);
+          });
+
+          widget(container_y, {
+            align: center;
+            spacing: 0.25em;
+            padding: [1.4em, 0];
+
+            widget(label, {
+              caption: $self.metadata.title;
+              size: 1.1em;
+              color: select(isNavFocused(), 1, 0.9);
+            });
+
+            widget(label, {
+              caption: $self.metadata.description;
+              size: 0.75em;
+              color: 0.5;
+              maxlines: 2;
+              filterConstraintX: true;
+            });
+          });
+        });
+      });
+    });
+  });
+});

@@ -1,0 +1,976 @@
+language: Swedish
+native: Svenska
+
+id: Server (host[:port] o URL)
+msg: Server (host[:port] eller URL)
+
+id: Username
+msg: Användarnamn
+
+id: Password
+msg: Lösenord
+
+id: Nome playlist
+msg: Listnamn
+
+id: Abilita EPG
+msg: Aktivera EPG
+
+id: URL XMLTV personalizzato (opzionale)
+msg: Anpassad XMLTV-URL (valfri)
+
+id: Aggiorna EPG ogni (ore)
+msg: Uppdatera EPG var (timme)
+
+id: Correggi orario EPG (minuti)
+msg: EPG-tidskorrigering (minuter)
+
+id: Aggiorna EPG all'avvio
+msg: Uppdatera EPG vid start
+
+id: Log di debug
+msg: Felsökningslogg
+
+id: Riproduzione
+msg: Uppspelning
+
+id: Formato stream live
+msg: Livestream-format
+
+id: Automatico
+msg: Automatiskt
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Film-/episodformat
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Kanalinfo-varaktighet efter zap (s)
+
+id: Riprendi ultimo canale all'avvio
+msg: Återuppta senaste kanalen vid start
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Extra HTTP-headers (Namn: värde per rad)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Uppdatera lista var (min, 0 = aldrig)
+
+id: Aspetto
+msg: Utseende
+
+id: Mostra numeri canale in guida
+msg: Visa kanalnummer i guiden
+
+id: Mostra loghi canale in guida
+msg: Visa kanallogotyper i guiden
+
+id: Ore visibili in guida
+msg: Synliga timmar i guiden
+
+id: Opacita' pannelli (%)
+msg: Panelopacitet (%)
+
+id: Colore accento
+msg: Accentfärg
+
+id: Blu
+msg: Blå
+
+id: Verde
+msg: Grön
+
+id: Arancione
+msg: Orange
+
+id: Rosso
+msg: Röd
+
+id: Viola
+msg: Violett
+
+id: Controllo genitori
+msg: Föräldrakontroll
+
+id: PIN (vuoto = disattivo)
+msg: PIN (tomt = av)
+
+id: Ordinamento cataloghi
+msg: Katalogsortering
+
+id: Predefinito
+msg: Standard
+
+id: Nome A-Z
+msg: Namn A-Ö
+
+id: Aggiunti di recente
+msg: Nyligen tillagda
+
+id: Voto
+msg: Betyg
+
+id: Account
+msg: Konto
+
+id: Verifica connessione
+msg: Testa anslutning
+
+id: Connessione OK
+msg: Anslutning OK
+
+id: Errore
+msg: Fel
+
+id: Inserisci credenziali…
+msg: Ange inloggning…
+
+id: Ricarica EPG adesso
+msg: Ladda om EPG nu
+
+id: EPG: ricarico in corso…
+msg: EPG: laddar om…
+
+id: EPG aggiornata
+msg: EPG uppdaterad
+
+id: EPG non disponibile
+msg: EPG ej tillgänglig
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — Xtream Codes-klient för Movian.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Konfigurera server och inloggning ovan, öppna sedan tjänsten från start.
+
+id: Server (host:porta o URL)
+msg: Server (host:port eller URL)
+
+id: Credenziali salvate
+msg: Inloggning sparad
+
+id: Playlist aggiornata
+msg: Lista uppdaterad
+
+id: Sleep timer disattivato
+msg: Insomningstimer av
+
+id: Sleep timer: spegnimento tra
+msg: Insomningstimer: stoppar om
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Insomningstimer: uppspelning stoppad
+
+id: Backup salvato
+msg: Backup sparad
+
+id: Backup fallito
+msg: Backup misslyckades
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Backup återställd (favoriter gäller efter omstart)
+
+id: Ripristino fallito
+msg: Återställning misslyckades
+
+id: Preferiti
+msg: Favoriter
+
+id: Recenti
+msg: Senaste
+
+id: Tutti i canali
+msg: Alla kanaler
+
+id: Guida TV
+msg: TV-guide
+
+id: Multi-view
+msg: Multivyer
+
+id: Film
+msg: Filmer
+
+id: Serie TV
+msg: Serier
+
+id: Cerca
+msg: Sök
+
+id: Registrazioni
+msg: Inspelningar
+
+id: Guida
+msg: Hjälp
+
+id: Impostazioni
+msg: Inställningar
+
+id: Playlist attiva
+msg: Aktiv lista
+
+id: OK passa alla playlist successiva
+msg: OK växlar till nästa lista
+
+id: Nome mostrato nel menu
+msg: Namn i menyn
+
+id: Server
+msg: Server
+
+id: host:porta o URL Xtream Codes
+msg: host:port eller Xtream Codes-URL
+
+id: URL EPG
+msg: EPG-URL
+
+id: Lascia vuoto per usare la guida del server
+msg: Lämna tomt för att använda serverns guide
+
+id: Tipo playlist
+msg: Listtyp
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Gäller bara den nya listan (Lägg till)
+
+id: Refresh automatico playlist
+msg: Automatisk listuppdatering
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Laddar om listor och guide med intervall
+
+id: Aggiungi playlist…
+msg: Lägg till lista…
+
+id: Modifica playlist attiva…
+msg: Redigera aktiv lista…
+
+id: Rimuovi playlist attiva
+msg: Ta bort aktiv lista
+
+id: Guida TV (EPG)
+msg: TV-guide (EPG)
+
+id: URL XMLTV personalizzato
+msg: Anpassad XMLTV-URL
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Tom = serverns xmltv.php
+
+id: Aggiorna EPG ogni
+msg: Uppdatera EPG var
+
+id: Intervallo di refresh della guida
+msg: Guide-uppdateringsintervall
+
+id: Correggi orario EPG
+msg: EPG-tidskorrigering
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Förskjuter program om guiden ligger fel
+
+id: Formato film / episodi
+msg: Film- / episodformat
+
+id: Durata info canale
+msg: Kanalinfo-varaktighet
+
+id: Sempre visibile
+msg: Alltid synlig
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: Panelens synlighetstid efter zap
+
+id: Riprendi ultimo canale
+msg: Återuppta senaste kanal
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: Vid start öppnas guiden på senast sedda kanal
+
+id: UA custom per API e stream sul server
+msg: Anpassad UA för API och strömmar på servern
+
+id: Header HTTP extra
+msg: Extra HTTP-headers
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: En per rad: \"Namn: värde\" — gäller API och guide
+
+id: Sleep timer
+msg: Insomningstimer
+
+id: Ferma la riproduzione dopo N minuti
+msg: Stoppar uppspelning efter N minuter
+
+id: Numeri canale
+msg: Kanalnummer
+
+id: Numero progressivo nella guida
+msg: Löpnummer i guiden
+
+id: Loghi canale
+msg: Kanallogotyper
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Posterordning i Film- och Serie-sektioner
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: Bredd på EPG-rutnätets tidsfönster
+
+id: Opacita' pannelli
+msg: Panelopacitet
+
+id: Trasparenza di guide e menu sul video
+msg: Transparens för guide och menyer över video
+
+id: Colore di indicatori e linea \"adesso\"
+msg: Färg på indikatorer och \"nu\"-linjen
+
+id: Ripristina ordine e numeri canali
+msg: Återställ ordning och kanalnummer
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Ångra flyttningar och egen numrering
+
+id: Ripristina canali e gruppi nascosti
+msg: Återställ dolda kanaler och grupper
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Visa allt dolt igen
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Ej inställt
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Lås grupper med vuxeninnehåll
+
+id: Gruppi bloccati
+msg: Låsta grupper
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: \"Vuxen\"-grupper kräver PIN för att öppnas
+
+id: Imposta un PIN per attivare il blocco
+msg: Ange en PIN för att aktivera låsning
+
+id: Gruppo live
+msg: Live-grupp
+
+id: Categoria film
+msg: Filmkategori
+
+id: Categoria serie
+msg: Seriekategori
+
+id: Blocca
+msg: Lås
+
+id: Esporta backup
+msg: Exportera backup
+
+id: Salva impostazioni, preferiti e liste in
+msg: Sparar inställningar, favoriter och listor till
+
+id: Ripristina backup
+msg: Återställ backup
+
+id: Carica impostazioni e liste dal file di backup
+msg: Laddar inställningar och listor från backupfilen
+
+id: Versione
+msg: Version
+
+id: Stato
+msg: Status
+
+id: Scadenza
+msg: Utgång
+
+id: Connessioni max
+msg: Max anslutningar
+
+id: Impostazioni Movian…
+msg: Movian-inställningar…
+
+id: Pagina impostazioni nativa del plugin
+msg: Pluginets egna inställningssida
+
+id: Ripristinati
+msg: Återställda
+
+id: elementi
+msg: objekt
+
+id: Nulla da ripristinare
+msg: Inget att återställa
+
+id: (riapri il plugin)
+msg: (öppna pluginet igen)
+
+id: Ordine e numerazione ripristinati
+msg: Ordning och numrering återställda
+
+id: Playlist rimossa
+msg: Lista borttagen
+
+id: Inserisci il PIN
+msg: Ange PIN
+
+id: PIN errato
+msg: Fel PIN
+
+id: Auto
+msg: Auto
+
+id: Tutto schermo
+msg: Helskärm
+
+id: Formato
+msg: Format
+
+id: Registrazione salvata (
+msg: Inspelning sparad (
+
+id: MB) in
+msg: MB) till
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: Inspelning inte tillgänglig på denna kanal
+
+id: Registrazione avviata
+msg: Inspelning startad
+
+id: canale
+msg: kanal
+
+id: Registrazione fallita
+msg: Inspelning misslyckades
+
+id: Registrazione completata
+msg: Inspelning klar
+
+id: Registrazione programmata avviata
+msg: Schemalagd inspelning startad
+
+id: Registrazione programmata fallita
+msg: Schemalagd inspelning misslyckades
+
+id: Aggiunto ai preferiti
+msg: Tillagd i favoriter
+
+id: Rimosso dai preferiti
+msg: Borttagen från favoriter
+
+id: Catch-up non supportato da questa playlist
+msg: Catch-up stöds inte av denna lista
+
+id: Numero canale (vuoto = automatico)
+msg: Kanalnummer (tomt = auto)
+
+id: Numero assegnato
+msg: Nummer tilldelat
+
+id: Numerazione automatica
+msg: Automatisk numrering
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Nytt kanalnamn (tomt = original)
+
+id: Canale rinominato in \"
+msg: Kanal omdöpt till \"
+
+id: Nome originale ripristinato
+msg: Originalnamn återställt
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Kanal dold (återställ i Inställningar)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Grupp dold (återställ i Inställningar)
+
+id: Continua a guardare
+msg: Fortsätt titta
+
+id: Tutti
+msg: Alla
+
+id: Playlist
+msg: Lista
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: System
+
+id: Informazioni
+msg: Information
+
+id: Modifica playlist
+msg: Redigera lista
+
+id: Aggiungi playlist
+msg: Lägg till lista
+
+id: Tipo
+msg: Typ
+
+id: host:porta o URL del pannello Xtream
+msg: host:port eller Xtream-panel-URL
+
+id: URL EPG (opzionale)
+msg: EPG-URL (valfri)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Tom = serverns xmltv.php / listans url-tvg
+
+id: Annulla
+msg: Avbryt
+
+id: Il server/URL e' obbligatorio
+msg: Server/URL är obligatorisk
+
+id: Username obbligatorio per Xtream
+msg: Användarnamn krävs för Xtream
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: Ange MAC (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Anslutning misslyckades
+
+id: Playlist aggiunta
+msg: Lista tillagd
+
+id: Stagione
+msg: Säsong
+
+id: Informazioni non disponibili
+msg: Information ej tillgänglig
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Ingen programinfo för denna kanal
+
+id: Registrazione programmata rimossa
+msg: Schemalagd inspelning borttagen
+
+id: Registrazione programmata
+msg: Schemalagd inspelning
+
+id: alle
+msg: kl.
+
+id: Canale non trovato
+msg: Kanal hittades inte
+
+id: Registrazioni programmate
+msg: Schemalagda inspelningar
+
+id: Nessuna registrazione programmata
+msg: Inga schemalagda inspelningar
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Öppna en kanals programtablå och välj \"Spela in\" på ett kommande program
+
+id: Navigazione
+msg: Navigering
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Pilar för att navigera, OK/klick för att bekräfta. Höger musknapp eller långtryck (touch/fjärr) = snabbmeny. ESC/Tillbaka = tillbaka.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: Kanalgrupper till vänster, kanaler till höger. OK på en kanal tunar den; senast sedda kanal startar vid öppning om \"Återuppta senaste kanal\" är på i Inställningar.
+
+id: Preferiti e Recenti
+msg: Favoriter och Senaste
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Långtryck på en kanal → \"Favoriter\": den visas i gruppen \"Favoriter\" överst. Sedda kanaler hamnar i \"Senaste\", sorterade efter senast sedda.
+
+id: Menu canale (long-press)
+msg: Kanalmeny (långtryck)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Titta, Programtablå (dagens EPG), Catch-up, Favoriter, Dölj kanal, Döp om, Upp/ner (manuell ordning), Kanalnummer (egen numrering), Multivyer.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Gruppmeny (långtryck på grupp)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Upp/ner för att ändra gruppordning, Dölj grupp, Återställ dolda. Ordningen sparas.
+
+id: Registrazione
+msg: Inspelning
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: Medan du tittar: REC-ikonen i spelarfältet (OK på videon visar/döljer info och fält) spelar in strömmen till en .ts-fil i mappen recordings/ tills stopp.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Kanalens programtablå → kommande program → \"Spela in\"-märke → OK. Inspelningen startar själv på tiden och slutar vid programmets slut. Lista och avbokningar finns under \"Inspelningar\" i menyn. En åt gången: att spela in medan du tittar på en annan kanal kan misslyckas om leverantören bara tillåter 1 anslutning.
+
+id: Rivedi (catch-up)
+msg: Catch-up (repris)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Endast tillgänglig om leverantören aktiverar arkiv på kanalen (tv_archive-flagga): långtryck på kanalen → \"Catch-up\", eller i tablån har avslutade program det blå märket. Om din leverantör inte stödjer timeshift visas inte valet.
+
+id: Zap numerico
+msg: Numerisk zap
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Skriv kanalnumret med tangenterna 0-9 och bekräfta med OK/Enter. \"Kanalnummer\" i snabbmenyn tilldelar ett eget nummer.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Meny → Multivyer: 2x2-mosaik med dämpat ljud; OK på en ruta öppnar kanalen i helskärm.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Meny → Sök: söker kanaler, filmer och serier.
+
+id: Interfaccia
+msg: Gränssnitt
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Meny → Inställningar → Utseende: accentfärg (guidens markeringar och ramar), panelopacitet, kanalnummer, logotyper. Ändringar gäller direkt.
+
+id: Nascondere e bloccare
+msg: Dölj och lås
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Dölj kanaler/grupper via snabbmenyn; återställ i Inställningar eller gruppens meny. Med en PIN kan du låsa hela kategorier (gruppens snabbmeny).
+
+id: Playlist multiple
+msg: Flera listor
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Inställningar → Listor: flera Xtream-konton/källor, M3U eller Stalker, snabbväxling och backup/återställning av preferenser.
+
+id: Connessioni
+msg: Anslutningar
+
+id: Trial
+msg: Prov
+
+id: Creato il
+msg: Skapad
+
+id: Protocollo
+msg: Protokoll
+
+id: Timezone
+msg: Tidszon
+
+id: Orario server
+msg: Servertid
+
+id: non caricata
+msg: inte laddad
+
+id: Apri
+msg: Öppna
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Konfigurera en Xtream Codes-server (host, användarnamn, lösenord)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, uppspelning, utseende, föräldrakontroll
+
+id: Categorie
+msg: Kategorier
+
+id: Riproduci
+msg: Spela
+
+id: Dettagli
+msg: Detaljer
+
+id: Cerca canali, film e serie…
+msg: Sök kanaler, filmer och serier…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Skriv och tryck OK för att söka kanaler, filmer och serier
+
+id: Seleziona un canale per iniziare
+msg: Välj en kanal för att börja
+
+id: Gruppi
+msg: Grupper
+
+id: No information
+msg: Ingen information
+
+id: Guarda
+msg: Titta
+
+id: Palinsesto
+msg: Programtablå
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Ta bort från favoriter
+
+id: Aggiungi ai preferiti
+msg: Lägg till i favoriter
+
+id: Nascondi canale
+msg: Dölj kanal
+
+id: Rinomina canale
+msg: Döp om kanal
+
+id: Sposta su
+msg: Flytta upp
+
+id: Sposta giù
+msg: Flytta ner
+
+id: Numero canale…
+msg: Kanalnummer…
+
+id: Nascondi gruppo
+msg: Dölj grupp
+
+id: Ripristina nascosti
+msg: Återställ dolda
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Spela in
+
+id: Stagioni
+msg: Säsonger
+
+id: Canali — OK: assegna al tile selezionato
+msg: Kanaler — OK: tilldela vald ruta
+
+
+id: Nome playlist:
+msg: Listnamn:
+
+id: Server (host:porta o URL):
+msg: Server (host:port eller URL):
+
+id: Username:
+msg: Användarnamn:
+
+id: Password:
+msg: Lösenord:
+
+id: URL EPG (vuoto = server Xtream):
+msg: EPG-URL (tom = Xtream-server):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (tom = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Extra headers (Namn: värde, en per rad):
+
+id: ore
+msg: timmar
+
+id: attivi
+msg: aktiva
+
+id: Nessuno
+msg: Ingen
+
+id: Movian (predefinito)
+msg: Movian (standard)
+
+id: Programma
+msg: Program
+
+id: file di backup non leggibile
+msg: backupfilen är oläslig
+
+id: URL del file lista .m3u/.m3u8
+msg: URL till .m3u/.m3u8-listfilen
+
+id: URL del portale
+msg: Portal-URL
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC-adress (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Krävs inte
+
+id: Non richiesta
+msg: Krävs inte
+
+id: A fine episodio parte automaticamente il successivo
+msg: I slutet av ett avsnitt startar nästa automatiskt
+
+id: Attivo: sarai avvisato all'inizio
+msg: Aktiv: du meddelas när det börjar
+
+id: Autoplay episodio successivo
+msg: Spela nästa avsnitt automatiskt
+
+id: Avvisami quando inizia
+msg: Meddela mig när det börjar
+
+id: Cartella non scrivibile
+msg: Mappen är inte skrivbar
+
+id: Cartella registrazioni
+msg: Inspelningsmapp
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Inspelningsmapp (tom = standard)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Inspelningsmapp (tom = standard):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: Inspelningsmappen är inte skrivbar, standard används
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Endast tillgänglig om leverantören aktiverar arkivet på kanalen (tv_archive-flagga): klicka direkt på ett avslutat program i guidens rutnät, långtryck på kanalen → \"Se igen\" eller märket i kanalens tablå. Om leverantören inte stödjer timeshift visas inte funktionen.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Var .ts-filer ska sparas — tom = plugin-lagring
+
+id: Elimina
+msg: Ta bort
+
+id: Eliminare la registrazione
+msg: Ta bort inspelningen
+
+id: Episodio non trovato
+msg: Avsnittet hittades inte
+
+id: Esporta preferiti in M3U
+msg: Exportera favoriter till M3U
+
+id: Esportazione fallita
+msg: Exporten misslyckades
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: Sedda avsnitt har en bock i listan. När ett avsnitt tar slut startar nästa automatiskt (kan stängas av i Inställningar → Uppspelning → \"Spela nästa avsnitt automatiskt\").
+
+id: I file .ts registrati appariranno qui
+msg: Inspelade .ts-filer visas här
+
+id: IN CORSO
+msg: PÅGÅR
+
+id: In corso
+msg: Pågår
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: Medan du tittar: REC-ikonen i spelarfältet (OK på video visar/döljer info och fält) spelar in strömmen till en .ts-fil tills den stoppas. Inspelade filer kan spelas upp och raderas via Meny → \"Inspelningar\"; målmappen ändras i Inställningar → Uppspelning.
+
+id: Nessun preferito da esportare
+msg: Inga favoriter att exportera
+
+id: Nessun promemoria attivo
+msg: Inga aktiva påminnelser
+
+id: Nessun'altra puntata in palinsesto
+msg: Inga fler avsnitt i tablån
+
+id: Nessuna puntata futura da registrare
+msg: Inga framtida avsnitt att spela in
+
+id: Nessuna registrazione completata
+msg: Inga slutförda inspelningar
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Kanalens tablå → framtida program → märke \"Spela in\" → OK. Raden \"Påminnelse och serieinspelning\" under programmet tillåter även bara en avisering vid start (utan inspelning) och inspelning av alla avsnitt med samma titel. Inspelningar startar av sig själva och slutar vid programmets slut. En i taget: att spela in medan du tittar på en annan kanal kan misslyckas om leverantören bara tillåter 1 anslutning.
+
+id: Predefinita
+msg: Standard
+
+id: Preferiti esportati
+msg: Favoriter exporterade
+
+id: Promemoria
+msg: Påminnelse
+
+id: Promemoria attivato
+msg: Påminnelse aktiverad
+
+id: Promemoria attivo
+msg: Påminnelse aktiv
+
+id: Promemoria e registrazione serie
+msg: Påminnelse och serieinspelning
+
+id: Promemoria rimosso
+msg: Påminnelse borttagen
+
+id: Promemorie
+msg: Påminnelser
+
+id: Prossimo episodio
+msg: Nästa avsnitt
+
+id: Registra tutta la serie
+msg: Spela in hela serien
+
+id: Registrazione eliminata
+msg: Inspelning borttagen
+
+id: Registrazione programmata, promemoria e serie
+msg: Schemalagd inspelning, påminnelse och serie
+
+id: Registrazione singola puntata
+msg: Inspelning av ett enskilt avsnitt
+
+id: Salva i canali preferiti come playlist standard
+msg: Spara favoritkanaler som standardspellista
+
+id: Sta iniziando
+msg: Börjar nu
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Använd märket \"Spela in\" på programraden
+
+id: canali
+msg: kanaler
+
+id: cartella non scrivibile
+msg: mappen är inte skrivbar
+
+id: fallita
+msg: misslyckades
+
+id: puntate
+msg: avsnitt
+
+id: puntate in palinsesto
+msg: avsnitt i tablån
+

@@ -1,0 +1,303 @@
+//
+//  multiview.view — mosaico 2x2 di stream simultanei.
+//
+//  Ogni tile e' un widget(video) indipendente con noAudio: i pipe
+//  silenziosi non diventano primary e non si fermano a vicenda.
+//  OK su un tile apre il canale nella pagina live unica.
+//
+//  Contratto con il plugin (model):
+//    mvurlN    videoparams URL del tile N ('' = libero)
+//    mvtitleN  nome canale del tile N
+//    mvhasN    1 se il tile N e' sintonizzato
+//    nodes     canali del gruppo corrente (rail di scelta)
+//    palpha    opacita' pannelli
+//
+//  Eventi su model.eventSink:
+//    "mvwatch:N"  tile N attivato → pagina live sul canale
+//    "mvtune:N"   canale N della rail scelto → primo tile libero
+//
+
+#import "skin://theme.view"
+
+
+widget(container_z, {
+
+  // fondo nero: dietro i tile non deve trasparire il tema
+  widget(quad, {
+    color: 0;
+  });
+
+  // ============ griglia 2x2 ============
+  widget(container_y, {
+
+    widget(container_x, {
+      weight: 1;
+      filterConstraintY: true;
+      spacing: 0.2em;
+      padding: [0.2em, 0];
+
+      widget(container_z, {
+        id: "tile0";
+        weight: 1;
+        focusable: true;
+        suggestFocus(true);
+        onEvent(right, { focus("tile1"); }, true);
+          onEvent(down,  { focus("tile2"); }, true);
+        onEvent(activate, {
+          fireEvent(deliverEvent($self.model.eventSink, "mvwatch:0"));
+        });
+        widget(video, {
+          source: $self.model.mvurl0;
+          noAudio: true;
+          hidden: !$self.model.mvhas0;
+        });
+        widget(quad, {
+          color: 0;
+          alpha: 0.35;
+          hidden: $self.model.mvhas0;
+        });
+        widget(container_y, {
+          align: bottom;
+          widget(container_x, {
+            widget(quad, { color: 0; alpha: 0.5; });
+            widget(label, {
+              caption: $self.model.mvtitle0;
+              size: 0.8em;
+              padding: [0.4em, 0];
+              color: 0.95;
+              filterConstraintX: true;
+              ellipsize: true;
+            });
+          });
+        });
+        widget(border, {
+          border: 0.12em;
+          color: select(isNavFocused(), [0.13, 0.59, 0.95], 0.1);
+        });
+      });
+
+      widget(container_z, {
+        id: "tile1";
+        weight: 1;
+        focusable: true;
+        onEvent(left,  { focus("tile0"); }, true);
+          onEvent(down,  { focus("tile3"); }, true);
+        onEvent(activate, {
+          fireEvent(deliverEvent($self.model.eventSink, "mvwatch:1"));
+        });
+        widget(video, {
+          source: $self.model.mvurl1;
+          noAudio: true;
+          hidden: !$self.model.mvhas1;
+        });
+        widget(quad, {
+          color: 0;
+          alpha: 0.35;
+          hidden: $self.model.mvhas1;
+        });
+        widget(container_y, {
+          align: bottom;
+          widget(container_x, {
+            widget(quad, { color: 0; alpha: 0.5; });
+            widget(label, {
+              caption: $self.model.mvtitle1;
+              size: 0.8em;
+              padding: [0.4em, 0];
+              color: 0.95;
+              filterConstraintX: true;
+              ellipsize: true;
+            });
+          });
+        });
+        widget(border, {
+          border: 0.12em;
+          color: select(isNavFocused(), [0.13, 0.59, 0.95], 0.1);
+        });
+      });
+    });
+
+    widget(container_x, {
+      weight: 1;
+      filterConstraintY: true;
+      spacing: 0.2em;
+      padding: [0.2em, 0];
+
+      widget(container_z, {
+        id: "tile2";
+        weight: 1;
+        focusable: true;
+        onEvent(right, { focus("tile3"); }, true);
+          onEvent(down,  { focus("chanrail"); }, true);
+          onEvent(up,    { focus("tile0"); }, true);
+        onEvent(activate, {
+          fireEvent(deliverEvent($self.model.eventSink, "mvwatch:2"));
+        });
+        widget(video, {
+          source: $self.model.mvurl2;
+          noAudio: true;
+          hidden: !$self.model.mvhas2;
+        });
+        widget(quad, {
+          color: 0;
+          alpha: 0.35;
+          hidden: $self.model.mvhas2;
+        });
+        widget(container_y, {
+          align: bottom;
+          widget(container_x, {
+            widget(quad, { color: 0; alpha: 0.5; });
+            widget(label, {
+              caption: $self.model.mvtitle2;
+              size: 0.8em;
+              padding: [0.4em, 0];
+              color: 0.95;
+              filterConstraintX: true;
+              ellipsize: true;
+            });
+          });
+        });
+        widget(border, {
+          border: 0.12em;
+          color: select(isNavFocused(), [0.13, 0.59, 0.95], 0.1);
+        });
+      });
+
+      widget(container_z, {
+        id: "tile3";
+        weight: 1;
+        focusable: true;
+        onEvent(left,  { focus("tile2"); }, true);
+          onEvent(down,  { focus("chanrail"); }, true);
+          onEvent(up,    { focus("tile1"); }, true);
+        onEvent(activate, {
+          fireEvent(deliverEvent($self.model.eventSink, "mvwatch:3"));
+        });
+        widget(video, {
+          source: $self.model.mvurl3;
+          noAudio: true;
+          hidden: !$self.model.mvhas3;
+        });
+        widget(quad, {
+          color: 0;
+          alpha: 0.35;
+          hidden: $self.model.mvhas3;
+        });
+        widget(container_y, {
+          align: bottom;
+          widget(container_x, {
+            widget(quad, { color: 0; alpha: 0.5; });
+            widget(label, {
+              caption: $self.model.mvtitle3;
+              size: 0.8em;
+              padding: [0.4em, 0];
+              color: 0.95;
+              filterConstraintX: true;
+              ellipsize: true;
+            });
+          });
+        });
+        widget(border, {
+          border: 0.12em;
+          color: select(isNavFocused(), [0.13, 0.59, 0.95], 0.1);
+        });
+      });
+    });
+  });
+
+  // ============ rail canali (in basso) ============
+  widget(container_y, {
+    align: bottom;
+
+    widget(container_z, {
+      height: 6.5em;
+
+      widget(quad, {
+        color: [0.09, 0.11, 0.14];
+        alpha: 0.97;
+      });
+      widget(border, {
+        border: [0, 0.08em, 0, 0];
+        color: [0.13, 0.59, 0.95];
+      });
+
+      widget(container_y, {
+
+        widget(label, {
+          caption: _("Canali — OK: assegna al tile selezionato");
+          size: 0.8em;
+          color: 0.7;
+          padding: [0.5em, 0];
+          height: 1.6em;
+        });
+
+        widget(list_x, {
+          id: "chanrail";
+          onEvent(up, { focus("tile2"); }, true);
+          height: 4.6em;
+          spacing: 0.3em;
+          padding: [0.3em, 0.2em];
+          navWrap: true;
+
+          cloner($self.model.nodes, container_z, {
+            width: 9em;
+            focusable: true;
+
+            onEvent(activate, {
+              fireEvent(deliverEvent($parent.model.eventSink,
+                                     fmt("mvtune:%d", $self.metadata.xidx)));
+            });
+
+            widget(quad, {
+              color: select(isNavFocused(), [0.10, 0.20, 0.30],
+                            [0.13, 0.16, 0.19]);
+              alpha: 0.95;
+            });
+            widget(border, {
+              border: 0.06em;
+              color: select(isNavFocused(), [0.13, 0.59, 0.95], 0.12);
+            });
+
+            widget(container_y, {
+
+              widget(label, {
+                caption: $self.metadata.num ??
+                         ($self.metadata.xidx + 1);
+                size: 0.7em;
+                color: [0.565, 0.792, 0.976];
+                align: right;
+                padding: [0.3em, 0];
+              });
+
+              widget(container_z, {
+                weight: 1;
+                widget(image, {
+                  source: $self.metadata.icon;
+                  padding: 0.3em;
+                  alpha: select(isVoid($self.metadata.icon), 0, 1);
+                });
+                widget(label, {
+                  caption: $self.metadata.title;
+                  size: 0.7em;
+                  align: center;
+                  maxlines: 2;
+                  ellipsize: true;
+                  padding: [0.2em, 0];
+                  alpha: select(isVoid($self.metadata.icon), 1, 0);
+                });
+              });
+
+              widget(label, {
+                caption: $self.metadata.title;
+                size: 0.7em;
+                color: 0.85;
+                padding: [0.3em, 0];
+                filterConstraintX: true;
+                ellipsize: true;
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+});

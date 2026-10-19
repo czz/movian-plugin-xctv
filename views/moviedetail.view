@@ -1,0 +1,153 @@
+#import "skin://theme.view"
+#import "skin://styles/style_grid.view"
+#import "skin://styles/style_list.view"
+
+// XCtv movie detail — backdrop, poster, metadata and a big play
+// button rendered from the (single) video node of the page.
+
+widget(container_z, {
+
+  // sfondo scuro
+  widget(quad, {
+    color: [0.05, 0.06, 0.08];
+  });
+
+  // dimmed backdrop
+  widget(image, {
+    hidden: isVoid($self.model.metadata.backdrop);
+    source: $self.model.metadata.backdrop;
+    alpha: 0.22;
+  });
+
+  widget(quad, {
+    color: 0;
+    alpha: 0.35;
+  });
+
+  widget(container_y, {
+
+    PageHeader($self.model.metadata.title);
+
+    widget(container_x, {
+      padding: [1em, 1em, 1em, 0];
+      spacing: 1.5em;
+      height: 11em;
+
+      // poster
+      widget(container_z, {
+        width: 7.5em;
+
+        widget(quad, {
+          color: 0.02;
+          alpha: 0.9;
+        });
+
+        widget(image, {
+          source: $self.model.metadata.poster;
+          aspectConstraint: true;
+        });
+
+        widget(border, {
+          border: 0.1em;
+          color: 0.4;
+        });
+      });
+
+      // info
+      widget(container_y, {
+        filterConstraintX: true;
+        spacing: 0.4em;
+        align: top;
+
+        widget(label, {
+          caption: $self.model.metadata.tagline;
+          hidden: isVoid($self.model.metadata.tagline);
+          style: "ListItemLabelDimmed";
+          filterConstraintX: true;
+          ellipsize: true;
+        });
+
+        widget(container_x, {
+          spacing: 1em;
+          hidden: isVoid($self.model.metadata.genre) && isVoid($self.model.metadata.year);
+
+          widget(label, {
+            hidden: isVoid($self.model.metadata.genre);
+            caption: $self.model.metadata.genre;
+            size: 0.9em;
+            color: [0.4, 0.75, 1.0];
+          });
+
+          widget(label, {
+            hidden: isVoid($self.model.metadata.year);
+            caption: $self.model.metadata.year;
+            size: 0.9em;
+            color: 0.7;
+          });
+
+          widget(label, {
+            hidden: isVoid($self.model.metadata.duration);
+            caption: $self.model.metadata.duration;
+            size: 0.9em;
+            color: 0.7;
+          });
+        });
+
+        widget(label, {
+          caption: $self.model.metadata.description;
+          style: "ListItemLabelDimmed";
+          maxlines: 6;
+          filterConstraintX: true;
+        });
+      });
+    });
+
+    space(1);
+
+    // play button(s) from page nodes
+    cloner($self.model.nodes, container_z, {
+
+      hidden: $self.type == "separator";
+
+      widget(container_x, {
+        align: center;
+
+        widget(container_z, {
+
+          height: 3.2em;
+          width: 12em;
+
+          focusable: true;
+          onEvent(activate, navOpen($self.url, void, $self, $parent.model, void, $parent.url));
+          onEvent(itemMenu, eventWithProp(videoInfo, $self));
+
+          widget(quad, {
+            color: [0.13, 0.59, 0.95] * (0.75 + iir(isNavFocused() + isHovered(), 4) * 0.25);
+            alpha: 0.95;
+          });
+
+          widget(container_x, {
+            align: center;
+            spacing: 0.5em;
+
+            widget(icon, {
+              source: "skin://icons/ic_play_arrow_48px.svg";
+              size: 1.6em;
+            });
+
+            widget(label, {
+              caption: "Riproduci";
+              size: 1.3em;
+              color: 1;
+            });
+          });
+
+          widget(border, {
+            border: 0.1em;
+            color: iir(isNavFocused(), 4) * 0.9 + 0.1;
+          });
+        });
+      });
+    });
+  });
+});

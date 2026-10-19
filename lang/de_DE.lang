@@ -1,0 +1,977 @@
+language: German
+native: Deutsch
+
+id: Server (host[:port] o URL)
+msg: Server (host[:port] oder URL)
+
+id: Username
+msg: Benutzername
+
+id: Password
+msg: Passwort
+
+id: Nome playlist
+msg: Listenname
+
+id: Abilita EPG
+msg: EPG aktivieren
+
+id: URL XMLTV personalizzato (opzionale)
+msg: Eigene XMLTV-URL (optional)
+
+id: Aggiorna EPG ogni (ore)
+msg: EPG aktualisieren alle (Stunden)
+
+id: Correggi orario EPG (minuti)
+msg: EPG-Zeitkorrektur (Minuten)
+
+id: Aggiorna EPG all'avvio
+msg: EPG beim Start aktualisieren
+
+id: Log di debug
+msg: Debug-Log
+
+id: Riproduzione
+msg: Wiedergabe
+
+id: Formato stream live
+msg: Live-Stream-Format
+
+id: Automatico
+msg: Automatisch
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Film-/Episodenformat
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Kanalinfo-Dauer nach Zappen (Sek.)
+
+id: Riprendi ultimo canale all'avvio
+msg: Letzten Kanal beim Start fortsetzen
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Zusätzliche HTTP-Header (Name: Wert pro Zeile)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Liste aktualisieren alle (Min., 0 = nie)
+
+id: Aspetto
+msg: Aussehen
+
+id: Mostra numeri canale in guida
+msg: Kanalnummern in der Übersicht zeigen
+
+id: Mostra loghi canale in guida
+msg: Kanallogos in der Übersicht zeigen
+
+id: Ore visibili in guida
+msg: Sichtbare Stunden in der Übersicht
+
+id: Opacita' pannelli (%)
+msg: Panel-Deckkraft (%)
+
+id: Colore accento
+msg: Akzentfarbe
+
+id: Blu
+msg: Blau
+
+id: Verde
+msg: Grün
+
+id: Arancione
+msg: Orange
+
+id: Rosso
+msg: Rot
+
+id: Viola
+msg: Violett
+
+id: Controllo genitori
+msg: Kindersicherung
+
+id: PIN (vuoto = disattivo)
+msg: PIN (leer = aus)
+
+id: Ordinamento cataloghi
+msg: Katalog-Sortierung
+
+id: Predefinito
+msg: Standard
+
+id: Nome A-Z
+msg: Name A-Z
+
+id: Aggiunti di recente
+msg: Zuletzt hinzugefügt
+
+id: Voto
+msg: Bewertung
+
+id: Account
+msg: Konto
+
+id: Verifica connessione
+msg: Verbindung testen
+
+id: Connessione OK
+msg: Verbindung OK
+
+id: Errore
+msg: Fehler
+
+id: Inserisci credenziali…
+msg: Zugangsdaten eingeben…
+
+id: Ricarica EPG adesso
+msg: EPG jetzt neu laden
+
+id: EPG: ricarico in corso…
+msg: EPG: wird neu geladen…
+
+id: EPG aggiornata
+msg: EPG aktualisiert
+
+id: EPG non disponibile
+msg: EPG nicht verfügbar
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — Xtream-Codes-Client für Movian.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Server und Zugangsdaten oben einrichten, dann den Dienst von der Startseite öffnen.
+
+id: Server (host:porta o URL)
+msg: Server (host:port oder URL)
+
+id: Credenziali salvate
+msg: Zugangsdaten gespeichert
+
+id: Playlist aggiornata
+msg: Liste aktualisiert
+
+id: Sleep timer disattivato
+msg: Sleep-Timer aus
+
+id: Sleep timer: spegnimento tra
+msg: Sleep-Timer: Stopp in
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Sleep-Timer: Wiedergabe gestoppt
+
+id: Backup salvato
+msg: Backup gespeichert
+
+id: Backup fallito
+msg: Backup fehlgeschlagen
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Backup wiederhergestellt (Favoriten greifen nach Neustart)
+
+id: Ripristino fallito
+msg: Wiederherstellung fehlgeschlagen
+
+id: Preferiti
+msg: Favoriten
+
+id: Recenti
+msg: Zuletzt gesehen
+
+id: Tutti i canali
+msg: Alle Kanäle
+
+id: Guida TV
+msg: TV-Guide
+
+id: Multi-view
+msg: Multiview
+
+id: Film
+msg: Filme
+
+id: Serie TV
+msg: Serien
+
+id: Cerca
+msg: Suchen
+
+id: Registrazioni
+msg: Aufnahmen
+
+id: Guida
+msg: Hilfe
+
+id: Impostazioni
+msg: Einstellungen
+
+id: Playlist attiva
+msg: Aktive Liste
+
+id: OK passa alla playlist successiva
+msg: OK wechselt zur nächsten Liste
+
+id: Nome mostrato nel menu
+msg: Im Menü angezeigter Name
+
+id: Server
+msg: Server
+
+id: host:porta o URL Xtream Codes
+msg: host:port oder Xtream-Codes-URL
+
+id: URL EPG
+msg: EPG-URL
+
+id: Lascia vuoto per usare la guida del server
+msg: Leer lassen, um den Server-Guide zu nutzen
+
+id: Tipo playlist
+msg: Listentyp
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Gilt nur für die neue Liste (Hinzufügen)
+
+id: Refresh automatico playlist
+msg: Automatische Listen-Aktualisierung
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Lädt Listen und Guide in Intervallen neu
+
+id: Aggiungi playlist…
+msg: Liste hinzufügen…
+
+id: Modifica playlist attiva…
+msg: Aktive Liste bearbeiten…
+
+id: Rimuovi playlist attiva
+msg: Aktive Liste entfernen
+
+id: Guida TV (EPG)
+msg: TV-Guide (EPG)
+
+id: URL XMLTV personalizzato
+msg: Eigene XMLTV-URL
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Leer = xmltv.php des Xtream-Servers
+
+id: Aggiorna EPG ogni
+msg: EPG aktualisieren alle
+
+id: Intervallo di refresh della guida
+msg: Guide-Aktualisierungsintervall
+
+id: Correggi orario EPG
+msg: EPG-Zeitkorrektur
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Verschiebt Sendezeiten, wenn der Guide abweicht
+
+id: Formato film / episodi
+msg: Film- / Episodenformat
+
+id: Durata info canale
+msg: Kanalinfo-Dauer
+
+id: Sempre visibile
+msg: Immer sichtbar
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: Sichtbarkeitsdauer des Panels nach dem Zappen
+
+id: Riprendi ultimo canale
+msg: Letzten Kanal fortsetzen
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: Beim Start öffnet der Guide den zuletzt gesehenen Kanal
+
+id: UA custom per API e stream sul server
+msg: Eigener UA für API und Streams auf dem Server
+
+id: Header HTTP extra
+msg: Zusätzliche HTTP-Header
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: Einer pro Zeile: \"Name: Wert\" — gilt für API und Guide
+
+id: Sleep timer
+msg: Sleep-Timer
+
+id: Ferma la riproduzione dopo N minuti
+msg: Stoppt die Wiedergabe nach N Minuten
+
+id: Numeri canale
+msg: Kanalnummern
+
+id: Numero progressivo nella guida
+msg: Laufende Nummer im Guide
+
+id: Loghi canale
+msg: Kanallogos
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Poster-Reihenfolge in Filme- und Serien-Bereichen
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: Breite des EPG-Raster-Zeitfensters
+
+id: Opacita' pannelli
+msg: Panel-Deckkraft
+
+id: Trasparenza di guide e menu sul video
+msg: Transparenz von Guide und Menüs über dem Video
+
+id: Colore di indicatori e linea \"adesso\"
+msg: Farbe der Indikatoren und \"Jetzt\"-Linie
+
+id: Ripristina ordine e numeri canali
+msg: Reihenfolge und Kanalnummern zurücksetzen
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Verschiebungen und eigene Nummerierung aufheben
+
+id: Ripristina canali e gruppi nascosti
+msg: Versteckte Kanäle und Gruppen wiederherstellen
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Alles Versteckte wieder anzeigen
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Nicht gesetzt
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Gruppen mit Erwachseneninhalten sperren
+
+id: Gruppi bloccati
+msg: Gesperrte Gruppen
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: \"Erwachsenen\"-Gruppen verlangen die PIN zum Öffnen
+
+id: Imposta un PIN per attivare il blocco
+msg: PIN setzen, um die Sperre zu aktivieren
+
+id: Gruppo live
+msg: Live-Gruppe
+
+id: Categoria film
+msg: Film-Kategorie
+
+id: Categoria serie
+msg: Serien-Kategorie
+
+id: Blocca
+msg: Sperren
+
+id: Esporta backup
+msg: Backup exportieren
+
+id: Salva impostazioni, preferiti e liste in
+msg: Speichert Einstellungen, Favoriten und Listen in
+
+id: Ripristina backup
+msg: Backup wiederherstellen
+
+id: Carica impostazioni e liste dal file di backup
+msg: Lädt Einstellungen und Listen aus der Backup-Datei
+
+id: Versione
+msg: Version
+
+id: Stato
+msg: Status
+
+id: Scadenza
+msg: Ablauf
+
+id: Connessioni max
+msg: Max. Verbindungen
+
+id: Impostazioni Movian…
+msg: Movian-Einstellungen…
+
+id: Pagina impostazioni nativa del plugin
+msg: Native Plugin-Einstellungsseite
+
+id: Ripristinati
+msg: Wiederhergestellt
+
+id: elementi
+msg: Einträge
+
+id: Nulla da ripristinare
+msg: Nichts wiederherzustellen
+
+id: (riapri il plugin)
+msg: (Plugin neu öffnen)
+
+id: Ordine e numerazione ripristinati
+msg: Reihenfolge und Nummerierung zurückgesetzt
+
+id: Playlist rimossa
+msg: Liste entfernt
+
+id: Inserisci il PIN
+msg: PIN eingeben
+
+id: PIN errato
+msg: Falsche PIN
+
+id: Auto
+msg: Auto
+
+id: Tutto schermo
+msg: Vollbild
+
+id: Formato
+msg: Format
+
+id: Registrazione salvata (
+msg: Aufnahme gespeichert (
+
+id: MB) in
+msg: MB) nach
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: Aufnahme auf diesem Kanal nicht verfügbar
+
+id: Registrazione avviata
+msg: Aufnahme gestartet
+
+id: canale
+msg: Kanal
+
+id: Registrazione fallita
+msg: Aufnahme fehlgeschlagen
+
+id: Registrazione completata
+msg: Aufnahme abgeschlossen
+
+id: Registrazione programmata avviata
+msg: Geplante Aufnahme gestartet
+
+id: Registrazione programmata fallita
+msg: Geplante Aufnahme fehlgeschlagen
+
+id: Aggiunto ai preferiti
+msg: Zu Favoriten hinzugefügt
+
+id: Rimosso dai preferiti
+msg: Aus Favoriten entfernt
+
+id: Catch-up non supportato da questa playlist
+msg: Catch-up von dieser Liste nicht unterstützt
+
+id: Numero canale (vuoto = automatico)
+msg: Kanalnummer (leer = automatisch)
+
+id: Numero assegnato
+msg: Nummer zugewiesen
+
+id: Numerazione automatica
+msg: Automatische Nummerierung
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Neuer Kanalname (leer = Original)
+
+id: Canale rinominato in \"
+msg: Kanal umbenannt in \"
+
+id: Nome originale ripristinato
+msg: Originalname wiederhergestellt
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Kanal versteckt (in Einstellungen wiederherstellen)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Gruppe versteckt (in Einstellungen wiederherstellen)
+
+id: Continua a guardare
+msg: Weiterschauen
+
+id: Tutti
+msg: Alle
+
+id: Playlist
+msg: Liste
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: System
+
+id: Informazioni
+msg: Informationen
+
+id: Modifica playlist
+msg: Liste bearbeiten
+
+id: Aggiungi playlist
+msg: Liste hinzufügen
+
+id: Tipo
+msg: Typ
+
+id: host:porta o URL del pannello Xtream
+msg: host:port oder Xtream-Panel-URL
+
+id: URL EPG (opzionale)
+msg: EPG-URL (optional)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Leer = xmltv.php des Servers / url-tvg der Liste
+
+id: Annulla
+msg: Abbrechen
+
+id: Il server/URL e' obbligatorio
+msg: Server/URL ist erforderlich
+
+id: Username obbligatorio per Xtream
+msg: Benutzername für Xtream erforderlich
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: MAC eingeben (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Verbindung fehlgeschlagen
+
+id: Playlist aggiunta
+msg: Liste hinzugefügt
+
+id: Stagione
+msg: Staffel
+
+id: Informazioni non disponibili
+msg: Informationen nicht verfügbar
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Keine Programminfo für diesen Kanal
+
+id: Registrazione programmata rimossa
+msg: Geplante Aufnahme entfernt
+
+id: Registrazione programmata
+msg: Geplante Aufnahme
+
+id: alle
+msg: um
+
+id: Canale non trovato
+msg: Kanal nicht gefunden
+
+id: Registrazioni programmate
+msg: Geplante Aufnahmen
+
+id: Nessuna registrazione programmata
+msg: Keine geplanten Aufnahmen
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Programmübersicht eines Kanals öffnen und bei einer zukünftigen Sendung \"Aufnehmen\" wählen
+
+id: Navigazione
+msg: Navigation
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Pfeile zum Bewegen, OK/Klick zum Bestätigen. Rechte Maustaste oder langes Drücken (Touch/Fernbedienung) = Kontextmenü. ESC/Zurück = zurück.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: Kanalgruppen links, Kanäle rechts. OK auf einem Kanal schaltet um; der zuletzt gesehene Kanal startet beim Öffnen, wenn \"Letzten Kanal fortsetzen\" in den Einstellungen aktiv ist.
+
+id: Preferiti e Recenti
+msg: Favoriten und Zuletzt gesehen
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Lang auf einen Kanal drücken → \"Favoriten\": erscheint oben in der Gruppe \"Favoriten\". Gesehene Kanäle landen in \"Zuletzt gesehen\", nach letztem Ansehen sortiert.
+
+id: Menu canale (long-press)
+msg: Kanalmenü (lang drücken)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Ansehen, Programm (Tages-EPG), Catch-up, Favoriten, Kanal verstecken, Umbenennen, Hoch/Runter (manuelle Reihenfolge), Kanalnummer (eigene Nummerierung), Multiview.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Gruppenmenü (lang auf Gruppe drücken)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Hoch/Runter zum Umordnen der Gruppen, Gruppe verstecken, Versteckte wiederherstellen. Die Reihenfolge bleibt gespeichert.
+
+id: Registrazione
+msg: Aufnahme
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: Während der Wiedergabe: das REC-Symbol in der Player-Leiste (OK auf dem Video zeigt/versteckt Info und Leiste) nimmt den Stream als .ts-Datei im Ordner recordings/ bis zum Stopp auf.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Kanal-Programm → zukünftige Sendung → \"Aufnehmen\"-Badge → OK. Die Aufnahme startet von selbst zur Zeit und endet am Sendungsende. Liste und Löschungen unter \"Aufnahmen\" im Menü. Nur eine gleichzeitig: Aufnehmen während ein anderer Kanal läuft kann fehlschlagen, wenn der Provider nur 1 Verbindung erlaubt.
+
+id: Rivedi (catch-up)
+msg: Catch-up
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Nur verfügbar, wenn der Provider das Archiv auf dem Kanal aktiviert (tv_archive-Flag): lang auf den Kanal drücken → \"Catch-up\", oder im Programm haben beendete Sendungen das blaue Badge. Ohne Timeshift-Unterstützung erscheint die Option nicht.
+
+id: Zap numerico
+msg: Nummerisches Zappen
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Kanalnummer mit den Tasten 0-9 eingeben und mit OK/Enter bestätigen. \"Kanalnummer\" im Kontextmenü vergibt eine eigene Nummer.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Menü → Multiview: 2x2-Mosaik mit stummem Ton; OK auf einem Kästchen öffnet den Kanal im Vollbild.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Menü → Suchen: durchsucht Kanäle, Filme und Serien.
+
+id: Interfaccia
+msg: Oberfläche
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Menü → Einstellungen → Aussehen: Akzentfarbe (Guide-Markierungen und -Ränder), Panel-Deckkraft, Kanalnummern, Logos. Änderungen wirken sofort.
+
+id: Nascondere e bloccare
+msg: Verstecken und Sperren
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Kanäle/Gruppen über das Kontextmenü verstecken; über Einstellungen oder das Gruppenmenü wiederherstellen. Mit gesetzter PIN lassen sich ganze Kategorien sperren (Kontextmenü der Gruppe).
+
+id: Playlist multiple
+msg: Mehrere Listen
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Einstellungen → Listen: mehrere Xtream-Konten/Quellen, M3U oder Stalker, Schnellwechsel und Backup/Wiederherstellung der Einstellungen.
+
+id: Connessioni
+msg: Verbindungen
+
+id: Trial
+msg: Test
+
+id: Creato il
+msg: Erstellt am
+
+id: Protocollo
+msg: Protokoll
+
+id: Timezone
+msg: Zeitzone
+
+id: Orario server
+msg: Serverzeit
+
+id: non caricata
+msg: nicht geladen
+
+id: Apri
+msg: Öffnen
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Xtream-Codes-Server einrichten (Host, Benutzername, Passwort)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, Wiedergabe, Aussehen, Kindersicherung
+
+id: Categorie
+msg: Kategorien
+
+id: Riproduci
+msg: Abspielen
+
+id: Dettagli
+msg: Details
+
+id: Cerca canali, film e serie…
+msg: Kanäle, Filme und Serien suchen…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Tippen und OK drücken, um Kanäle, Filme und Serien zu suchen
+
+id: Seleziona un canale per iniziare
+msg: Kanal zum Starten auswählen
+
+id: Gruppi
+msg: Gruppen
+
+id: No information
+msg: Keine Information
+
+id: Guarda
+msg: Ansehen
+
+id: Palinsesto
+msg: Programm
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Aus Favoriten entfernen
+
+id: Aggiungi ai preferiti
+msg: Zu Favoriten hinzufügen
+
+id: Nascondi canale
+msg: Kanal verstecken
+
+id: Rinomina canale
+msg: Kanal umbenennen
+
+id: Sposta su
+msg: Nach oben
+
+id: Sposta giù
+msg: Nach unten
+
+id: Numero canale…
+msg: Kanalnummer…
+
+id: Nascondi gruppo
+msg: Gruppe verstecken
+
+id: Ripristina nascosti
+msg: Versteckte wiederherstellen
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Aufnehmen
+
+id: Stagioni
+msg: Staffeln
+
+id: Canali — OK: assegna al tile selezionato
+msg: Kanäle — OK: dem gewählten Kästchen zuweisen
+
+
+id: Nome playlist:
+msg: Name der Playlist:
+
+id: Server (host:porta o URL):
+msg: Server (Host:Port oder URL):
+
+id: Username:
+msg: Benutzername:
+
+id: Password:
+msg: Passwort:
+
+id: URL EPG (vuoto = server Xtream):
+msg: EPG-URL (leer = Xtream-Server):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (leer = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Zusätzliche Header (Name: Wert, einer pro Zeile):
+
+id: ore
+msg: Stunden
+
+id: attivi
+msg: aktiv
+
+id: Nessuno
+msg: Keine
+
+id: Movian (predefinito)
+msg: Movian (Standard)
+
+id: Programma
+msg: Sendung
+
+id: file di backup non leggibile
+msg: Backup-Datei nicht lesbar
+
+id: URL del file lista .m3u/.m3u8
+msg: URL der .m3u/.m3u8-Listendatei
+
+id: URL del portale
+msg: Portal-URL
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC-Adresse (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Nicht erforderlich
+
+id: Non richiesta
+msg: Nicht erforderlich
+
+
+id: A fine episodio parte automaticamente il successivo
+msg: Am Ende einer Episode startet automatisch die nächste
+
+id: Attivo: sarai avvisato all'inizio
+msg: Aktiv: Du wirst bei Beginn benachrichtigt
+
+id: Autoplay episodio successivo
+msg: Nächste Episode automatisch abspielen
+
+id: Avvisami quando inizia
+msg: Bei Beginn benachrichtigen
+
+id: Cartella non scrivibile
+msg: Ordner nicht beschreibbar
+
+id: Cartella registrazioni
+msg: Aufnahmeordner
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Aufnahmeordner (leer = Standard)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Aufnahmeordner (leer = Standard):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: Aufnahmeordner nicht beschreibbar, Standard wird verwendet
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Nur verfügbar, wenn der Anbieter das Archiv auf dem Kanal aktiviert (tv_archive-Flag): direkter Klick auf eine beendete Sendung im Guide-Raster, lange auf den Kanal drücken → \"Wiederholung\", oder das Badge im Sendeplan. Unterstützt der Anbieter kein Timeshift, erscheint die Funktion nicht.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Speicherort der .ts-Dateien — leer = Plugin-Speicher
+
+id: Elimina
+msg: Löschen
+
+id: Eliminare la registrazione
+msg: Aufnahme löschen
+
+id: Episodio non trovato
+msg: Episode nicht gefunden
+
+id: Esporta preferiti in M3U
+msg: Favoriten als M3U exportieren
+
+id: Esportazione fallita
+msg: Export fehlgeschlagen
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: Gesehene Episoden haben ein Häkchen in der Liste. Am Ende einer Folge startet automatisch die nächste (abschaltbar in Einstellungen → Wiedergabe → \"Nächste Episode automatisch abspielen\").
+
+id: I file .ts registrati appariranno qui
+msg: Aufgenommene .ts-Dateien erscheinen hier
+
+id: IN CORSO
+msg: LÄUFT
+
+id: In corso
+msg: Läuft
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: Während der Wiedergabe: REC-Symbol in der Player-Leiste (OK auf dem Video blendet Info und Leiste ein/aus) nimmt den Stream bis zum Stopp in eine .ts-Datei auf. Aufnahmen lassen sich unter Menü → \"Aufnahmen\" abspielen und löschen; der Zielordner ändert sich in Einstellungen → Wiedergabe.
+
+id: Nessun preferito da esportare
+msg: Keine Favoriten zum Exportieren
+
+id: Nessun promemoria attivo
+msg: Keine aktiven Erinnerungen
+
+id: Nessun'altra puntata in palinsesto
+msg: Keine weiteren Folgen im Sendeplan
+
+id: Nessuna puntata futura da registrare
+msg: Keine zukünftigen Folgen aufzunehmen
+
+id: Nessuna registrazione completata
+msg: Keine fertigen Aufnahmen
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Sendeplan des Kanals → zukünftige Sendung → Badge \"Aufnehmen\" → OK. Die Zeile \"Erinnerung und Serienaufnahme\" unter der Sendung erlaubt auch nur den Hinweis zum Beginn (ohne Aufnahme) und das Aufnehmen aller Folgen mit gleichem Titel. Aufnahmen starten von selbst und enden am Sendungsende. Eine nach der anderen: Aufnehmen während man einen anderen Kanal schaut kann fehlschlagen, wenn der Anbieter nur 1 Verbindung erlaubt.
+
+id: Predefinita
+msg: Standard
+
+id: Preferiti esportati
+msg: Favoriten exportiert
+
+id: Promemoria
+msg: Erinnerung
+
+id: Promemoria attivato
+msg: Erinnerung aktiviert
+
+id: Promemoria attivo
+msg: Erinnerung aktiv
+
+id: Promemoria e registrazione serie
+msg: Erinnerung und Serienaufnahme
+
+id: Promemoria rimosso
+msg: Erinnerung entfernt
+
+id: Promemorie
+msg: Erinnerungen
+
+id: Prossimo episodio
+msg: Nächste Episode
+
+id: Registra tutta la serie
+msg: Ganze Serie aufnehmen
+
+id: Registrazione eliminata
+msg: Aufnahme gelöscht
+
+id: Registrazione programmata, promemoria e serie
+msg: Geplante Aufnahme, Erinnerung und Serie
+
+id: Registrazione singola puntata
+msg: Aufnahme einer einzelnen Folge
+
+id: Salva i canali preferiti come playlist standard
+msg: Lieblingskanäle als Standard-Playlist speichern
+
+id: Sta iniziando
+msg: Beginnt jetzt
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Badge \"Aufnehmen\" in der Sendungszeile verwenden
+
+id: canali
+msg: Kanäle
+
+id: cartella non scrivibile
+msg: Ordner nicht beschreibbar
+
+id: fallita
+msg: fehlgeschlagen
+
+id: puntate
+msg: Folgen
+
+id: puntate in palinsesto
+msg: Folgen im Sendeplan
+

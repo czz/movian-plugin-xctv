@@ -1,5 +1,5 @@
 /**
- *  libxstream is a module for movian
+ *  libxtream is a module for movian
  *
  *  Copyright (C) 2017 czz78
  *
@@ -18,7 +18,6 @@
  */
 
 
-
 /*
  * JavaScript uses prototypes and does't have classes (or methods for that matter) like Object Oriented languages.
  * JavaScript developer need to think in JavaScript.
@@ -30,79 +29,115 @@
 
 
 var http = require('movian/http');
-var XmlTv = require('./libxmltv');
-var html = require('movian/html');
 
 var Xtream = (function () {
 
-    var _BASE_URL = { player_api: undefined, epg: undefined };
+    var _USER_AGENT = 'VLC/3.0.8 LibVLC/3.0.8';
 
-    var _OPTIONS = {
-                     debug : false,
-                     protocol: "http",
-                     // port: 80
-                   };
 
-    var _CREDENTIALS = {
-                     username : undefined,
-                     password : undefined,
-                   };
+    /*
+     *  Normalize a user supplied server string to "scheme://host[:port]"
+     *  Accepts: "host", "host:port", "http://host", "https://host:port"
+     *  and even "host:port/path" (path is dropped, Xtream lives at root).
+     */
+    function _normalizeBase(server, defprotocol) {
 
-    var _ANNOUNCEMENT = { host: 'api-android.whmcssmarters.com',
-                          sc  :  '3bcc1524a81f1796ac58cc1091683606',
-                          apikey: 'K60b0ad74709c08209e4b5e0efcb7a814'
-                        };
+        if(!server || typeof server != 'string')
+            return undefined;
 
-    var _USER_AGENT = 'AnonymousIPTVPlayer';
+        server = server.replace(/^\s+|\s+$/g, '');
+
+        var m = server.match(/^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/(.*)$/);
+        var scheme, rest;
+
+        if(m) {
+            scheme = m[1].toLowerCase();
+            rest = m[2];
+        } else {
+            scheme = defprotocol || 'http';
+            rest = server;
+        }
+
+        rest = rest.split('/')[0];          // drop any path
+        rest = rest.split('?')[0];          // drop any query
+        rest = rest.replace(/\/+$/, '');
+
+        if(!rest)
+            return undefined;
+
+        if(scheme != 'http' && scheme != 'https')
+            scheme = 'http';
+
+        return scheme + '://' + rest;
+    }
+
 
     /* construct */
     function Xtream(base_url, credentials, options) {
 
-        if (options === Object(options) && Object.prototype.toString.call(options) !== '[object Array]') {
-            this.options = function () {
-                return  {
-                          debug : options.debug ? options.debug : _OPTIONS.debug,
-                          protocol : options.protocol ? options.protocol : _OPTIONS.protocol,
-                        };
-            }
-        }
+        options = (options === Object(options) &&
+                   Object.prototype.toString.call(options) !== '[object Array]') ? options : {};
 
-        if (credentials === Object(credentials) && Object.prototype.toString.call(credentials) !== '[object Array]') {
-            this.credentials = function () {
-                return  {
-                          username : credentials.username ? credentials.username : _CREDENTIALS.username,
-                          password : credentials.password ? credentials.password : _CREDENTIALS.password,
-                        };
-            };
-        }
+        credentials = (credentials === Object(credentials) &&
+                       Object.prototype.toString.call(credentials) !== '[object Array]') ? credentials : {};
 
-        if (base_url === Object(base_url) && Object.prototype.toString.call(base_url) !== '[object Array]') {
-            this.baseUrl = function () {
-                return  {
-                          playerApi : this.options().protocol && base_url.player_api ? this.options().protocol + '://' + base_url.player_api : _BASE_URL.player_api,
-                          epg : this.options().protocol &&  base_url.epg ? this.options().protocol + '://' +  base_url.epg : _BASE_URL.epg
-                        };
-            };
-        }
+        this.options = function () {
+            return  {
+                      debug : options.debug ? true : false,
+                      protocol : options.protocol ? options.protocol : 'http',
+                      liveExt : options.liveExt ? options.liveExt : 'auto',
+                      vodExt : options.vodExt ? options.vodExt : 'auto',
+                    };
+        };
 
-        // getter for player url
-        this.playerUrl = function () {
-            return   this.baseUrl().playerApi + "/player_api.php";
+        this.credentials = function () {
+            return  {
+                      username : credentials.username ? credentials.username : undefined,
+                      password : credentials.password ? credentials.password : undefined,
+                    };
+        };
+
+        base_url = (base_url === Object(base_url) &&
+                    Object.prototype.toString.call(base_url) !== '[object Array]') ? base_url : {};
+
+        var proto = this.options().protocol;
+
+        var playerBase = _normalizeBase(base_url.player_api, proto);
+        var epgBase    = _normalizeBase(base_url.epg, proto) || playerBase;
+
+        this.baseUrl = function () {
+            return  {
+                      playerApi : playerBase,
+                      epg : epgBase
+                    };
+        };
+
+        // Cache di sessione breve per le risposte API: le liste
+        // pesanti (stream, categorie, info) non si riscaricano
+        // per ogni pagina/categoria.
+        var _cache = {};
+        this._cached = function(key, ttlSecs, fn) {
+            var now = Math.floor(Date.now() / 1000);
+            if(_cache[key] && (now - _cache[key].t) < ttlSecs)
+                return _cache[key].v;
+            var v = fn();
+            if(v) _cache[key] = { t: now, v: v };
+            return v;
         };
 
         // getter for player url
+        this.playerUrl = function () {
+            return this.baseUrl().playerApi + "/player_api.php";
+        };
+
+        // getter for epg url (full xmltv)
         this.epgUrl = function () {
-            return  this.baseUrl().epg + "/xmltv.php";
+            return this.baseUrl().epg + "/xmltv.php";
         };
 
         // getter for user agent
         this.userAgent = function () {
             return  _USER_AGENT;
-        };
-
-        // getter for announcements
-        this.announcements = function () {
-           return _ANNOUNCEMENTS;
         };
 
     }
@@ -120,50 +155,98 @@ var Xtream = (function () {
 
 
     /*
-     * Private method req
+     *  Validate that a JSON payload plausibly belongs to the requested
+     *  action. Category lists carry category_id+category_name and no
+     *  'name'; stream/series lists carry 'name' and never category_name.
+     */
+    function _shapeOk(action, parsed) {
+
+        if(parsed === null || typeof parsed != 'object')
+            return true;    // errors/other payloads pass through
+
+        var isArr = Object.prototype.toString.call(parsed) === '[object Array]';
+
+        switch(action) {
+        case 'get_live_categories':
+        case 'get_vod_categories':
+        case 'get_series_categories':
+            if(!isArr) return false;
+            if(!parsed.length) return true;
+            return parsed[0].category_name !== undefined &&
+                   parsed[0].name === undefined;
+
+        case 'get_live_streams':
+        case 'get_vod_streams':
+        case 'get_series':
+            if(!isArr) return false;
+            if(!parsed.length) return true;
+            return parsed[0].name !== undefined &&
+                   parsed[0].category_name === undefined;
+
+        case 'get_short_epg':
+            return parsed.epg_listings !== undefined;
+        }
+
+        return true;
+    }
+
+
+    /*
+     * Private method req — GET on player_api.php with query args.
+     * When statuscode === true, returns the HTTP status code instead
+     * of the parsed JSON body.
      */
     function _req(data, statuscode) {
 
-
-        switch(statuscode) {
-            case true:
-        }
-
         var res = false;
-        var post_data = {};
+
+        if(!this.credentials().username || !this.credentials().password)
+            return res;
+
+        var url = this.playerUrl() +
+                  "?username=" + encodeURIComponent(this.credentials().username) +
+                  "&password=" + encodeURIComponent(this.credentials().password);
 
         if (data === Object(data) && Object.prototype.toString.call(data) !== '[object Array]') {
-            post_data = data;
+            for(var k in data)
+                url += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]);
         }
 
-        post_data['username']= this.credentials().username;
-        post_data['password']= this.credentials().password;
-
-        var s = { method: "POST",
+        var s = { method: "GET",
                   debug: this.options().debug,
                   compression: false,
-                  headers: { 'User-Agent' : this.userAgent() },
-                  postdata: post_data
+                  connectTimeout: 5000,
+                  readTimeout: 15000,
+                  headers: { 'User-Agent' : this.userAgent() }
                  };
-
-        if(!this.credentials().username && !this.credentials().password) return res;
 
         try {
 
-            var v = http.request(this.playerUrl(), s);
+            var v = http.request(url, s);
 
-            switch(statuscode) {
-                case true:
-                    return v.statuscode;
-                    break;
-                default:
-                    return JSON.parse(v.toString());
-                    break;
+            if(statuscode === true)
+                return v.statuscode;
+
+            var body = v.toString();
+            if(!body || body.length < 2)
+                return res;
+
+            var parsed = JSON.parse(body);
+
+            // Payload-shape guard: if a response ever arrives for the wrong
+            // endpoint (e.g. swapped by a concurrent request), reject it
+            // instead of silently mapping it to "Unknown" rows.
+            if(!_shapeOk(data && data.action, parsed)) {
+                _debug.call(this, 'Bad response shape for ' + data.action +
+                    ' => ' + body.substring(0, 80), 'Xtream', true);
+                return res;
             }
+
+            return parsed;
 
         }
         catch (e) {
-            _debug.call(this,  e.toString().replace('\n', ''), 'Xtream' );
+            _debug.call(this,  e.toString().replace('\n', ''), 'Xtream', true );
         }
 
         return res;
@@ -171,138 +254,107 @@ var Xtream = (function () {
     }
 
 
-    function _reqEpg() {
+    /*
+     *  Fetch the full XMLTV document (xmltv.php).
+     *  Returns the raw xml string or false.
+     */
+    function _reqEpgRaw() {
 
         var res = false;
 
-        if(!this.credentials().username && !this.credentials().password) return res;
+        if(!this.credentials().username || !this.credentials().password)
+            return res;
 
-        url = this.epgUrl() + "?username=" + this.credentials().username + "&password=" + this.credentials().password;
+        var url = this.epgUrl() +
+                  "?username=" + encodeURIComponent(this.credentials().username) +
+                  "&password=" + encodeURIComponent(this.credentials().password);
 
         var s = { method: "GET",
                   debug: this.options().debug,
                   compression: true,
-                  headers: { 'User-Agent' : this.userAgent(), 'Content-Type':'text/xml)' },
+                  connectTimeout: 5000,
+                  readTimeout: 120000,   // xmltv.php puo' essere enorme
+                  headers: { 'User-Agent' : this.userAgent() }
                  };
 
-
         try {
-
-
-            // for some reason movian XML parse doesn't work
-            // we have made our own xmltv.dtd parser
-
-            var v = http.request(url, s).toString();
-
-
-//            var xml = new RegExp('<?xml([^>]+)>', 'i').test(v);
-            var xmltv = new XmlTv({debug: true});
-
-            //var doctype = xmltv.getDoctype(v);
-            //var doctype = xmltv.getXml(v);
-            var doctype = xmltv.getChannels(xmltv.getTv(v).content);
-
-//            var tv = new RegExp('<tv([^>]+)>(.*)', 'i').test(v);
-
-            console.log('v:'+ JSON.stringify(doctype));
-/*
-            return html.parse('<tv generator-info-name="my listings generator">'+
-'<channel id="3sat.de">'+
-'    <display-name lang="de">3SAT</display-name>'+
- ' </channel>'+
-'  <channel id="das-erste.de">'+
-'    <display-name lang="de">ARD</display-name>'+
-'    <display-name lang="de">Das Erste</display-name>'+
- ' </channel>'+
-
-'  <programme start="200006031633" channel="3sat.de">'+
-'    <title lang="de">blah</title>'+
-'    <title lang="en">blah</title>'+
-'    <desc lang="de">'+
-'       Blah Blah Blah.'+
-'    </desc>'+
-'    <credits>'+
-'      <director>blah</director>'+
-'      <actor>a</actor>'+
-'      <actor>b</actor>'+
-'    </credits>'+
-'    <date>19901011</date>'+
-'    <country>ES</country>'+
-'    <episode-num system="xmltv_ns">2 . 9 . 0/1</episode-num>'+
-'    <video>'+
-'      <aspect>16:9</aspect>'+
-'    </video>'+
-'    <rating system="MPAA">'+
-'      <value>PG</value>'+
-'      <icon src="pg_symbol.png" />'+
-'    </rating>'+
-'    <star-rating>'+
-'      <value>3/3</value>'+
-'    </star-rating>'+
- ' </programme>'+
-'</tv>');
-*/
-
-            //var html = require('showtime/html');
-            //return html.parse(v).document;
-
+            var v = http.request(url, s);
+            var body = v.toString();
+            if(body && body.indexOf('<') != -1)
+                res = body;
         }
         catch (e) {
-            _debug.call(this,  e.toString().replace('\n', ''), 'AnonympusTv:_reqEpg', true );
+            _debug.call(this,  e.toString().replace('\n', ''), 'Xtream:_reqEpgRaw', true );
         }
 
         return res;
 
     }
 
+
     /*
-     *  Get infos of your account
-     *  returns oject data
-     *
+     *  base64 decode helper (get_short_epg titles/descs are b64).
+     */
+    function _b64d(s) {
+        if(!s) return '';
+        try {
+            return String(Duktape.dec('base64', s));
+        } catch(e) {
+            return s;
+        }
+    }
+
+
+    /*
+     *  Account / login check.
+     *  Returns {status: bool, error: string}
      */
     Xtream.prototype.checkLogin = function () {
 
-        var res = _req.call(this,{},true);
+        if(!this.credentials().username || !this.credentials().password)
+            return {status : false, error: "No credentials set"};
 
-        _debug.call(this, JSON.stringify(res), "Xtream:checkLogin")
+        // Una sola request sul percorso felice: la risposta resta
+        // nella cache '_info' e serve gratis a liveExtension() ecc.
+        var self = this;
+        var res = this._cached('_info', 600, function() {
+            return _req.call(self);
+        });
 
-        switch(res) {
-            case 200:
-                return {status : true, error: ''};
-                break;
+        _debug.call(this, JSON.stringify(res), "Xtream:checkLogin");
+
+        if(res && res.user_info) {
+            if(String(res.user_info.auth) == '0')
+                return {status : false, error: "Authentication failed (auth=0)"};
+            return {status : true, error: ''};
+        }
+
+        // Fallita: una request di sola status per il messaggio d'errore
+        var code = _req.call(this, {}, true);
+        switch(code) {
             case 502:
                 return {status : false, error: "Bad Gateway" };
-                break;
             case 503:
-                return {status : false, error: "Service Anavailable" };
-                break;
+                return {status : false, error: "Service Unavailable" };
             default:
-                return {status : false, error: "Something went wrong, maybe wrong credentials or expired"};
-                break;
+                return {status : false, error: "Something went wrong, maybe wrong credentials or expired (HTTP " + code + ")"};
         }
-        return false;
-
 
     };
 
 
     /*
      *  Get infos of your account
-     *  returns oject data
-     *
+     *  returns object data
      */
     Xtream.prototype.getInfo = function (action) {
 
-        /*
-          {
-           "user_info":{"username":"xxxxxxxxxx","password":"xxxxxxxxxx","message":"","auth":1,"status":"Active","exp_date":"1575718849","is_trial":"0","active_cons":"0","created_at":"1573126849","max_connections":"1","allowed_output_formats":["m3u8","ts"]},
-           "server_info":{"url":"proxy.ayservices.xyz","port":"80","https_port":"25463","server_protocol":"http","rtmp_port":"25462","timezone":"Europe/Rome","timestamp_now":1574595062,"time_now":"2019-11-24 12:31:02"}
-          }
-        */
+        var self = this;
+        var res = this._cached('_info', 600, function() {
+            return _req.call(self);
+        });
 
-        var res = _req.call(this);
-
-        _debug.call(this, JSON.stringify(res), "Xtream:getInfo")
+        _debug.call(this, JSON.stringify(res), "Xtream:getInfo");
 
         if(!res) return false;
 
@@ -313,11 +365,47 @@ var Xtream = (function () {
             case "server":
                 return res.server_info;
             default:
-                return res
+                return res;
         }
 
-        return res;
+    };
 
+
+    /*
+     *  Preferred live output extension ("m3u8" or "ts") taken from
+     *  user_info.allowed_output_formats, defaulting to m3u8.
+     *  options.liveExt ('auto'|'m3u8'|'ts') forces the choice.
+     */
+    Xtream.prototype.liveExtension = function() {
+
+        var forced = this.options().liveExt;
+        if(forced && forced != 'auto')
+            return forced;
+
+        var ext = 'm3u8';
+
+        var user = this.getInfo('user');
+        if(user && user.allowed_output_formats) {
+            var fmts = user.allowed_output_formats;
+            if(fmts.indexOf('m3u8') == -1 && fmts.indexOf('ts') != -1)
+                ext = 'ts';
+        }
+
+        return ext;
+    };
+
+
+    /*
+     *  VOD container extension: res.container_extension unless
+     *  options.vodExt ('auto'|'mkv'|'mp4'|'avi') forces it.
+     */
+    Xtream.prototype.vodExtension = function(containerExt) {
+
+        var forced = this.options().vodExt;
+        if(forced && forced != 'auto')
+            return forced;
+
+        return containerExt ? containerExt : 'mp4';
     };
 
 
@@ -329,13 +417,16 @@ var Xtream = (function () {
     Xtream.prototype.getLiveCategories = function() {
 
         var cats = [];
-        var res = _req.call(this,{ action: "get_live_categories" } );
-        _debug.call(this, JSON.stringify(res), "Xtream:getLiveCategories")
+        var self = this;
+        var res = this._cached('_livecats', 300, function() {
+            return _req.call(self, { action: "get_live_categories" });
+        });
+        _debug.call(this, JSON.stringify(res), "Xtream:getLiveCategories");
 
         if(res) {
            for(var i in res) {
-              cats.push({ id: res[i].category_id ?  res[i].category_id :  0,
-                          title: res[i].category_name  ? res[i].category_name :  'Unknown',
+              cats.push({ id: res[i].category_id ?  res[i].category_id :  '0',
+                          title: res[i].category_name && res[i].category_name != 'undefined' ? res[i].category_name :  'Unknown',
                           icon: Plugin.path + 'images/livetv.png'
                         });
            }
@@ -349,38 +440,30 @@ var Xtream = (function () {
     /*
      *  Live Streams
      *  Returns an array of live streams. Each element of the array is an object.
-     *  { id: id, cat_id: category_id, title: name, icon: stream_icon, source:{ url: url } }
+     *  { id, cat_id, title, icon, epgid, source:{ url } }
      */
     Xtream.prototype.getLiveStreams = function() {
 
-        /*
-          {"num":1464,
-           "name":"XXX Vivid TV Europe",
-           "stream_type":"live",
-           "stream_id":88606,
-           "stream_icon":"",
-           "epg_channel_id":null,
-           "added":"1574063931",
-           "category_id":"18",
-           "custom_sid":"",
-           "tv_archive":0,
-           "direct_source":"",
-           "tv_archive_duration":0},
-        */
-
         var live = [];
 
-        var res = _req.call(this, { action: "get_live_streams" });
-        _debug.call(this, JSON.stringify(res), "Xtream:getLiveStreams")
+        var self = this;
+        var res = this._cached('_live', 300, function() {
+            return _req.call(self, { action: "get_live_streams" });
+        });
+        _debug.call(this, JSON.stringify(res), "Xtream:getLiveStreams");
+
+        var ext = this.liveExtension();
 
         if(res) {
            for(var i in res) {
 
               live.push({ id: res[i].stream_id ?  res[i].stream_id :  0,
-                             cat_id: res[i].category_id ?  res[i].category_id :  0,
-                             title: res[i].name ? res[i].name :  'Unknown',
+                             cat_id: res[i].category_id ?  res[i].category_id :  '0',
+                             title: res[i].name  ? res[i].name :  'Unknown',
                              icon: (res[i].stream_icon && res[i].stream_icon != '') ? res[i].stream_icon : Plugin.path + 'images/livetv.png',
-                             source:{url:    this.baseUrl().playerApi + "/" + this.credentials().username + "/" + this.credentials().password + "/" + res[i].stream_id }
+                             epgid: res[i].epg_channel_id ? res[i].epg_channel_id : '',
+                             archive: res[i].tv_archive == 1 || res[i].tv_archive === true,
+                             source:{url:    this.baseUrl().playerApi + "/live/" + this.credentials().username + "/" + this.credentials().password + "/" + res[i].stream_id + "." + ext }
                            });
            }
         }
@@ -391,8 +474,31 @@ var Xtream = (function () {
 
 
     /*
+     *  Catch-up (timeshift) playback URL for a live stream with
+     *  tv_archive. start is unix seconds, durationMin the length of
+     *  the programme in minutes.
+     *  Format: {base}/timeshift/{user}/{pass}/{mins}/{Y-m-d:H-i}/{id}.{ext}
+     */
+    Xtream.prototype.getCatchupUrl = function(stream_id, start, durationMin) {
+
+        var d = new Date(start * 1000);
+        var pad = function(x) { return (x < 10 ? '0' : '') + x; };
+        var ts = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' +
+                 pad(d.getDate()) + ':' + pad(d.getHours()) + '-' +
+                 pad(d.getMinutes());
+
+        if(!durationMin || durationMin < 1)
+            durationMin = 60;
+
+        return this.baseUrl().playerApi + "/timeshift/" +
+               this.credentials().username + "/" + this.credentials().password +
+               "/" + Math.ceil(durationMin) + "/" + ts + "/" + stream_id + "." +
+               this.liveExtension();
+    };
+
+
+    /*
      *  Live Streams by category id
-     *  Returns an array of vod streams.
      */
     Xtream.prototype.getLiveStreamsByCategoryId = function(id) {
 
@@ -404,39 +510,202 @@ var Xtream = (function () {
 
            for(var i in res) {
 
-              if( res[i].cat_id == id ){
+              if( String(id) == '0' ) {
+                 if( res[i].cat_id == '' || res[i].cat_id == '0' ){
+                    delete res[i].cat_id;
+                    streams.push(res[i]);
+                 }
+              }
 
-                  delete res[i].cat_id;
-                  streams.push(res[i]);
+              else {
+                if( res[i].cat_id == id ){
 
+                    delete res[i].cat_id;
+                    streams.push(res[i]);
+
+                }
               }
            }
         }
 
         return streams;
 
+    };
+
+
+    /*
+     *  Short EPG (now/next) for a single live stream via
+     *  action=get_short_epg&stream_id=N&limit=M
+     *  Returns an array of { title, desc, start, stop, icon } sorted by start.
+     *  start/stop are unix seconds.
+     */
+    function _shortEpgEvents(res) {
+
+        var events = [];
+
+        if(res && res.epg_listings) {
+            for(var i in res.epg_listings) {
+
+                var l = res.epg_listings[i];
+
+                var start = l.start_timestamp ? parseInt(l.start_timestamp, 10) :
+                            (l.start ? Math.floor(new Date(l.start.replace(' ', 'T')).getTime()/1000) : 0);
+                var stop  = l.stop_timestamp  ? parseInt(l.stop_timestamp, 10)  :
+                            (l.stop  ? Math.floor(new Date(l.stop.replace(' ', 'T')).getTime()/1000)  : 0);
+
+                if(!start)
+                    continue;
+                if(!stop || stop <= start)
+                    stop = start + 3600;
+
+                events.push({ title: _b64d(l.title),
+                              desc: _b64d(l.description),
+                              start: start,
+                              stop: stop });
+            }
+        }
+
+        events.sort(function(a, b) { return a.start - b.start; });
+        return events;
     }
+
+
+    Xtream.prototype.getShortEpg = function(stream_id, limit) {
+
+        var data = { action: "get_short_epg", stream_id: stream_id };
+        if(limit)
+            data.limit = limit;
+
+        var res = _req.call(this, data);
+        _debug.call(this, JSON.stringify(res), "Xtream:getShortEpg");
+
+        return _shortEpgEvents(res);
+    };
+
+
+    /*
+     *  Async variant: the fetch runs on a runtime task thread and
+     *  cb(eventsOrFalse) fires when done — the JS/UI thread never
+     *  blocks. Used to fill grid rows with now/next instantly,
+     *  before the full XMLTV guide is ready.
+     */
+    Xtream.prototype.getShortEpgAsync = function(stream_id, limit, cb) {
+
+        if(!this.credentials().username || !this.credentials().password) {
+            cb(false);
+            return;
+        }
+
+        var url = this.playerUrl() +
+                  "?username=" + encodeURIComponent(this.credentials().username) +
+                  "&password=" + encodeURIComponent(this.credentials().password) +
+                  "&action=get_short_epg&stream_id=" +
+                  encodeURIComponent(stream_id);
+        if(limit)
+            url += "&limit=" + limit;
+
+        var s = { method: "GET",
+                  debug: this.options().debug,
+                  compression: false,
+                  connectTimeout: 5000,
+                  readTimeout: 15000,
+                  headers: { 'User-Agent' : this.userAgent() }
+                 };
+
+        var self = this;
+        try {
+            http.request(url, s, function(err, res) {
+                var evs = false;
+                try {
+                    if(!err && res) {
+                        var parsed = JSON.parse(res.toString());
+                        if(_shapeOk('get_short_epg', parsed))
+                            evs = _shortEpgEvents(parsed);
+                    }
+                } catch(e) {}
+                try { cb(evs); } catch(e) {}
+            });
+        } catch(e) {
+            cb(false);
+        }
+    };
+
+
+    /*
+     *  Full XMLTV guide (xmltv.php). Returns the raw XML string
+     *  (parsing is left to libxmltv) or false.
+     */
+    Xtream.prototype.getEpg = function() {
+
+        return _reqEpgRaw.call(this);
+
+    };
+
+
+    /*
+     *  Async variant of getEpg: cb(bodyOrFalse) fires when the
+     *  download completes — the fetch runs on a task thread so the
+     *  UI stays responsive while xmltv.php transfers.
+     */
+    Xtream.prototype.getEpgAsync = function(cb) {
+
+        if(!this.credentials().username || !this.credentials().password) {
+            cb(false);
+            return;
+        }
+
+        var url = this.epgUrl() +
+                  "?username=" + encodeURIComponent(this.credentials().username) +
+                  "&password=" + encodeURIComponent(this.credentials().password);
+
+        var s = { method: "GET",
+                  debug: this.options().debug,
+                  compression: true,
+                  connectTimeout: 5000,
+                  readTimeout: 120000,
+                  headers: { 'User-Agent' : this.userAgent() }
+                 };
+
+        var self = this;
+        try {
+            http.request(url, s, function(err, res) {
+                var body = false;
+                try {
+                    if(!err && res)
+                        body = res.toString();
+                    if(body && body.indexOf('<') == -1)
+                        body = false;
+                } catch(e) {
+                    body = false;
+                }
+                try { cb(body); } catch(e2) {}
+            });
+        } catch(e) {
+            _debug.call(self, e.toString().replace('\n', ''),
+                        'Xtream:getEpgAsync', true);
+            cb(false);
+        }
+    };
 
 
     /*
      *  Vod Categories
-     *  Returns an array of vod categories. Each element of the array is an object.
+     *  Returns an array of vod categories.
      *  [{ id: category_id, title: category_name, icon: icon }]
      */
     Xtream.prototype.getVodCategories = function() {
 
-       /*
-         [{\"category_id\":\"305\",\"category_name\":\"Vetrina SKY Primafila\",\"parent_id\":0}]
-       */
-
         var cats = [];
 
-        var res = _req.call(this, { action: "get_vod_categories" });
-        _debug.call(this, JSON.stringify(res), "Xtream:getVodCategories")
+        var self = this;
+        var res = this._cached('_vodcats', 300, function() {
+            return _req.call(self, { action: "get_vod_categories" });
+        });
+        _debug.call(this, JSON.stringify(res), "Xtream:getVodCategories");
 
         if(res) {
            for(var i in res) {
-              cats.push({ id: res[i].category_id ?  res[i].category_id :  0,
+              cats.push({ id: res[i].category_id ?  res[i].category_id :  '0',
                           title: res[i].category_name  ? res[i].category_name :  'Unknown',
                           icon: Plugin.path + 'images/vod.png'
                         });
@@ -451,28 +720,30 @@ var Xtream = (function () {
     /*
      *  Vod Streams
      *  Returns an array of vod streams.
-     *  [{ id: id, cat_id: cat_id, title: title, icon: icon }]
+     *  [{ id, cat_id, title, icon, rating, year, source:{ url } }]
      */
     Xtream.prototype.getVodStreams = function() {
 
-        /*
-          {\"num\":4336,\"name\":\"SIFFREDI LATE NIGHT 1x17 xxx\",\"stream_type\":\"movie\",\"stream_id\":89700,
-           \"stream_icon\":null,\"rating\":null,\"rating_5based\":0,\"added\":\"1574581636\",\"category_id\":\"357\",
-           \"container_extension\":\"mkv\",\"custom_sid\":\"\",\"direct_source\":\"\"},
-        */
-
         var streams = [];
 
-        var res = _req.call(this, { action: "get_vod_streams"});
-        _debug.call(this, JSON.stringify(res), "Xtream:getVodStreams")
+        var self = this;
+        var res = this._cached('_vod', 300, function() {
+            return _req.call(self, { action: "get_vod_streams" });
+        });
+        _debug.call(this, JSON.stringify(res), "Xtream:getVodStreams");
 
         if(res) {
            for(var i in res) {
 
+              var ext = this.vodExtension(res[i].container_extension);
+
               streams.push({ id: res[i].stream_id ?  res[i].stream_id :  0,
-                             cat_id: res[i].category_id ?  res[i].category_id :  0,
+                             cat_id: res[i].category_id ?  res[i].category_id :  '0',
                              title: res[i].name ? res[i].name :  'Unknown',
-                             icon: (res[i].stream_icon && res[i].stream_icon != '') ? res[i].stream_icon : Plugin.path + 'images/vod.png'
+                             icon: (res[i].stream_icon && res[i].stream_icon != '') ? res[i].stream_icon : Plugin.path + 'images/vod.png',
+                             rating: res[i].rating_5based ? res[i].rating_5based : (res[i].rating ? res[i].rating : ''),
+                             added: parseInt(res[i].added, 10) || 0,
+                             source:{url:    this.baseUrl().playerApi + "/movie/" + this.credentials().username + "/" + this.credentials().password + "/" + res[i].stream_id + "." + ext}
                            });
            }
         }
@@ -480,12 +751,11 @@ var Xtream = (function () {
 
         return streams;
 
-    }
+    };
 
 
     /*
      *  Vod Streams by category id
-     *  Returns an array of vod streams.
      */
     Xtream.prototype.getVodStreamsByCategoryId = function(id) {
 
@@ -508,112 +778,60 @@ var Xtream = (function () {
 
         return streams;
 
-    }
+    };
 
 
     /*
      *  Vod Info
-     *  Returns an array of vod stream.
-     *  returns showtime video object
+     *  Returns a showtime video object
      */
     Xtream.prototype.getVodInfo = function(id) {
 
         var res = _req.call(this, { action: "get_vod_info", vod_id: id});
-        _debug.call(this, JSON.stringify(res), "Xtream:getVodInfo")
+        _debug.call(this, JSON.stringify(res), "Xtream:getVodInfo");
 
-         /*{"info":{
-                    "movie_image":"http:\/\/pad.mymovies.it\/filmclub\/2002\/06\/029\/imm.jpg",
-                    "genre":"Animazione",
-                    "plot":"Sulla riva di un fiume tranquillo,",
-                    "cast": "aumont, Ed Wynn, Richard Haydn",
-                    "rating":"",
-                    "director":"Clyde Geronimi, Wilfred Jackson",
-                    "releasedate":"1951",
-                    "duration_secs":4516,
-                    "duration":"01:15:16",
-                    "video":{
-                             "index":0,
-                             "codec_name":"h264",
-                             "codec_long_name":"H.264 \/ AVC \/ MPEG-4 AVC \/ MPEG-4 part 10",
-                             "profile":"Main",
-                             "codec_type":"video",
-                             "codec_time_base":"1\/60",
-                             "codec_tag_string":"[0][0][0][0]",
-                             "codec_tag":"0x0000",
-                             "width":1280,
-                             "height":720,
-                             "coded_width":1280,
-                             "coded_height":720,
-                             "has_b_frames":1,"sample_aspect_ratio":"1:1",
-                             "display_aspect_ratio":"16:9","pix_fmt":"yuv420p","level":41,"chroma_location":"left","field_order":"progressive","refs":1,"is_avc":"true","nal_length_size":"4",
-                             "r_frame_rate":"30\/1",
-                             "avg_frame_rate":"30\/1","time_base":"1\/1000","start_pts":0,"start_time":"0.000000","bits_per_raw_sample":"8",
-                             "disposition":{
-                                            "default":1,"dub":0,"original":0,"comment":0,"lyrics":0,"karaoke":0,"forced":0,"hearing_impaired":0,"visual_impaired":0,"clean_effects":0,"attached_pic":0,"timed_thumbnails":0
-                                           }
-                            },
-                     "audio":"mp3","bitrate":2131,"imdb_id":"","backdrop_path":[],"youtube_trailer":"","tmdb_id":""
-                    },
-
-            "movie_data":{
-                          "stream_id":1716,
-                          "name":"Alice Nel Paese Delle Meraviglie",
-                          "added":"1460485998",
-                          "category_id":"22",
-                          "container_extension":"mkv",
-                          "custom_sid":"",
-                          "direct_source":""
-                         }
-           }
-        */
+        if(!res || !res.movie_data)
+            return false;
 
         var cn = res.info && res.info.video && res.info.video.codec_name ? res.info.video.codec_name : '';
-        var cw = res.info && res.info.video && res.info.video.coded_width ? res.info.video.coded_width: '';
-        var ch = res.info && res.info.video && res.info.video.coded_height ? res.info.video.coded_height: '';
-        var au = res.info && res.info.audio ? res.info.audio.codec_name: '';
+        var cw = res.info && res.info.video && res.info.video.coded_width ? res.info.video.coded_width : (res.info && res.info.video && res.info.video.width ? res.info.video.width : '');
+        var ch = res.info && res.info.video && res.info.video.coded_height ? res.info.video.coded_height : (res.info && res.info.video && res.info.video.height ? res.info.video.height : '');
+        var au = res.info && res.info.audio && res.info.audio.codec_name ? res.info.audio.codec_name : (res.info && res.info.audio ? res.info.audio : '');
         var cast = res.info && res.info.cast ? res.info.cast: '';
         var dir = res.info && res.info.director ? res.info.director: '';
         var plot = res.info && res.info.plot ? res.info.plot: '';
 
+        var ext = this.vodExtension(res.movie_data.container_extension);
+
+        var backdrop = '';
+        if(res.info && res.info.backdrop_path && res.info.backdrop_path.length)
+            backdrop = res.info.backdrop_path[0];
+
         return  { id: res.movie_data.stream_id,
                   title: res.movie_data.name ? res.movie_data.name : 'unknown',
-                  icon: res.info.movie_image ? res.info.movie_image: "skin://icons/ic_local_movie_48px.svg",
+                  icon: res.info && res.info.movie_image ? res.info.movie_image: Plugin.path + "images/vod.png",
+                  backdrop: backdrop,
                   tagline: cn+" "+ cw+'x'+ch + ' - ' + au,
-                  genre: res.info.genre ? res.info.genre : 'unknown',
-                  description: cast + " - " + dir+"\n"+ plot ,
-                  year: res.info.releaseDate ? res.info.releaseDate: '',
-                  duration: res.info.duration ? res.info.duration: '',
-                  source:{url:    this.baseUrl().playerApi + "/movie/" + this.credentials().username + "/" + this.credentials().password + "/" + id+ "." + res.movie_data.container_extension}
+                  genre: res.info && res.info.genre ? res.info.genre : 'unknown',
+                  description: (cast ? "Cast: " + cast + "\n" : '') + (dir ? "Regia: " + dir + "\n\n" : '') + plot ,
+                  rating: res.info && res.info.rating ? res.info.rating : '',
+                  year: res.info && res.info.releasedate ? res.info.releasedate : (res.info && res.info.releaseDate ? res.info.releaseDate : ''),
+                  duration: res.info && res.info.duration ? res.info.duration: '',
+                  source:{url:    this.baseUrl().playerApi + "/movie/" + this.credentials().username + "/" + this.credentials().password + "/" + id+ "." + ext}
          };
 
-    }
+    };
 
 
     Xtream.prototype.getSeries = function() {
 
-        /* [{\"num\":498,
-             \"name\":\"The Morning Show\",
-             \"series_id\":505,
-             \"cover\":\"https://m.media-amazon.com/images/M/MV5BMmYzY2U1NGYtZjE4Mi00MjA2LWE4NDktZjNhMzEzNDIzYjQyXkEyXkFqcGdeQXVyNjU2ODM5MjU@._V1_UX182_CR0,0,182,268_AL_.jpg\",
-             \"plot\":\"Alex Levy conduce The Morning Show, un popolare programma di notizie\",
-             \"cast\":\"Jennifer Aniston, Reese Witherspoon, Billy Crudup\",
-             \"director\":\"Jay Carson, Kerry Ehrin\",
-             \"genre\":\"Drammatico\",
-             \"releaseDate\":\"2019\",
-             \"last_modified\":\"1574584590\",
-             \"rating\":\"0\",
-             \"rating_5based\":0,
-             \"backdrop_path\":[],
-             \"youtube_trailer\":\"\",
-             \"episode_run_time\":\"0\",
-             \"category_id\":\"356\"
-            }]
-        */
-
         var series = [];
 
-        var res = _req.call(this, { action: "get_series" } );
-        _debug.call(this, JSON.stringify(res), "Xtream:getSeriesStreams request")
+        var self = this;
+        var res = this._cached('_series', 300, function() {
+            return _req.call(self, { action: "get_series" });
+        });
+        _debug.call(this, JSON.stringify(res), "Xtream:getSeriesStreams request");
 
         if(res) {
            for(var i in res) {
@@ -623,19 +841,21 @@ var Xtream = (function () {
               var plot = res[i].plot ? res[i].plot: '';
 
               series.push({ id: res[i].series_id ?  res[i].series_id :  0,
-                            cat_id: res[i].category_id ?  res[i].category_id :  0,
+                            cat_id: res[i].category_id ?  res[i].category_id :  '0',
                             title: res[i].name  ? res[i].name :  'Unknown',
-                            icon: res[i].cover && res[i].cover != '' ? res[i].cover : "skin://icons/ic_movie_48px.svg",
+                            icon: res[i].cover && res[i].cover != '' ? res[i].cover : Plugin.path + "images/series.png",
                             tagline: res[i].episode_run_time ? res[i].episode_run_time : "?",
                             genre: res[i].genre ? res[i].genre : 'unknown',
-                            description: cast + " - " + dir+ "\n" + plot ,
+                            description: (cast ? "Cast: " + cast + " - " : '') + (dir ? dir + "\n" : '') + plot ,
+                            rating: res[i].rating ? res[i].rating : '',
+                            added: parseInt(res[i].last_modified, 10) || parseInt(res[i].added, 10) || 0,
                             year: res[i].releaseDate ? res[i].releaseDate : '',
                             source:{url:    this.baseUrl().playerApi + "/series/" + this.credentials().username + "/" + this.credentials().password + "/" + res[i].series_id+ ".mp4"}
                         });
            }
         }
 
-        _debug.call(this, JSON.stringify(series), "Xtream:getSeriesStreams stream return")
+        _debug.call(this, JSON.stringify(series), "Xtream:getSeriesStreams stream return");
 
         return series;
 
@@ -644,20 +864,21 @@ var Xtream = (function () {
 
     /*
      *  Series Categories
-     *  Returns an array of shows for the genre. Each element of the array is an object.
+     *  Returns an array of series categories.
      *  { id: id, title: title, icon: icon }
-     *
      */
     Xtream.prototype.getSeriesCategories = function() {
-        /*[{\"category_id\":\"328\",\"category_name\":\"RAI Fiction\",\"parent_id\":0},{\"category_id\":\"320\",\"category_name\":\"Mediaset Fiction\",\"parent_id\":0},{\"category_id\":\"338\",\"category_name\":\"Mediaset Review\",\"parent_id\":0},{\"category_id\":\"316\",\"category_name\":\"Serie TV Netflix\",\"parent_id\":0},*/
-        cats = [];
+        var cats = [];
 
-        var res = _req.call(this, { action: "get_series_categories" });
-        _debug.call(this, JSON.stringify(res), "Xtream:getSeriesCategories")
+        var self = this;
+        var res = this._cached('_seriescats', 300, function() {
+            return _req.call(self, { action: "get_series_categories" });
+        });
+        _debug.call(this, JSON.stringify(res), "Xtream:getSeriesCategories");
 
         if(res) {
            for(var i in res) {
-              cats.push({ id: res[i].category_id ?  res[i].category_id :  0,
+              cats.push({ id: res[i].category_id ?  res[i].category_id :  '0',
                           title: res[i].category_name  ? res[i].category_name :  'Unknown',
                           icon: Plugin.path + 'images/series.png'
                         });
@@ -671,9 +892,7 @@ var Xtream = (function () {
 
 
     /*
-     *  Vod Streams by category id
-     *  Returns an array of vod streams.
-     *  [{ id: id, title: title, icon: icon }]
+     *  Series by category id
      */
     Xtream.prototype.getSeriesByCategoryId = function(id) {
 
@@ -693,105 +912,44 @@ var Xtream = (function () {
 
         return streams;
 
-    }
+    };
 
 
     /*
      *  Series Info
-     *  Returns an array of series stream.
-     *  returns showtime video object
+     *  Returns an array of episodes (all seasons flattened).
      */
     Xtream.prototype.getSeriesInfo = function(id) {
-
-         /*{"seasons":[],
-            "info":{
-                    "name":"Daredevil",
-                    "cover":"https:\/\/m.media-amazon.com\/images\/M\/MV5BODcwOTg2MDE3NF5BMl5BanBnXkFtZTgwNTUyNTY1NjM@._V1_UX182_CR0,0,182,268_AL_.jpg",
-                    "plot":"Hell's Kitchen. L'avvocato Matt Murdock, ",
-                    "cast":"Charlie Cox, Vincent D'Onofrio, Deborah Ann Woll",
-                    "director":"Drew Goddard",
-                    "genre":"Supereroi",
-                    "releaseDate":"2015",
-                    "last_modified":"1553098834",
-                    "rating":"0",
-                    "rating_5based":0,
-                    "backdrop_path":[],
-                    "youtube_trailer":"HAYQG0mYGWs",
-                    "episode_run_time":"0",
-                    "category_id":"316"
-                   },
-             "episodes":{"1":[{"id":"58839",
-                               "episode_num":1,
-                               "title":"Daredevil 1x01",
-                               "container_extension":"mp4",
-                               "info":{
-                                 "duration_secs":3041,
-                                 "duration":"00:50:41",
-                                 "video":{"index":0,"codec_name":"h264","codec_long_name":"H.264 \/ AVC \/ MPEG-4 AVC \/ MPEG-4 part 10",
-                                   "profile":"High",
-                                   "codec_type": "video",
-                                   "codec_time_base": "1\/50",
-                                   "codec_tag_string":"avc1",
-                                   "codec_tag":"0x31637661",
-                                   "width":720,"height":400,
-                                   "coded_width":720,
-                                   "coded_height":400,
-                                   "has_b_frames":2,
-                                   "sample_aspect_ratio":"80:81",
-                                   "display_aspect_ratio":"16:9",
-                                   "pix_fmt":"yuv420p",
-                                   "level":31,
-                                   "color_range":"tv",
-                                   "color_space":"smpte170m",
-                                   "color_transfer":"bt709","color_primaries":"bt470bg","chroma_location":"left","refs":1,"is_avc":"true",
-                                   "nal_length_size":"4",
-                                   "r_frame_rate":"25\/1","avg_frame_rate":"25\/1","time_base":"1\/90000","start_pts":0,"start_time":"0.000000","duration_ts":273690000,"duration":"3041.000000","bit_rate":"632680",
-                                   "bits_per_raw_sample":"8","nb_frames":"76025",
-                                   "disposition":{"default":1,"dub":0,"original":0,"comment":0,"lyrics":0,"karaoke":0,"forced":0,"hearing_impaired":0,"visual_impaired":0,"clean_effects":0,"attached_pic":0,"timed_thumbnails":0},
-                                   "tags":{"creation_time":"2015-10-22T17:38:07.000000Z","language":"und","handler_name":"VideoHandler"}
-                                 },
-                                 "audio":{"index":1,"codec_name":"aac","codec_long_name":"AAC (Advanced Audio Coding)","profile":"LC","codec_type":"audio","codec_time_base":"1\/48000","codec_tag_string":"mp4a","codec_tag":"0x6134706d","sample_fmt":"fltp","sample_rate":"48000","channels":2,"channel_layout":"stereo","bits_per_sample":0,"r_frame_rate":"0\/0","avg_frame_rate":"0\/0","time_base":"1\/48000","start_pts":0,"start_time":"0.000000","duration_ts":145968128,"duration":"3041.002667","bit_rate":"160218","max_bit_rate":"200000","nb_frames":"142547",
-                                          "disposition":{"default":1,"dub":0,"original":0,"comment":0,"lyrics":0,"karaoke":0,"forced":0,"hearing_impaired":0,"visual_impaired":0,"clean_effects":0,"attached_pic":0,"timed_thumbnails":0},
-                                                "tags":{"creation_time":"2015-10-22T17:38:07.000000Z","language":"und","handler_name":"Stereo"}
-                                 },
-                                 "bitrate":799
-                               },
-                               "custom_sid":"",
-                               "added":"1553098780",
-                               "season":1,
-                               "direct_source":""
-                             },]
-         */
 
         var series = [];
 
         var res = _req.call(this, { action: "get_series_info", series_id: id});
-        _debug.call(this, JSON.stringify(res), "Xtream:getSeriesInfo")
+        _debug.call(this, JSON.stringify(res), "Xtream:getSeriesInfo");
 
-        if(res.episodes){
+        if(res && res.episodes){
             for (var i in res.episodes) {
                 for(var j in res.episodes[i] ){
 
-                    var cn = res.episodes[i][j].info && res.episodes[i][j].info.video && res.episodes[i][j].info.video.codec_name ? res.episodes[i][j].info.video.codec_name : '';
-                    var cw = res.episodes[i][j].info && res.episodes[i][j].info.video && res.episodes[i][j].info.video.coded_width ? res.episodes[i][j].info.video.coded_width: '';
-                    var ch = res.episodes[i][j].info && res.episodes[i][j].info.video && res.episodes[i][j].info.video.coded_height ? res.episodes[i][j].info.video.coded_height: '';
-                    var au = res.episodes[i][j].info && res.episodes[i][j].info.audio ? res.episodes[i][j].info.audio.codec_name: '';
-                    var cast = res.info && res.info.cast ? res.info.cast: '';
-                    var dir = res.info && res.info.director ? res.info.director: '';
-                    //var plot = res.info && res.info.plot ? res.info.plot: '';
+                    var ep = res.episodes[i][j];
 
-                    series.push({ id: res.episodes[i][j].id,
-                                  title: res.episodes[i][j].title ? res.episodes[i][j].title : 'unknown',
-                                  icon: res.info.cover ? res.info.cover: "skin://icons/ic_local_movie_48px.svg",
+                    var cn = ep.info && ep.info.video && ep.info.video.codec_name ? ep.info.video.codec_name : '';
+                    var cw = ep.info && ep.info.video && ep.info.video.coded_width ? ep.info.video.coded_width : '';
+                    var ch = ep.info && ep.info.video && ep.info.video.coded_height ? ep.info.video.coded_height : '';
+                    var au = ep.info && ep.info.audio && ep.info.audio.codec_name ? ep.info.audio.codec_name : '';
+
+                    var ext = this.vodExtension(ep.container_extension);
+
+                    series.push({ id: ep.id,
+                                  title: ep.title ? ep.title : 'unknown',
+                                  icon: res.info && res.info.cover ? res.info.cover: Plugin.path + "images/series.png",
                                   tagline: cn+" "+ cw+'x'+ch + ' - ' + au,
-                                  genre: res.info.genre ? res.info.genre : 'unknown',
-                                  //description: cast + " - " + dir+"\n"+ plot ,
-                                  year: res.info.releaseDate ? res.info.releaseDate: '',
+                                  genre: res.info && res.info.genre ? res.info.genre : 'unknown',
+                                  year: res.info && res.info.releaseDate ? res.info.releaseDate: '',
                                   vtype: 'tvseries' ,
-                                  season: {number: res.episodes[i][j].season},
-                                  episode: {title:res.episodes[i][j].title ? res.episodes[i][j].title : 'unknown' ,number:res.episodes[i][j].episode_num},
-                                  duration:res.episodes[i][j].info && res.episodes[i][j].info.duration ? res.episodes[i][j].info.duration: '',
-                                  source:{url:    this.baseUrl().playerApi + "/series/" + this.credentials().username + "/" + this.credentials().password + "/" + res.episodes[i][j].id+ "." + res.episodes[i][j].container_extension}
+                                  season: {number: ep.season},
+                                  episode: {title: ep.title ? ep.title : 'unknown' ,number: ep.episode_num},
+                                  duration: ep.info && ep.info.duration ? ep.info.duration: '',
+                                  source:{url:    this.baseUrl().playerApi + "/series/" + this.credentials().username + "/" + this.credentials().password + "/" + ep.id+ "." + ext}
                                  });
                 }
             }
@@ -800,66 +958,6 @@ var Xtream = (function () {
          return series;
 
     };
-
-
-    Xtream.prototype.getEpg = function() {
-        /*
-          <tv  ......
-            <channel id="">
-              <display-name>TeenNick</display-name>
-              <icon src="http://webtv.aystream.com/webtv/loghi/teennick.png" />
-           </channel>
-           <programme start="20191205115800 +0100" stop="20191205133600 +0100" channel="Premium Cinema HD" >
-             <title>Il Viaggio Di Fanny</title>
-             <desc>Regia di L. Doillon; FRA 2016 - Commovente film vincitore del Giffoni 2016, basato sulla vera storia di Fanny Ben-Ami, una ragazzina ebrea che nel 1943, durante l&apos;occupazione tedesca in Francia, viene mandata insieme alle due sorelle in una colonia in montagna. Un viaggio emozionante sull&apos;amicizia e la liberta&apos; raccontato attraverso gli occhi dei bambini(n)</desc>
-           </programme>
-        */
-
-        var res = _reqEpg.call(this);
-        _debug.call(this, JSON.stringify(res), "Xtream:getEpg")
-//        _debug.call(this, res.tv.channel[1], "Xtream:getEpg")
-//        return res;
-
-    };
-
-
-
-
-    /*
-     *  Seasons
-     *  Returns an array of seasons for the show. Each element of the array is an object.
-     *  { title: title, episodes: { title: title, path: path } }
-     */
-/*    Xtream.prototype.getEpg = function() {
-
-        var res = _reqEpg.call(this);
-        _debug.call(this, JSON.stringify(res), "Xtream:getEpg")
-        return res;
-
-    };
-*/
-    Xtream.prototype.getAnnouncement = function() {
-
-/*
-POST /response_api.php HTTP/1.1
-User-Agent: IPTV Smarters Pro
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 116
-Host: api-android.whmcssmarters.com
-Connection: close
-Accept-Encoding: gzip, deflate
-action=getAnnouncement&sc=3bcc1524a81f1796ac58cc1091683606&apikey=K60b0ad74709c08209e4b5e0efcb7a814&rand_num=5869015
-*/
-
-
-        var res = false;
-
-
-        return res;
-
-    };
-
-
 
 
     return Xtream;

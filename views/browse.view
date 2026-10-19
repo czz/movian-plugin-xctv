@@ -1,0 +1,340 @@
+#import "skin://theme.view"
+#import "skin://styles/style_grid.view"
+
+// XCtv browse — sezioni Film / Serie TV:
+//   [rail categorie | griglia poster]
+// La rail e' page.model.groups (xidx/sel), i poster sono
+// page.model.nodes. Il cambio categoria e' in-place via
+// model.eventSink "group:N" (come la pagina live).
+// Left sulla rail apre il drawer app (model.menu).
+
+$view.menu = 0;   // drawer sezioni app
+$view.ctx  = 0;   // popup contestuale poster
+
+onEvent(back, { $view.ctx = 0; focus("postergrid"); }, $view.ctx);
+onEvent(back, { $view.menu = 0; focus("catlist"); }, $view.menu && !$view.ctx);
+
+widget(container_z, {
+
+  // sfondo scuro
+  widget(quad, {
+    color: [0.05, 0.06, 0.08];
+  });
+
+  widget(container_x, {
+
+    // ====== rail categorie ======
+    widget(container_z, {
+      width: 12em;
+
+      // left oltre la rail -> drawer sezioni app 
+      onEvent(left, { $view.menu = 1; focus("menulist"); }, !$view.menu);
+
+      widget(quad, {
+        color: [0.13, 0.16, 0.19];
+        alpha: 0.97;
+      });
+
+      widget(container_y, {
+
+        widget(label, {
+          caption: _("Categorie");
+          size: 1.05em;
+          height: 2.5em;
+          padding: [1em, 0];
+          color: 0.95;
+        });
+
+        widget(list_y, {
+          id: "catlist";
+          navWrap: true;
+          chaseFocus: true;
+          filterConstraintY: true;
+
+          cloner($self.model.groups, container_z, {
+            height: 2.7em;
+            focusable: true;
+            selectOnFocus: true;
+
+            suggestFocus($self.sel);
+
+            ListItemBevel();
+            ListItemHighlight();
+
+            // prima ricarica i poster (i cloni vengono ricreati),
+            // poi sposta il focus sulla griglia fresca
+            onEvent(activate, {
+              fireEvent(deliverEvent($parent.model.eventSink,
+                                     fmt("group:%d", $self.xidx)));
+              focus("postergrid");
+            });
+
+            widget(container_x, {
+              padding: [1em, 0];
+              spacing: 0.6em;
+
+              widget(label, {
+                caption: $self.metadata.title;
+                size: 0.95em;
+                color: 0.9;
+                filterConstraintX: true;
+                ellipsize: true;
+                align: center;
+              });
+
+              widget(icon, {
+                source: "skin://icons/ic_check_48px.svg";
+                size: 1em;
+                color: [0.13, 0.59, 0.95];
+                hidden: !$self.sel;
+              });
+            });
+          });
+        });
+      });
+    });
+
+    // ====== griglia poster ======
+    widget(container_z, {
+      weight: 1;
+      filterConstraintX: true;
+
+      widget(array, {
+
+        id: "postergrid";
+        margin: [0.8em, 0.8em, 0.8em, 0.8em];
+
+        Xspacing: 0.7em;
+        Yspacing: 0.7em;
+
+        childTilesX: select($ui.aspect > 1, 7, 3);
+        childTilesY: 4;
+        chaseFocus: true;
+        navWrap: true;
+
+        clipOffsetTop: 1em;
+        scrollThresholdTop: 2em;
+        scrollThresholdBottom: $ui.universeBottomHeight;
+        clipOffsetBottom: $ui.universeBottomHeight;
+        clipAlpha: 0.2;
+        clipBlur: 1;
+
+        cloner($self.model.nodes, container_y, {
+
+          hidden: $self.type == "separator";
+
+          focusable: true;
+          onEvent(activate, navOpen($self.url, void, $self, $parent.model, void, $parent.url));
+
+          // long-press: menu contestuale sul poster
+          // (Riproduci diretta o Dettagli — )
+          onEvent(itemMenu, {
+            $view.ctx = 1;
+            $view.ctxplay = $self.metadata.playurl;
+            $view.ctxinfo = $self.url;
+            focus("ctxlist");
+          });
+
+          widget(container_z, {
+
+            widget(quad, {
+              color: [0.10, 0.12, 0.15];
+              alpha: select(isNavFocused() + isHovered(), 1, 0.85);
+            });
+
+            widget(image, {
+              source: $self.metadata.icon;
+              style: "GridBackdrop";
+            });
+
+            // badge rating in alto a destra
+            widget(container_x, {
+              align: right;
+              hidden: isVoid($self.metadata.rating);
+
+              widget(container_z, {
+                widget(quad, {
+                  color: 0;
+                  alpha: 0.75;
+                });
+                widget(label, {
+                  caption: fmt("%.1f", $self.metadata.rating * 1.0);
+                  size: 0.7em;
+                  padding: [0.35em, 0.1em];
+                  color: [0.565, 0.792, 0.976];
+                });
+              });
+            });
+
+            widget(border, {
+              border: 0.1em;
+              color: select(isNavFocused(), [0.13, 0.59, 0.95], 0);
+            });
+          });
+
+          widget(label, {
+            style: "GridLabel";
+            caption: $self.metadata.title;
+            maxlines: 2;
+          });
+        });
+      });
+    });
+  });
+
+  // ---- drawer sezioni app (stesso della pagina live) ----
+  widget(container_x, {
+    hidden: !$view.menu;
+
+    widget(container_z, {
+      width: 15em;
+
+      widget(quad, {
+        color: [0.09, 0.11, 0.14];
+        alpha: 0.98;
+      });
+
+      widget(container_y, {
+
+        widget(label, {
+          caption: "XCtv";
+          size: 1.2em;
+          height: 2.2em;
+          padding: [1em, 0];
+          color: [0.565, 0.792, 0.976];
+          font: "skin://fonts/RobotoCondensed-Light.ttf";
+        });
+
+        widget(list_y, {
+          id: "menulist";
+          navWrap: true;
+          chaseFocus: true;
+          filterConstraintY: true;
+
+          cloner($self.model.menu, container_z, {
+            height: 3em;
+            focusable: true;
+            selectOnFocus: true;
+
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate,
+                    navOpen($self.url),
+                    $self.url != '');
+            onEvent(activate, {
+              $view.menu = 0;
+              focus("postergrid");
+            }, $self.url == '');
+
+            onEvent(right, {
+              $view.menu = 0;
+              focus("postergrid");
+            }, true);
+
+            widget(container_x, {
+              padding: [1em, 0];
+              spacing: 0.8em;
+
+              widget(icon, {
+                source: $self.metadata.icon;
+                size: 1.2em;
+                color: select(isNavFocused(), [0.565, 0.792, 0.976], 0.7);
+              });
+
+              widget(label, {
+                caption: $self.metadata.title;
+                size: 1em;
+                color: select(isNavFocused(), 1, 0.85);
+                filterConstraintX: true;
+                ellipsize: true;
+                align: center;
+              });
+            });
+          });
+        });
+      });
+    });
+
+    space(1);
+  });
+
+  // ---- popup contestuale poster (long-press) ----
+  widget(container_z, {
+    hidden: !$view.ctx;
+
+    widget(quad, {
+      color: 0;
+      alpha: 0.4;
+      onEvent(back, { $view.ctx = 0; focus("postergrid"); }, true);
+    });
+
+    widget(container_x, {
+      align: center;
+
+      widget(container_z, {
+        width: 16em;
+
+        widget(quad, {
+          color: [0.11, 0.13, 0.16];
+          alpha: 0.98;
+        });
+        widget(border, {
+          border: 0.05em;
+          color: 0.3;
+        });
+
+        widget(list_y, {
+          id: "ctxlist";
+          navWrap: true;
+          filterConstraintY: true;
+
+          // Riproduci diretta (solo VOD: le serie aprono gli episodi)
+          widget(container_z, {
+            hidden: isVoid($view.ctxplay) || $view.ctxplay == '';
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              fireEvent(navOpen($view.ctxplay));
+            });
+
+            widget(label, {
+              caption: _("Riproduci");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Dettagli
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              fireEvent(navOpen($view.ctxinfo));
+            });
+
+            widget(label, {
+              caption: _("Dettagli");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+        });
+      });
+
+      space(1);
+    });
+  });
+
+  ScrollBar("postergrid", 4em, $ui.universeBottomHeight);
+});

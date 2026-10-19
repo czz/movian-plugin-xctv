@@ -1,0 +1,976 @@
+language: Danish
+native: Dansk
+
+id: Server (host[:port] o URL)
+msg: Server (host[:port] eller URL)
+
+id: Username
+msg: Brugernavn
+
+id: Password
+msg: Adgangskode
+
+id: Nome playlist
+msg: Navn på liste
+
+id: Abilita EPG
+msg: Aktiver EPG
+
+id: URL XMLTV personalizzato (opzionale)
+msg: Brugerdefineret XMLTV-URL (valgfri)
+
+id: Aggiorna EPG ogni (ore)
+msg: Opdater EPG hver (time)
+
+id: Correggi orario EPG (minuti)
+msg: EPG-tidskorrektion (minutter)
+
+id: Aggiorna EPG all'avvio
+msg: Opdater EPG ved start
+
+id: Log di debug
+msg: Debug-log
+
+id: Riproduzione
+msg: Afspilning
+
+id: Formato stream live
+msg: Livestream-format
+
+id: Automatico
+msg: Automatisk
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Film-/episodeformat
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Kanalinfo-varighed efter zap (sek)
+
+id: Riprendi ultimo canale all'avvio
+msg: Genoptag sidste kanal ved start
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Ekstra HTTP-headers (Navn: værdi pr. linje)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Genindlæs liste hver (min, 0 = aldrig)
+
+id: Aspetto
+msg: Udseende
+
+id: Mostra numeri canale in guida
+msg: Vis kanalnumre i guiden
+
+id: Mostra loghi canale in guida
+msg: Vis kanallogoer i guiden
+
+id: Ore visibili in guida
+msg: Synlige timer i guiden
+
+id: Opacita' pannelli (%)
+msg: Panel-ugennemsigtighed (%)
+
+id: Colore accento
+msg: Accentfarve
+
+id: Blu
+msg: Blå
+
+id: Verde
+msg: Grøn
+
+id: Arancione
+msg: Orange
+
+id: Rosso
+msg: Rød
+
+id: Viola
+msg: Violet
+
+id: Controllo genitori
+msg: Forældrekontrol
+
+id: PIN (vuoto = disattivo)
+msg: PIN (tom = slået fra)
+
+id: Ordinamento cataloghi
+msg: Katalog-sortering
+
+id: Predefinito
+msg: Standard
+
+id: Nome A-Z
+msg: Navn A-Z
+
+id: Aggiunti di recente
+msg: Senest tilføjet
+
+id: Voto
+msg: Bedømmelse
+
+id: Account
+msg: Konto
+
+id: Verifica connessione
+msg: Test forbindelse
+
+id: Connessione OK
+msg: Forbindelse OK
+
+id: Errore
+msg: Fejl
+
+id: Inserisci credenziali…
+msg: Indtast login…
+
+id: Ricarica EPG adesso
+msg: Genindlæs EPG nu
+
+id: EPG: ricarico in corso…
+msg: EPG: genindlæser…
+
+id: EPG aggiornata
+msg: EPG opdateret
+
+id: EPG non disponibile
+msg: EPG ikke tilgængelig
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — Xtream Codes-klient til Movian.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Konfigurer server og login ovenfor, og åbn derefter tjenesten fra start.
+
+id: Server (host:porta o URL)
+msg: Server (host:port eller URL)
+
+id: Credenziali salvate
+msg: Login gemt
+
+id: Playlist aggiornata
+msg: Liste opdateret
+
+id: Sleep timer disattivato
+msg: Sleep-timer slået fra
+
+id: Sleep timer: spegnimento tra
+msg: Sleep-timer: stopper om
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Sleep-timer: afspilning stoppet
+
+id: Backup salvato
+msg: Backup gemt
+
+id: Backup fallito
+msg: Backup mislykkedes
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Backup gendannet (favoritter træder i kraft ved genstart)
+
+id: Ripristino fallito
+msg: Gendannelse mislykkedes
+
+id: Preferiti
+msg: Favoritter
+
+id: Recenti
+msg: Seneste
+
+id: Tutti i canali
+msg: Alle kanaler
+
+id: Guida TV
+msg: TV-guide
+
+id: Multi-view
+msg: Multivisning
+
+id: Film
+msg: Film
+
+id: Serie TV
+msg: Serier
+
+id: Cerca
+msg: Søg
+
+id: Registrazioni
+msg: Optagelser
+
+id: Guida
+msg: Hjælp
+
+id: Impostazioni
+msg: Indstillinger
+
+id: Playlist attiva
+msg: Aktiv liste
+
+id: OK passa alla playlist successiva
+msg: OK skifter til næste liste
+
+id: Nome mostrato nel menu
+msg: Navn vist i menuen
+
+id: Server
+msg: Server
+
+id: host:porta o URL Xtream Codes
+msg: host:port eller Xtream Codes-URL
+
+id: URL EPG
+msg: EPG-URL
+
+id: Lascia vuoto per usare la guida del server
+msg: Lad stå tom for at bruge serverens guide
+
+id: Tipo playlist
+msg: Listetype
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Gælder kun den nye liste (Tilføj)
+
+id: Refresh automatico playlist
+msg: Automatisk liste-opdatering
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Genindlæser lister og guide med intervaller
+
+id: Aggiungi playlist…
+msg: Tilføj liste…
+
+id: Modifica playlist attiva…
+msg: Rediger aktiv liste…
+
+id: Rimuovi playlist attiva
+msg: Fjern aktiv liste
+
+id: Guida TV (EPG)
+msg: TV-guide (EPG)
+
+id: URL XMLTV personalizzato
+msg: Brugerdefineret XMLTV-URL
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Tom = serverens xmltv.php
+
+id: Aggiorna EPG ogni
+msg: Opdater EPG hver
+
+id: Intervallo di refresh della guida
+msg: Guide-opdateringsinterval
+
+id: Correggi orario EPG
+msg: EPG-tidskorrektion
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Forskyd programmer hvis guiden er forskudt
+
+id: Formato film / episodi
+msg: Film- / episodeformat
+
+id: Durata info canale
+msg: Kanalinfo-varighed
+
+id: Sempre visibile
+msg: Altid synlig
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: Panelets synlighedstid efter zap
+
+id: Riprendi ultimo canale
+msg: Genoptag sidste kanal
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: Ved start åbner guiden på den senest sete kanal
+
+id: UA custom per API e stream sul server
+msg: Brugerdefineret UA til API og streams på serveren
+
+id: Header HTTP extra
+msg: Ekstra HTTP-headers
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: Én pr. linje: \"Navn: værdi\" — gælder API og guide
+
+id: Sleep timer
+msg: Sleep-timer
+
+id: Ferma la riproduzione dopo N minuti
+msg: Stopper afspilning efter N minutter
+
+id: Numeri canale
+msg: Kanalnumre
+
+id: Numero progressivo nella guida
+msg: Løbenummer i guiden
+
+id: Loghi canale
+msg: Kanallogoer
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Plakat-rækkefølge i Film- og Serie-sektioner
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: Bredde af EPG-gitterets tidsvindue
+
+id: Opacita' pannelli
+msg: Panel-ugennemsigtighed
+
+id: Trasparenza di guide e menu sul video
+msg: Gennemsigtighed af guide og menuer over video
+
+id: Colore di indicatori e linea \"adesso\"
+msg: Farve på indikatorer og \"nu\"-linjen
+
+id: Ripristina ordine e numeri canali
+msg: Nulstil rækkefølge og kanalnumre
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Fortryd flytninger og brugerdefineret nummerering
+
+id: Ripristina canali e gruppi nascosti
+msg: Gendan skjulte kanaler og grupper
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Vis alt skjult igen
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Ikke sat
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Lås grupper med voksenindhold
+
+id: Gruppi bloccati
+msg: Låste grupper
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: \"Voksen\"-grupper kræver PIN for at åbne
+
+id: Imposta un PIN per attivare il blocco
+msg: Angiv en PIN for at aktivere låsning
+
+id: Gruppo live
+msg: Live-gruppe
+
+id: Categoria film
+msg: Film-kategori
+
+id: Categoria serie
+msg: Serie-kategori
+
+id: Blocca
+msg: Lås
+
+id: Esporta backup
+msg: Eksporter backup
+
+id: Salva impostazioni, preferiti e liste in
+msg: Gemmer indstillinger, favoritter og lister til
+
+id: Ripristina backup
+msg: Gendan backup
+
+id: Carica impostazioni e liste dal file di backup
+msg: Indlæser indstillinger og lister fra backupfilen
+
+id: Versione
+msg: Version
+
+id: Stato
+msg: Status
+
+id: Scadenza
+msg: Udløb
+
+id: Connessioni max
+msg: Maks. forbindelser
+
+id: Impostazioni Movian…
+msg: Movian-indstillinger…
+
+id: Pagina impostazioni nativa del plugin
+msg: Pluginets egen indstillingsside
+
+id: Ripristinati
+msg: Gendannet
+
+id: elementi
+msg: elementer
+
+id: Nulla da ripristinare
+msg: Intet at gendanne
+
+id: (riapri il plugin)
+msg: (genåbn pluginnet)
+
+id: Ordine e numerazione ripristinati
+msg: Rækkefølge og nummerering nulstillet
+
+id: Playlist rimossa
+msg: Liste fjernet
+
+id: Inserisci il PIN
+msg: Indtast PIN
+
+id: PIN errato
+msg: Forkert PIN
+
+id: Auto
+msg: Auto
+
+id: Tutto schermo
+msg: Fuld skærm
+
+id: Formato
+msg: Format
+
+id: Registrazione salvata (
+msg: Optagelse gemt (
+
+id: MB) in
+msg: MB) til
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: Optagelse ikke tilgængelig på denne kanal
+
+id: Registrazione avviata
+msg: Optagelse startet
+
+id: canale
+msg: kanal
+
+id: Registrazione fallita
+msg: Optagelse mislykkedes
+
+id: Registrazione completata
+msg: Optagelse færdig
+
+id: Registrazione programmata avviata
+msg: Planlagt optagelse startet
+
+id: Registrazione programmata fallita
+msg: Planlagt optagelse mislykkedes
+
+id: Aggiunto ai preferiti
+msg: Tilføjet til favoritter
+
+id: Rimosso dai preferiti
+msg: Fjernet fra favoritter
+
+id: Catch-up non supportato da questa playlist
+msg: Catch-up understøttes ikke af denne liste
+
+id: Numero canale (vuoto = automatico)
+msg: Kanalnummer (tom = auto)
+
+id: Numero assegnato
+msg: Nummer tildelt
+
+id: Numerazione automatica
+msg: Automatisk nummerering
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Nyt kanalnavn (tom = original)
+
+id: Canale rinominato in \"
+msg: Kanal omdøbt til \"
+
+id: Nome originale ripristinato
+msg: Originalt navn gendannet
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Kanal skjult (gendan under Indstillinger)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Gruppe skjult (gendan under Indstillinger)
+
+id: Continua a guardare
+msg: Se videre
+
+id: Tutti
+msg: Alle
+
+id: Playlist
+msg: Liste
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: System
+
+id: Informazioni
+msg: Information
+
+id: Modifica playlist
+msg: Rediger liste
+
+id: Aggiungi playlist
+msg: Tilføj liste
+
+id: Tipo
+msg: Type
+
+id: host:porta o URL del pannello Xtream
+msg: host:port eller Xtream-panel-URL
+
+id: URL EPG (opzionale)
+msg: EPG-URL (valgfri)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Tom = serverens xmltv.php / listens url-tvg
+
+id: Annulla
+msg: Annuller
+
+id: Il server/URL e' obbligatorio
+msg: Server/URL er påkrævet
+
+id: Username obbligatorio per Xtream
+msg: Brugernavn påkrævet for Xtream
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: Indtast MAC (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Forbindelse mislykkedes
+
+id: Playlist aggiunta
+msg: Liste tilføjet
+
+id: Stagione
+msg: Sæson
+
+id: Informazioni non disponibili
+msg: Information ikke tilgængelig
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Ingen programinfo for denne kanal
+
+id: Registrazione programmata rimossa
+msg: Planlagt optagelse fjernet
+
+id: Registrazione programmata
+msg: Planlagt optagelse
+
+id: alle
+msg: kl.
+
+id: Canale non trovato
+msg: Kanal ikke fundet
+
+id: Registrazioni programmate
+msg: Planlagte optagelser
+
+id: Nessuna registrazione programmata
+msg: Ingen planlagte optagelser
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Åbn en kanals programoversigt og vælg \"Optag\" på et kommende program
+
+id: Navigazione
+msg: Navigation
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Pile til at navigere, OK/klik for at bekræfte. Højre museknap eller langt tryk (touch/fjernbetjening) = kontekstmenu. ESC/Tilbage = tilbage.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: Kanalgrupper til venstre, kanaler til højre. OK på en kanal tuner den; den sidst sete kanal genstarter ved åbning hvis \"Genoptag sidste kanal\" er slået til i Indstillinger.
+
+id: Preferiti e Recenti
+msg: Favoritter og Seneste
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Langt tryk på en kanal → \"Favoritter\": den vises i gruppen \"Favoritter\" øverst. Sete kanaler ryger i \"Seneste\", sorteret efter sidst set.
+
+id: Menu canale (long-press)
+msg: Kanalmenu (langt tryk)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Se, Programoversigt (dagens EPG), Catch-up, Favoritter, Skjul kanal, Omdøb, Op/ned (manuelt sortering), Kanalnummer (brugerdefineret nummerering), Multivisning.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Gruppemenu (langt tryk på gruppe)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Op/ned for at omarrangere grupper, Skjul gruppe, Gendan skjulte. Rækkefølgen gemmes.
+
+id: Registrazione
+msg: Optagelse
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: Mens du ser: REC-ikonet i afspillerbjælken (OK på videoen viser/skjuler info og bjælke) optager streamen til en .ts-fil i mappen recordings/ indtil stop.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Kanalens programoversigt → kommende program → \"Optag\"-badge → OK. Optagelsen starter af sig selv til tiden og stopper ved programmets slut. Liste og annulleringer findes under \"Optagelser\" i menuen. Én ad gangen: optagelse mens du ser en anden kanal kan fejle, hvis udbyderen kun tillader 1 forbindelse.
+
+id: Rivedi (catch-up)
+msg: Catch-up (genafspil)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Kun tilgængelig hvis udbyderen aktiverer arkiv på kanalen (tv_archive-flag): langt tryk på kanalen → \"Catch-up\", eller i programoversigten har færdige programmer det blå badge. Hvis din udbyder ikke understøtter timeshift, vises valget ikke.
+
+id: Zap numerico
+msg: Numerisk zap
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Tast kanalnummeret med tasterne 0-9 og bekræft med OK/Enter. \"Kanalnummer\" i kontekstmenuen tildeler et brugerdefineret nummer.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Menu → Multivisning: 2x2-mosaik med dæmpet lyd; OK på en felt åbner kanalen på fuld skærm.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Menu → Søg: søger kanaler, film og serier.
+
+id: Interfaccia
+msg: Interface
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Menu → Indstillinger → Udseende: accentfarve (guide-markeringer og -rammer), panel-ugennemsigtighed, kanalnumre, logoer. Ændringer gælder med det samme.
+
+id: Nascondere e bloccare
+msg: Skjul og lås
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Skjul kanaler/grupper via kontekstmenuen; gendan via Indstillinger eller gruppemenuen. Med en PIN kan du låse hele kategorier (gruppens kontekstmenu).
+
+id: Playlist multiple
+msg: Flere lister
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Indstillinger → Lister: flere Xtream-konti/kilder, M3U eller Stalker, hurtig skift og backup/gendannelse af præferencer.
+
+id: Connessioni
+msg: Forbindelser
+
+id: Trial
+msg: Prøve
+
+id: Creato il
+msg: Oprettet
+
+id: Protocollo
+msg: Protokol
+
+id: Timezone
+msg: Tidszone
+
+id: Orario server
+msg: Servertid
+
+id: non caricata
+msg: ikke indlæst
+
+id: Apri
+msg: Åbn
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Konfigurer en Xtream Codes-server (host, brugernavn, adgangskode)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, afspilning, udseende, forældrekontrol
+
+id: Categorie
+msg: Kategorier
+
+id: Riproduci
+msg: Afspil
+
+id: Dettagli
+msg: Detaljer
+
+id: Cerca canali, film e serie…
+msg: Søg kanaler, film og serier…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Tast og tryk OK for at søge kanaler, film og serier
+
+id: Seleziona un canale per iniziare
+msg: Vælg en kanal for at starte
+
+id: Gruppi
+msg: Grupper
+
+id: No information
+msg: Ingen information
+
+id: Guarda
+msg: Se
+
+id: Palinsesto
+msg: Programoversigt
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Fjern fra favoritter
+
+id: Aggiungi ai preferiti
+msg: Tilføj til favoritter
+
+id: Nascondi canale
+msg: Skjul kanal
+
+id: Rinomina canale
+msg: Omdøb kanal
+
+id: Sposta su
+msg: Flyt op
+
+id: Sposta giù
+msg: Flyt ned
+
+id: Numero canale…
+msg: Kanalnummer…
+
+id: Nascondi gruppo
+msg: Skjul gruppe
+
+id: Ripristina nascosti
+msg: Gendan skjulte
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Optag
+
+id: Stagioni
+msg: Sæsoner
+
+id: Canali — OK: assegna al tile selezionato
+msg: Kanaler — OK: tildel til valgt felt
+
+
+id: Nome playlist:
+msg: Listenavn:
+
+id: Server (host:porta o URL):
+msg: Server (host:port eller URL):
+
+id: Username:
+msg: Brugernavn:
+
+id: Password:
+msg: Adgangskode:
+
+id: URL EPG (vuoto = server Xtream):
+msg: EPG-URL (tom = Xtream-server):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (tom = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Ekstra headers (Navn: værdi, én pr. linje):
+
+id: ore
+msg: timer
+
+id: attivi
+msg: aktive
+
+id: Nessuno
+msg: Ingen
+
+id: Movian (predefinito)
+msg: Movian (standard)
+
+id: Programma
+msg: Program
+
+id: file di backup non leggibile
+msg: backupfil ikke læsbar
+
+id: URL del file lista .m3u/.m3u8
+msg: URL til .m3u/.m3u8-listefilen
+
+id: URL del portale
+msg: Portal-URL
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC-adresse (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Ikke påkrævet
+
+id: Non richiesta
+msg: Ikke påkrævet
+
+id: A fine episodio parte automaticamente il successivo
+msg: Når en episode slutter, starter den næste automatisk
+
+id: Attivo: sarai avvisato all'inizio
+msg: Aktiv: du får besked ved start
+
+id: Autoplay episodio successivo
+msg: Afspil næste episode automatisk
+
+id: Avvisami quando inizia
+msg: Giv mig besked ved start
+
+id: Cartella non scrivibile
+msg: Mappe ikke skrivbar
+
+id: Cartella registrazioni
+msg: Optagemappe
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Optagemappe (tom = standard)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Optagemappe (tom = standard):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: Optagemappe ikke skrivbar, standard bruges
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Kun tilgængelig hvis udbyderen aktiverer arkivet på kanalen (tv_archive-flag): direkte klik på et afsluttet program i guidens gitter, langt tryk på kanalen → \"Se igen\" eller mærket i kanalens oversigt. Hvis udbyderen ikke understøtter timeshift vises funktionen ikke.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Hvor .ts-filer gemmes — tom = plugin-lager
+
+id: Elimina
+msg: Slet
+
+id: Eliminare la registrazione
+msg: Slet optagelsen
+
+id: Episodio non trovato
+msg: Episode ikke fundet
+
+id: Esporta preferiti in M3U
+msg: Eksportér favoritter til M3U
+
+id: Esportazione fallita
+msg: Eksport mislykkedes
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: Sete episoder har et flueben i listen. Når en episode slutter starter den næste automatisk (kan slås fra i Indstillinger → Afspilning → \"Afspil næste episode automatisk\").
+
+id: I file .ts registrati appariranno qui
+msg: Optagne .ts-filer vises her
+
+id: IN CORSO
+msg: IGANGVÆRENDE
+
+id: In corso
+msg: Igangværende
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: Mens du ser: REC-ikonet i afspillerlinjen (OK på video viser/skjuler info og linje) optager streamen til en .ts-fil indtil stop. Optagne filer kan afspilles og slettes via Menu → \"Optagelser\"; destinationsmappen ændres i Indstillinger → Afspilning.
+
+id: Nessun preferito da esportare
+msg: Ingen favoritter at eksportere
+
+id: Nessun promemoria attivo
+msg: Ingen aktive påmindelser
+
+id: Nessun'altra puntata in palinsesto
+msg: Ingen andre afsnit i oversigten
+
+id: Nessuna puntata futura da registrare
+msg: Ingen fremtidige afsnit at optage
+
+id: Nessuna registrazione completata
+msg: Ingen afsluttede optagelser
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Kanalens oversigt → fremtidigt program → mærke \"Optag\" → OK. Rækken \"Påmindelse og serieoptagelse\" under programmet tillader også kun en besked ved start (uden optagelse) og optagelse af alle afsnit med samme titel. Optagelser starter af sig selv og stopper ved programmets slut. En ad gangen: at optage mens du ser en anden kanal kan mislykkes, hvis udbyderen kun tillader 1 forbindelse.
+
+id: Predefinita
+msg: Standard
+
+id: Preferiti esportati
+msg: Favoritter eksporteret
+
+id: Promemoria
+msg: Påmindelse
+
+id: Promemoria attivato
+msg: Påmindelse aktiveret
+
+id: Promemoria attivo
+msg: Påmindelse aktiv
+
+id: Promemoria e registrazione serie
+msg: Påmindelse og serieoptagelse
+
+id: Promemoria rimosso
+msg: Påmindelse fjernet
+
+id: Promemorie
+msg: Påmindelser
+
+id: Prossimo episodio
+msg: Næste episode
+
+id: Registra tutta la serie
+msg: Optag hele serien
+
+id: Registrazione eliminata
+msg: Optagelse slettet
+
+id: Registrazione programmata, promemoria e serie
+msg: Planlagt optagelse, påmindelse og serie
+
+id: Registrazione singola puntata
+msg: Optagelse af ét afsnit
+
+id: Salva i canali preferiti come playlist standard
+msg: Gem favoritkanaler som standard-playliste
+
+id: Sta iniziando
+msg: Begynder nu
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Brug mærket \"Optag\" på programrækken
+
+id: canali
+msg: kanaler
+
+id: cartella non scrivibile
+msg: mappe ikke skrivbar
+
+id: fallita
+msg: mislykkedes
+
+id: puntate
+msg: afsnit
+
+id: puntate in palinsesto
+msg: afsnit i oversigten
+

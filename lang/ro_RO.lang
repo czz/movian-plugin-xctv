@@ -1,0 +1,976 @@
+language: Romanian
+native: Română
+
+id: Server (host[:port] o URL)
+msg: Server (host[:port] sau URL)
+
+id: Username
+msg: Utilizator
+
+id: Password
+msg: Parolă
+
+id: Nome playlist
+msg: Nume listă
+
+id: Abilita EPG
+msg: Activează EPG
+
+id: URL XMLTV personalizzato (opzionale)
+msg: URL XMLTV personalizat (opțional)
+
+id: Aggiorna EPG ogni (ore)
+msg: Actualizează EPG la fiecare (ore)
+
+id: Correggi orario EPG (minuti)
+msg: Corecție orar EPG (minute)
+
+id: Aggiorna EPG all'avvio
+msg: Actualizează EPG la pornire
+
+id: Log di debug
+msg: Jurnal de depanare
+
+id: Riproduzione
+msg: Redare
+
+id: Formato stream live
+msg: Format stream live
+
+id: Automatico
+msg: Automat
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Format filme/episoade
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Durata info canal după zap (s)
+
+id: Riprendi ultimo canale all'avvio
+msg: Reia ultimul canal la pornire
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Headere HTTP extra (Nume: valoare pe rând)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Actualizează lista la fiecare (min, 0 = niciodată)
+
+id: Aspetto
+msg: Aspect
+
+id: Mostra numeri canale in guida
+msg: Arată numerele canalelor în ghid
+
+id: Mostra loghi canale in guida
+msg: Arată logo-urile canalelor în ghid
+
+id: Ore visibili in guida
+msg: Ore vizibile în ghid
+
+id: Opacita' pannelli (%)
+msg: Opacitate panouri (%)
+
+id: Colore accento
+msg: Culoare de accent
+
+id: Blu
+msg: Albastru
+
+id: Verde
+msg: Verde
+
+id: Arancione
+msg: Portocaliu
+
+id: Rosso
+msg: Roșu
+
+id: Viola
+msg: Violet
+
+id: Controllo genitori
+msg: Control parental
+
+id: PIN (vuoto = disattivo)
+msg: PIN (gol = inactiv)
+
+id: Ordinamento cataloghi
+msg: Sortare cataloage
+
+id: Predefinito
+msg: Implicit
+
+id: Nome A-Z
+msg: Nume A-Z
+
+id: Aggiunti di recente
+msg: Adăugate recent
+
+id: Voto
+msg: Notă
+
+id: Account
+msg: Cont
+
+id: Verifica connessione
+msg: Testează conexiunea
+
+id: Connessione OK
+msg: Conexiune OK
+
+id: Errore
+msg: Eroare
+
+id: Inserisci credenziali…
+msg: Introdu credențialele…
+
+id: Ricarica EPG adesso
+msg: Reîncarcă EPG acum
+
+id: EPG: ricarico in corso…
+msg: EPG: reîncărcare…
+
+id: EPG aggiornata
+msg: EPG actualizat
+
+id: EPG non disponibile
+msg: EPG indisponibil
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — client Xtream Codes pentru Movian.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Configurează serverul și credențialele mai sus, apoi deschide serviciul din pagina principală.
+
+id: Server (host:porta o URL)
+msg: Server (host:port sau URL)
+
+id: Credenziali salvate
+msg: Credențiale salvate
+
+id: Playlist aggiornata
+msg: Listă actualizată
+
+id: Sleep timer disattivato
+msg: Temporizator dezactivat
+
+id: Sleep timer: spegnimento tra
+msg: Temporizator: oprire în
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Temporizator: redare oprită
+
+id: Backup salvato
+msg: Backup salvat
+
+id: Backup fallito
+msg: Backup eșuat
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Backup restaurat (favoritele se aplică la repornire)
+
+id: Ripristino fallito
+msg: Restaurare eșuată
+
+id: Preferiti
+msg: Favorite
+
+id: Recenti
+msg: Recente
+
+id: Tutti i canali
+msg: Toate canalele
+
+id: Guida TV
+msg: Ghid TV
+
+id: Multi-view
+msg: Multi-view
+
+id: Film
+msg: Filme
+
+id: Serie TV
+msg: Seriale
+
+id: Cerca
+msg: Caută
+
+id: Registrazioni
+msg: Înregistrări
+
+id: Guida
+msg: Ajutor
+
+id: Impostazioni
+msg: Setări
+
+id: Playlist attiva
+msg: Listă activă
+
+id: OK passa alla playlist successiva
+msg: OK trece la lista următoare
+
+id: Nome mostrato nel menu
+msg: Nume afișat în meniu
+
+id: Server
+msg: Server
+
+id: host:porta o URL Xtream Codes
+msg: host:port sau URL Xtream Codes
+
+id: URL EPG
+msg: URL EPG
+
+id: Lascia vuoto per usare la guida del server
+msg: Lasă gol pentru ghidul serverului
+
+id: Tipo playlist
+msg: Tip listă
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Se aplică doar listei noi (Adaugă)
+
+id: Refresh automatico playlist
+msg: Actualizare automată a listelor
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Reîncarcă listele și ghidul la intervale
+
+id: Aggiungi playlist…
+msg: Adaugă listă…
+
+id: Modifica playlist attiva…
+msg: Editează lista activă…
+
+id: Rimuovi playlist attiva
+msg: Elimină lista activă
+
+id: Guida TV (EPG)
+msg: Ghid TV (EPG)
+
+id: URL XMLTV personalizzato
+msg: URL XMLTV personalizat
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Gol = xmltv.php al serverului Xtream
+
+id: Aggiorna EPG ogni
+msg: Actualizează EPG la fiecare
+
+id: Intervallo di refresh della guida
+msg: Interval de actualizare a ghidului
+
+id: Correggi orario EPG
+msg: Corecție orar EPG
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Decalează programele dacă ghidul e decalat
+
+id: Formato film / episodi
+msg: Format filme / episoade
+
+id: Durata info canale
+msg: Durata info canal
+
+id: Sempre visibile
+msg: Mereu vizibil
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: Timp de vizibilitate al panoului după zap
+
+id: Riprendi ultimo canale
+msg: Reia ultimul canal
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: La pornire ghidul se deschide pe ultimul canal vizionat
+
+id: UA custom per API e stream sul server
+msg: UA personalizat pentru API și streamuri
+
+id: Header HTTP extra
+msg: Headere HTTP extra
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: Câte unul pe rând: \"Nume: valoare\" — valabil pentru API și ghid
+
+id: Sleep timer
+msg: Temporizator
+
+id: Ferma la riproduzione dopo N minuti
+msg: Oprește redarea după N minute
+
+id: Numeri canale
+msg: Numere de canal
+
+id: Numero progressivo nella guida
+msg: Număr progresiv în ghid
+
+id: Loghi canale
+msg: Logo-uri canale
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Ordinea posterele în secțiunile Filme și Seriale
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: Lățimea ferestrei de timp a grilei EPG
+
+id: Opacita' pannelli
+msg: Opacitate panouri
+
+id: Trasparenza di guide e menu sul video
+msg: Transparența ghidurilor și meniurilor peste video
+
+id: Colore di indicatori e linea \"adesso\"
+msg: Culoarea indicatorilor și a liniei \"acum\"
+
+id: Ripristina ordine e numeri canali
+msg: Restabilește ordinea și numerele de canal
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Anulează mutările și numerotarea personalizată
+
+id: Ripristina canali e gruppi nascosti
+msg: Restaurează canalele și grupurile ascunse
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Afișează din nou tot ce a fost ascuns
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Nesetat
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Blochează grupurile cu conținut pentru adulți
+
+id: Gruppi bloccati
+msg: Grupuri blocate
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: Grupurile \"adulți\" cer PIN-ul la deschidere
+
+id: Imposta un PIN per attivare il blocco
+msg: Setează un PIN pentru a activa blocarea
+
+id: Gruppo live
+msg: Grup live
+
+id: Categoria film
+msg: Categorie filme
+
+id: Categoria serie
+msg: Categorie seriale
+
+id: Blocca
+msg: Blochează
+
+id: Esporta backup
+msg: Exportă backup
+
+id: Salva impostazioni, preferiti e liste in
+msg: Salvează setările, favoritele și listele în
+
+id: Ripristina backup
+msg: Restaurează backup
+
+id: Carica impostazioni e liste dal file di backup
+msg: Încarcă setările și listele din fișierul de backup
+
+id: Versione
+msg: Versiune
+
+id: Stato
+msg: Stare
+
+id: Scadenza
+msg: Expirare
+
+id: Connessioni max
+msg: Conexiuni max
+
+id: Impostazioni Movian…
+msg: Setări Movian…
+
+id: Pagina impostazioni nativa del plugin
+msg: Pagina de setări nativă a pluginului
+
+id: Ripristinati
+msg: Restaurate
+
+id: elementi
+msg: elemente
+
+id: Nulla da ripristinare
+msg: Nimic de restaurat
+
+id: (riapri il plugin)
+msg: (redeschide pluginul)
+
+id: Ordine e numerazione ripristinati
+msg: Ordine și numerotare restabilite
+
+id: Playlist rimossa
+msg: Listă eliminată
+
+id: Inserisci il PIN
+msg: Introdu PIN-ul
+
+id: PIN errato
+msg: PIN greșit
+
+id: Auto
+msg: Auto
+
+id: Tutto schermo
+msg: Ecran complet
+
+id: Formato
+msg: Format
+
+id: Registrazione salvata (
+msg: Înregistrare salvată (
+
+id: MB) in
+msg: MB) în
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: Înregistrare indisponibilă pe acest canal
+
+id: Registrazione avviata
+msg: Înregistrare pornită
+
+id: canale
+msg: canal
+
+id: Registrazione fallita
+msg: Înregistrare eșuată
+
+id: Registrazione completata
+msg: Înregistrare finalizată
+
+id: Registrazione programmata avviata
+msg: Înregistrare programată pornită
+
+id: Registrazione programmata fallita
+msg: Înregistrare programată eșuată
+
+id: Aggiunto ai preferiti
+msg: Adăugat la favorite
+
+id: Rimosso dai preferiti
+msg: Eliminat din favorite
+
+id: Catch-up non supportato da questa playlist
+msg: Catch-up nesuportat de această listă
+
+id: Numero canale (vuoto = automatico)
+msg: Număr canal (gol = automat)
+
+id: Numero assegnato
+msg: Număr atribuit
+
+id: Numerazione automatica
+msg: Numerotare automată
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Nume nou canal (gol = original)
+
+id: Canale rinominato in \"
+msg: Canal redenumit în \"
+
+id: Nome originale ripristinato
+msg: Nume original restaurat
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Canal ascuns (restaurează din Setări)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Grup ascuns (restaurează din Setări)
+
+id: Continua a guardare
+msg: Continuă vizionarea
+
+id: Tutti
+msg: Toate
+
+id: Playlist
+msg: Listă
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: Sistem
+
+id: Informazioni
+msg: Informații
+
+id: Modifica playlist
+msg: Editează lista
+
+id: Aggiungi playlist
+msg: Adaugă listă
+
+id: Tipo
+msg: Tip
+
+id: host:porta o URL del pannello Xtream
+msg: host:port sau URL-ul panoului Xtream
+
+id: URL EPG (opzionale)
+msg: URL EPG (opțional)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Gol = xmltv.php al serverului / url-tvg al listei
+
+id: Annulla
+msg: Anulează
+
+id: Il server/URL e' obbligatorio
+msg: Serverul/URL-ul este obligatoriu
+
+id: Username obbligatorio per Xtream
+msg: Utilizator obligatoriu pentru Xtream
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: Introdu MAC (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Conexiune eșuată
+
+id: Playlist aggiunta
+msg: Listă adăugată
+
+id: Stagione
+msg: Sezon
+
+id: Informazioni non disponibili
+msg: Informații indisponibile
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Nicio informație de program pentru acest canal
+
+id: Registrazione programmata rimossa
+msg: Înregistrare programată eliminată
+
+id: Registrazione programmata
+msg: Înregistrare programată
+
+id: alle
+msg: la
+
+id: Canale non trovato
+msg: Canal negăsit
+
+id: Registrazioni programmate
+msg: Înregistrări programate
+
+id: Nessuna registrazione programmata
+msg: Nicio înregistrare programată
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Deschide programul unui canal și alege \"Înregistrează\" pe o emisiune viitoare
+
+id: Navigazione
+msg: Navigare
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Săgeți pentru navigare, OK/click pentru confirmare. Click dreapta sau apăsare lungă (touch/telecomandă) = meniu contextual. ESC/Înapoi = înapoi.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: Grupurile de canale la stânga, canalele la dreapta. OK pe un canal îl comută; ultimul canal vizionat pornește la deschidere dacă \"Reia ultimul canal\" e activ în Setări.
+
+id: Preferiti e Recenti
+msg: Favorite și Recente
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Apăsare lungă pe un canal → \"Favorite\": apare în grupul \"Favorite\" sus. Canalele vizionate ajung în \"Recente\", ordonate după ultima vizionare.
+
+id: Menu canale (long-press)
+msg: Meniu canal (apăsare lungă)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Vezi, Program (EPG-ul zilei), Catch-up, Favorite, Ascunde canal, Redenumește, Sus/jos (ordine manuală), Număr canal (numerotare personalizată), Multi-view.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Meniu grup (apăsare lungă pe grup)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Sus/jos pentru reordonarea grupurilor, Ascunde grup, Restaurează ascunse. Ordinea este persistentă.
+
+id: Registrazione
+msg: Înregistrare
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: În timpul vizionării: iconița REC din bara playerului (OK pe video afișează/ascunde info și bara) înregistrează fluxul într-un fișier .ts în folderul recordings/ până la oprire.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Programul unui canal → emisiune viitoare → insigna \"Înregistrează\" → OK. Înregistrarea pornește singură la oră și se oprește la finalul emisiunii. Lista și anulările sunt în \"Înregistrări\" din meniu. Una la rând: a înregistra în timp ce vezi alt canal poate eșua dacă furnizorul permite o singură conexiune.
+
+id: Rivedi (catch-up)
+msg: Catch-up (reluare)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Disponibil doar dacă furnizorul activează arhiva pe canal (flag tv_archive): apăsare lungă pe canal → \"Catch-up\", sau în program emisiunile terminate au insigna albastră. Dacă furnizorul nu suportă timeshift, opțiunea nu apare.
+
+id: Zap numerico
+msg: Zap numeric
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Tastează numărul canalului cu tastele 0-9 și confirmă cu OK/Enter. \"Număr canal\" din meniul contextual atribuie un număr personalizat.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Meniu → Multi-view: mozaic 2x2 cu sunetul oprit; OK pe o dală deschide canalul pe tot ecranul.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Meniu → Caută: caută canale, filme și seriale.
+
+id: Interfaccia
+msg: Interfață
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Meniu → Setări → Aspect: culoare de accent (evidențieri și margini ale ghidului), opacitate panou, numere de canal, logo-uri. Modificările se aplică imediat.
+
+id: Nascondere e bloccare
+msg: Ascundere și blocare
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Ascunde canale/grupuri din meniul contextual; restaurează din Setări sau din meniul grupului. Cu un PIN setat poți bloca categorii întregi (meniul contextual al grupului).
+
+id: Playlist multiple
+msg: Liste multiple
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Setări → Liste: mai multe conturi/surse Xtream, M3U sau Stalker, comutare rapidă și backup/restaurare a preferințelor.
+
+id: Connessioni
+msg: Conexiuni
+
+id: Trial
+msg: Probă
+
+id: Creato il
+msg: Creat la
+
+id: Protocollo
+msg: Protocol
+
+id: Timezone
+msg: Fus orar
+
+id: Orario server
+msg: Ora serverului
+
+id: non caricata
+msg: neîncărcată
+
+id: Apri
+msg: Deschide
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Configurează un server Xtream Codes (host, utilizator, parolă)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, redare, aspect, control parental
+
+id: Categorie
+msg: Categorii
+
+id: Riproduci
+msg: Redă
+
+id: Dettagli
+msg: Detalii
+
+id: Cerca canali, film e serie…
+msg: Caută canale, filme și seriale…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Tastează și apasă OK pentru a căuta canale, filme și seriale
+
+id: Seleziona un canale per iniziare
+msg: Selectează un canal pentru a începe
+
+id: Gruppi
+msg: Grupuri
+
+id: No information
+msg: Fără informații
+
+id: Guarda
+msg: Vezi
+
+id: Palinsesto
+msg: Program
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Elimină din favorite
+
+id: Aggiungi ai preferiti
+msg: Adaugă la favorite
+
+id: Nascondi canale
+msg: Ascunde canalul
+
+id: Rinomina canale
+msg: Redenumește canalul
+
+id: Sposta su
+msg: Mută sus
+
+id: Sposta giù
+msg: Mută jos
+
+id: Numero canale…
+msg: Număr canal…
+
+id: Nascondi gruppo
+msg: Ascunde grupul
+
+id: Ripristina nascosti
+msg: Restaurează ascunse
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Înregistrează
+
+id: Stagioni
+msg: Sezoane
+
+id: Canali — OK: assegna al tile selezionato
+msg: Canale — OK: atribuie dalei selectate
+
+
+id: Nome playlist:
+msg: Nume listă:
+
+id: Server (host:porta o URL):
+msg: Server (host:port sau URL):
+
+id: Username:
+msg: Utilizator:
+
+id: Password:
+msg: Parolă:
+
+id: URL EPG (vuoto = server Xtream):
+msg: URL EPG (gol = server Xtream):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (gol = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Headere extra (Nume: valoare, câte unul pe linie):
+
+id: ore
+msg: ore
+
+id: attivi
+msg: active
+
+id: Nessuno
+msg: Niciunul
+
+id: Movian (predefinito)
+msg: Movian (implicit)
+
+id: Programma
+msg: Program
+
+id: file di backup non leggibile
+msg: fișier de backup ilizibil
+
+id: URL del file lista .m3u/.m3u8
+msg: URL-ul fișierului listă .m3u/.m3u8
+
+id: URL del portale
+msg: URL portal
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: Adresă MAC (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Nu e necesar
+
+id: Non richiesta
+msg: Nu e necesară
+
+id: A fine episodio parte automaticamente il successivo
+msg: La finalul unui episod, următorul pornește automat
+
+id: Attivo: sarai avvisato all'inizio
+msg: Activ: vei fi anunțat la început
+
+id: Autoplay episodio successivo
+msg: Redare automată episodul următor
+
+id: Avvisami quando inizia
+msg: Anunță-mă când începe
+
+id: Cartella non scrivibile
+msg: Dosar non-inscriptibil
+
+id: Cartella registrazioni
+msg: Dosarul înregistrărilor
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Dosarul înregistrărilor (gol = implicit)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Dosarul înregistrărilor (gol = implicit):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: Dosarul înregistrărilor nu este inscriptibil, se folosește cel implicit
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Disponibil doar dacă furnizorul activează arhiva pe canal (flag tv_archive): clic direct pe un program terminat în grila ghidului, apăsare lungă pe canal → \"Revedere\", sau insigna din programul canalului. Dacă furnizorul nu acceptă timeshift, funcția nu apare.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Unde se salvează fișierele .ts — gol = stocarea pluginului
+
+id: Elimina
+msg: Șterge
+
+id: Eliminare la registrazione
+msg: Șterge înregistrarea
+
+id: Episodio non trovato
+msg: Episod negăsit
+
+id: Esporta preferiti in M3U
+msg: Exportă favoritele în M3U
+
+id: Esportazione fallita
+msg: Export eșuat
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: Episoadele vizionate au o bifă în listă. La finalul unui episod pornește automat următorul (se poate dezactiva în Setări → Redare → \"Redare auto episodul următor\").
+
+id: I file .ts registrati appariranno qui
+msg: Fișierele .ts înregistrate vor apărea aici
+
+id: IN CORSO
+msg: ÎN CURS
+
+id: In corso
+msg: În curs
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: În timpul vizionării: pictograma REC din bara playerului (OK pe video afișează/ascunde info și bara) înregistrează fluxul într-un fișier .ts până la oprire. Fișierele înregistrate se vizionează și se șterg din Meniu → \"Înregistrări\"; dosarul destinație se schimbă în Setări → Redare.
+
+id: Nessun preferito da esportare
+msg: Niciun favorit de exportat
+
+id: Nessun promemoria attivo
+msg: Niciun memento activ
+
+id: Nessun'altra puntata in palinsesto
+msg: Niciun alt episod în program
+
+id: Nessuna puntata futura da registrare
+msg: Niciun episod viitor de înregistrat
+
+id: Nessuna registrazione completata
+msg: Nicio înregistrare finalizată
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Programul unui canal → program viitor → insigna \"Înregistrează\" → OK. Rândul \"Memento și înregistrare serie\" de sub program permite și doar anunțul la început (fără înregistrare) și înregistrarea tuturor episoadelor cu același titlu. Înregistrările pornesc singure și se opresc la finalul programului. Una câte una: a înregistra în timp ce privești alt canal poate eșua dacă furnizorul permite o singură conexiune.
+
+id: Predefinita
+msg: Implicit
+
+id: Preferiti esportati
+msg: Favorite exportate
+
+id: Promemoria
+msg: Memento
+
+id: Promemoria attivato
+msg: Memento activat
+
+id: Promemoria attivo
+msg: Memento activ
+
+id: Promemoria e registrazione serie
+msg: Memento și înregistrare serie
+
+id: Promemoria rimosso
+msg: Memento eliminat
+
+id: Promemorie
+msg: Mementouri
+
+id: Prossimo episodio
+msg: Episodul următor
+
+id: Registra tutta la serie
+msg: Înregistrează întreaga serie
+
+id: Registrazione eliminata
+msg: Înregistrare ștearsă
+
+id: Registrazione programmata, promemoria e serie
+msg: Înregistrare programată, memento și serie
+
+id: Registrazione singola puntata
+msg: Înregistrarea unui singur episod
+
+id: Salva i canali preferiti come playlist standard
+msg: Salvează canalele favorite ca playlist standard
+
+id: Sta iniziando
+msg: Începe acum
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Folosește insigna \"Înregistrează\" pe rândul programului
+
+id: canali
+msg: canale
+
+id: cartella non scrivibile
+msg: dosar non-inscriptibil
+
+id: fallita
+msg: eșuată
+
+id: puntate
+msg: episoade
+
+id: puntate in palinsesto
+msg: episoade în program
+

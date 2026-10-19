@@ -1,0 +1,976 @@
+language: Finnish
+native: Suomi
+
+id: Server (host[:port] o URL)
+msg: Palvelin (host[:portti] tai URL)
+
+id: Username
+msg: Käyttäjätunnus
+
+id: Password
+msg: Salasana
+
+id: Nome playlist
+msg: Listan nimi
+
+id: Abilita EPG
+msg: Ota EPG käyttöön
+
+id: URL XMLTV personalizzato (opzionale)
+msg: Mukautettu XMLTV-URL (valinnainen)
+
+id: Aggiorna EPG ogni (ore)
+msg: Päivitä EPG joka (tunti)
+
+id: Correggi orario EPG (minuti)
+msg: EPG-aikakorjaus (minuuttia)
+
+id: Aggiorna EPG all'avvio
+msg: Päivitä EPG käynnistyksessä
+
+id: Log di debug
+msg: Vianmääritysloki
+
+id: Riproduzione
+msg: Toisto
+
+id: Formato stream live
+msg: Livestriimin muoto
+
+id: Automatico
+msg: Automaattinen
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Elokuva-/jaksoformaatti
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Kanavatiedon kesto zapin jälkeen (s)
+
+id: Riprendi ultimo canale all'avvio
+msg: Jatka viime kanavaa käynnistyksessä
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Lisä-HTTP-otsakkeet (Nimi: arvo per rivi)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Päivitä lista joka (min, 0 = ei koskaan)
+
+id: Aspetto
+msg: Ulkoasu
+
+id: Mostra numeri canale in guida
+msg: Näytä kanavanumerot oppaassa
+
+id: Mostra loghi canale in guida
+msg: Näytä kanavalogot oppaassa
+
+id: Ore visibili in guida
+msg: Näkyvät tunnit oppaassa
+
+id: Opacita' pannelli (%)
+msg: Paneelien peittävyys (%)
+
+id: Colore accento
+msg: Korostusväri
+
+id: Blu
+msg: Sininen
+
+id: Verde
+msg: Vihreä
+
+id: Arancione
+msg: Oranssi
+
+id: Rosso
+msg: Punainen
+
+id: Viola
+msg: Violetti
+
+id: Controllo genitori
+msg: Lapsilukko
+
+id: PIN (vuoto = disattivo)
+msg: PIN (tyhjä = pois)
+
+id: Ordinamento cataloghi
+msg: Katalogien lajittelu
+
+id: Predefinito
+msg: Oletus
+
+id: Nome A-Z
+msg: Nimi A-Z
+
+id: Aggiunti di recente
+msg: Äskettäin lisätyt
+
+id: Voto
+msg: Arvosana
+
+id: Account
+msg: Tili
+
+id: Verifica connessione
+msg: Testaa yhteys
+
+id: Connessione OK
+msg: Yhteys OK
+
+id: Errore
+msg: Virhe
+
+id: Inserisci credenziali…
+msg: Syötä tunnistetiedot…
+
+id: Ricarica EPG adesso
+msg: Lataa EPG uudelleen
+
+id: EPG: ricarico in corso…
+msg: EPG: ladataan…
+
+id: EPG aggiornata
+msg: EPG päivitetty
+
+id: EPG non disponibile
+msg: EPG ei saatavilla
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — Xtream Codes -asiakas Movianille.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Määritä palvelin ja tunnistetiedot yllä, avaa sitten palvelu aloitussivulta.
+
+id: Server (host:porta o URL)
+msg: Palvelin (host:portti tai URL)
+
+id: Credenziali salvate
+msg: Tunnistetiedot tallennettu
+
+id: Playlist aggiornata
+msg: Lista päivitetty
+
+id: Sleep timer disattivato
+msg: Uniajastin pois
+
+id: Sleep timer: spegnimento tra
+msg: Uniajastin: pysähtyy
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Uniajastin: toisto pysäytetty
+
+id: Backup salvato
+msg: Varmuuskopio tallennettu
+
+id: Backup fallito
+msg: Varmuuskopiointi epäonnistui
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Varmuuskopio palautettu (suosikit tulevat voimaan uudelleenkäynnistyksessä)
+
+id: Ripristino fallito
+msg: Palautus epäonnistui
+
+id: Preferiti
+msg: Suosikit
+
+id: Recenti
+msg: Viimeisimmät
+
+id: Tutti i canali
+msg: Kaikki kanavat
+
+id: Guida TV
+msg: TV-opas
+
+id: Multi-view
+msg: Moninäkymä
+
+id: Film
+msg: Elokuvat
+
+id: Serie TV
+msg: Sarjat
+
+id: Cerca
+msg: Hae
+
+id: Registrazioni
+msg: Tallenteet
+
+id: Guida
+msg: Ohje
+
+id: Impostazioni
+msg: Asetukset
+
+id: Playlist attiva
+msg: Aktiivinen lista
+
+id: OK passa alla playlist successiva
+msg: OK vaihtaa seuraavaan listaan
+
+id: Nome mostrato nel menu
+msg: Valikossa näkyvä nimi
+
+id: Server
+msg: Palvelin
+
+id: host:porta o URL Xtream Codes
+msg: host:portti tai Xtream Codes -URL
+
+id: URL EPG
+msg: EPG-URL
+
+id: Lascia vuoto per usare la guida del server
+msg: Jätä tyhjäksi käyttääksesi palvelimen opasta
+
+id: Tipo playlist
+msg: Listan tyyppi
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Koskee vain uutta listaa (Lisää)
+
+id: Refresh automatico playlist
+msg: Listojen automaattipäivitys
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Lataa listat ja oppaan uudelleen välein
+
+id: Aggiungi playlist…
+msg: Lisää lista…
+
+id: Modifica playlist attiva…
+msg: Muokkaa aktiivista listaa…
+
+id: Rimuovi playlist attiva
+msg: Poista aktiivinen lista
+
+id: Guida TV (EPG)
+msg: TV-opas (EPG)
+
+id: URL XMLTV personalizzato
+msg: Mukautettu XMLTV-URL
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Tyhjä = palvelimen xmltv.php
+
+id: Aggiorna EPG ogni
+msg: Päivitä EPG joka
+
+id: Intervallo di refresh della guida
+msg: Oppaan päivitysväli
+
+id: Correggi orario EPG
+msg: EPG-aikakorjaus
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Siirtää ohjelmat, jos opas on väärässä ajassa
+
+id: Formato film / episodi
+msg: Elokuva- / jaksoformaatti
+
+id: Durata info canale
+msg: Kanavatiedon kesto
+
+id: Sempre visibile
+msg: Aina näkyvissä
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: Paneelin näkyvyysaika zapin jälkeen
+
+id: Riprendi ultimo canale
+msg: Jatka viime kanavaa
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: Käynnistyksessä opas avautuu viimeksi katsotulle kanavalle
+
+id: UA custom per API e stream sul server
+msg: Mukautettu UA API:lle ja palvelimen striimeille
+
+id: Header HTTP extra
+msg: Lisä-HTTP-otsakkeet
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: Yksi per rivi: \"Nimi: arvo\" — koskee API:a ja opasta
+
+id: Sleep timer
+msg: Uniajastin
+
+id: Ferma la riproduzione dopo N minuti
+msg: Pysäyttää toiston N minuutin jälkeen
+
+id: Numeri canale
+msg: Kanavanumerot
+
+id: Numero progressivo nella guida
+msg: Juokseva numero oppaassa
+
+id: Loghi canale
+msg: Kanavalogot
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Julisteiden järjestys Elokuvat- ja Sarjat-osioissa
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: EPG-ruudukon aikaikkunan leveys
+
+id: Opacita' pannelli
+msg: Paneelien peittävyys
+
+id: Trasparenza di guide e menu sul video
+msg: Oppaan ja valikoiden läpinäkyvyys videon päällä
+
+id: Colore di indicatori e linea \"adesso\"
+msg: Ilmaisimien ja \"nyt\"-viivan väri
+
+id: Ripristina ordine e numeri canali
+msg: Palauta järjestys ja kanavanumerot
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Kumoa siirrot ja oma numerointi
+
+id: Ripristina canali e gruppi nascosti
+msg: Palauta piilotetut kanavat ja ryhmät
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Näytä kaikki piilotettu uudelleen
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Ei asetettu
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Lukitse aikuissisältöryhmät
+
+id: Gruppi bloccati
+msg: Lukitut ryhmät
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: \"Aikuisryhmät\" vaativat PIN-koodin
+
+id: Imposta un PIN per attivare il blocco
+msg: Aseta PIN lukituksen käyttöön
+
+id: Gruppo live
+msg: Live-ryhmä
+
+id: Categoria film
+msg: Elokuva-luokka
+
+id: Categoria serie
+msg: Sarja-luokka
+
+id: Blocca
+msg: Lukitse
+
+id: Esporta backup
+msg: Vie varmuuskopio
+
+id: Salva impostazioni, preferiti e liste in
+msg: Tallentaa asetukset, suosikit ja listat kohteeseen
+
+id: Ripristina backup
+msg: Palauta varmuuskopio
+
+id: Carica impostazioni e liste dal file di backup
+msg: Lataa asetukset ja listat varmuuskopiotiedostosta
+
+id: Versione
+msg: Versio
+
+id: Stato
+msg: Tila
+
+id: Scadenza
+msg: Vanheneminen
+
+id: Connessioni max
+msg: Maks. yhteydet
+
+id: Impostazioni Movian…
+msg: Movian-asetukset…
+
+id: Pagina impostazioni nativa del plugin
+msg: Liitännäisen oma asetussivu
+
+id: Ripristinati
+msg: Palautettu
+
+id: elementi
+msg: kohdetta
+
+id: Nulla da ripristinare
+msg: Ei palautettavaa
+
+id: (riapri il plugin)
+msg: (avaa liitännäinen uudelleen)
+
+id: Ordine e numerazione ripristinati
+msg: Järjestys ja numerointi palautettu
+
+id: Playlist rimossa
+msg: Lista poistettu
+
+id: Inserisci il PIN
+msg: Syötä PIN
+
+id: PIN errato
+msg: Väärä PIN
+
+id: Auto
+msg: Auto
+
+id: Tutto schermo
+msg: Koko näyttö
+
+id: Formato
+msg: Muoto
+
+id: Registrazione salvata (
+msg: Tallenne tallennettu (
+
+id: MB) in
+msg: MB) kohteeseen
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: Tallennus ei saatavilla tällä kanavalla
+
+id: Registrazione avviata
+msg: Tallennus aloitettu
+
+id: canale
+msg: kanava
+
+id: Registrazione fallita
+msg: Tallennus epäonnistui
+
+id: Registrazione completata
+msg: Tallennus valmis
+
+id: Registrazione programmata avviata
+msg: Ajastettu tallennus aloitettu
+
+id: Registrazione programmata fallita
+msg: Ajastettu tallennus epäonnistui
+
+id: Aggiunto ai preferiti
+msg: Lisätty suosikkeihin
+
+id: Rimosso dai preferiti
+msg: Poistettu suosikeista
+
+id: Catch-up non supportato da questa playlist
+msg: Catch-up ei tuettu tässä listassa
+
+id: Numero canale (vuoto = automatico)
+msg: Kanavanumero (tyhjä = auto)
+
+id: Numero assegnato
+msg: Numero määritetty
+
+id: Numerazione automatica
+msg: Automaattinen numerointi
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Uusi kanavan nimi (tyhjä = alkuperäinen)
+
+id: Canale rinominato in \"
+msg: Kanava nimetty uudelleen: \"
+
+id: Nome originale ripristinato
+msg: Alkuperäinen nimi palautettu
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Kanava piilotettu (palauta Asetuksista)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Ryhmä piilotettu (palauta Asetuksista)
+
+id: Continua a guardare
+msg: Jatka katselua
+
+id: Tutti
+msg: Kaikki
+
+id: Playlist
+msg: Lista
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: Järjestelmä
+
+id: Informazioni
+msg: Tiedot
+
+id: Modifica playlist
+msg: Muokkaa listaa
+
+id: Aggiungi playlist
+msg: Lisää lista
+
+id: Tipo
+msg: Tyyppi
+
+id: host:porta o URL del pannello Xtream
+msg: host:portti tai Xtream-paneelin URL
+
+id: URL EPG (opzionale)
+msg: EPG-URL (valinnainen)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Tyhjä = palvelimen xmltv.php / listan url-tvg
+
+id: Annulla
+msg: Peruuta
+
+id: Il server/URL e' obbligatorio
+msg: Palvelin/URL on pakollinen
+
+id: Username obbligatorio per Xtream
+msg: Käyttäjätunnus pakollinen Xtreamille
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: Syötä MAC (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Yhteys epäonnistui
+
+id: Playlist aggiunta
+msg: Lista lisätty
+
+id: Stagione
+msg: Kausi
+
+id: Informazioni non disponibili
+msg: Tiedot eivät saatavilla
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Ei ohjelmatietoja tälle kanavalle
+
+id: Registrazione programmata rimossa
+msg: Ajastettu tallenne poistettu
+
+id: Registrazione programmata
+msg: Ajastettu tallennus
+
+id: alle
+msg: klo
+
+id: Canale non trovato
+msg: Kanavaa ei löydy
+
+id: Registrazioni programmate
+msg: Ajastetut tallenteet
+
+id: Nessuna registrazione programmata
+msg: Ei ajastettuja tallenteita
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Avaa kanavan ohjelmaopas ja valitse \"Tallenna\" tulevalle ohjelmalle
+
+id: Navigazione
+msg: Navigointi
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Nuolinäppäimet liikkumiseen, OK/klikkaus vahvistukseen. Hiiren oikea nappi tai pitkä painallus (kosketys/kauko) = pikavalikko. ESC/Takaisin = palaa.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: Kanavaryhmät vasemmalla, kanavat oikealla. OK kanavalla virittää sen; viimeksi katsottu kanava käynnistyy, jos \"Jatka viime kanavaa\" on päällä Asetuksissa.
+
+id: Preferiti e Recenti
+msg: Suosikit ja Viimeisimmät
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Pitkä painallus kanavalla → \"Suosikit\": kanava ilmestyy ylimmäiseen \"Suosikit\"-ryhmään. Katsotut kanavat menevät \"Viimeisimmät\"-ryhmään.
+
+id: Menu canale (long-press)
+msg: Kanavavalikko (pitkä painallus)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Katso, Ohjelmaopas (päivän EPG), Catch-up, Suosikit, Piilota kanava, Nimeä uudelleen, Ylös/alas (oma järjestys), Kanavanumero (oma numerointi), Moninäkymä.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Ryhmävalikko (pitkä painallus ryhmällä)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Ylös/alas ryhmien uudelleenjärjestykseen, Piilota ryhmä, Palauta piilotetut. Järjestys säilyy.
+
+id: Registrazione
+msg: Tallennus
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: Katselun aikana: REC-kuvake soittimen palkissa (OK videolla näyttää/piilottaa tiedot ja palkin) tallentaa striimin .ts-tiedostona recordings/-kansioon, kunnes pysäytetään.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Kanavan ohjelmaopas → tuleva ohjelma → \"Tallenna\"-merkki → OK. Tallennus käynnistyy itsestään ajalla ja loppuu ohjelman lopussa. Lista ja peruutukset ovat valikon \"Tallenteet\"-kohdassa. Yksi kerrallaan: tallennus toisen kanavan katselun aikana voi epäonnistua, jos palveluntarjoaja sallii vain 1 yhteyden.
+
+id: Rivedi (catch-up)
+msg: Catch-up (uusinta)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Saatavilla vain jos palveluntarjoaja ottaa arkiston käyttöön kanavalla (tv_archive-lippu): pitkä painallus kanavalla → \"Catch-up\", tai ohjelmaoppaassa päättyneillä ohjelmilla on sininen merkki. Jos palveluntarjoaja ei tue timeshiftiä, valintaa ei näy.
+
+id: Zap numerico
+msg: Numeroinen zap
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Syötä kanavan numero näppäimillä 0-9 ja vahvista OK/Enter. \"Kanavanumero\" pikavalikossa antaa oman numeron.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Valikko → Moninäkymä: 2x2-mosaiikki ääni mykistettynä; OK ruudulla avaa kanavan koko näytölle.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Valikko → Hae: hakee kanavia, elokuvia ja sarjoja.
+
+id: Interfaccia
+msg: Käyttöliittymä
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Valikko → Asetukset → Ulkoasu: korostusväri (oppaan korostukset ja reunukset), paneelien peittävyys, kanavanumerot, logot. Muutokset astuvat voimaan heti.
+
+id: Nascondere e bloccare
+msg: Piilottaminen ja lukitseminen
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Piilota kanavia/ryhmiä pikavalikosta; palauta Asetuksista tai ryhmän valikosta. PIN-koodilla voit lukita kokonaisia luokkia (ryhmän pikavalikko).
+
+id: Playlist multiple
+msg: Useita listoja
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Asetukset → Listat: useita Xtream-tilejä/lähteitä, M3U tai Stalker, nopea vaihto ja asetusten varmuuskopio/palautus.
+
+id: Connessioni
+msg: Yhteydet
+
+id: Trial
+msg: Kokeilu
+
+id: Creato il
+msg: Luotu
+
+id: Protocollo
+msg: Protokolla
+
+id: Timezone
+msg: Aikavyöhyke
+
+id: Orario server
+msg: Palvelimen aika
+
+id: non caricata
+msg: ei ladattu
+
+id: Apri
+msg: Avaa
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Määritä Xtream Codes -palvelin (host, käyttäjä, salasana)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, toisto, ulkoasu, lapsilukko
+
+id: Categorie
+msg: Luokat
+
+id: Riproduci
+msg: Toista
+
+id: Dettagli
+msg: Tiedot
+
+id: Cerca canali, film e serie…
+msg: Hae kanavia, elokuvia ja sarjoja…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Kirjoita ja paina OK hakeaksesi kanavia, elokuvia ja sarjoja
+
+id: Seleziona un canale per iniziare
+msg: Valitse kanava aloittaaksesi
+
+id: Gruppi
+msg: Ryhmät
+
+id: No information
+msg: Ei tietoja
+
+id: Guarda
+msg: Katso
+
+id: Palinsesto
+msg: Ohjelmaopas
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Poista suosikeista
+
+id: Aggiungi ai preferiti
+msg: Lisää suosikkeihin
+
+id: Nascondi canale
+msg: Piilota kanava
+
+id: Rinomina canale
+msg: Nimeä kanava uudelleen
+
+id: Sposta su
+msg: Siirrä ylös
+
+id: Sposta giù
+msg: Siirrä alas
+
+id: Numero canale…
+msg: Kanavanumero…
+
+id: Nascondi gruppo
+msg: Piilota ryhmä
+
+id: Ripristina nascosti
+msg: Palauta piilotetut
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Tallenna
+
+id: Stagioni
+msg: Kaudet
+
+id: Canali — OK: assegna al tile selezionato
+msg: Kanavat — OK: määritä valittuun ruutuun
+
+
+id: Nome playlist:
+msg: Listan nimi:
+
+id: Server (host:porta o URL):
+msg: Palvelin (host:portti tai URL):
+
+id: Username:
+msg: Käyttäjätunnus:
+
+id: Password:
+msg: Salasana:
+
+id: URL EPG (vuoto = server Xtream):
+msg: EPG-URL (tyhjä = Xtream-palvelin):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (tyhjä = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Lisäotsakkeet (Nimi: arvo, yksi per rivi):
+
+id: ore
+msg: tuntia
+
+id: attivi
+msg: käytössä
+
+id: Nessuno
+msg: Ei mitään
+
+id: Movian (predefinito)
+msg: Movian (oletus)
+
+id: Programma
+msg: Ohjelma
+
+id: file di backup non leggibile
+msg: varmuuskopiotiedosto ei luettavissa
+
+id: URL del file lista .m3u/.m3u8
+msg: .m3u/.m3u8-listatiedoston URL
+
+id: URL del portale
+msg: Portaalin URL
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC-osoite (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Ei vaadita
+
+id: Non richiesta
+msg: Ei vaadita
+
+id: A fine episodio parte automaticamente il successivo
+msg: Jakson lopussa seuraava käynnistyy automaattisesti
+
+id: Attivo: sarai avvisato all'inizio
+msg: Aktiivinen: sinulle ilmoitetaan alussa
+
+id: Autoplay episodio successivo
+msg: Toista seuraava jakso automaattisesti
+
+id: Avvisami quando inizia
+msg: Ilmoita minulle kun alkaa
+
+id: Cartella non scrivibile
+msg: Kansio ei ole kirjoitettava
+
+id: Cartella registrazioni
+msg: Tallennuskansio
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Tallennuskansio (tyhjä = oletus)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Tallennuskansio (tyhjä = oletus):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: Tallennuskansio ei ole kirjoitettava, käytetään oletusta
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Saatavilla vain jos palveluntarjoaja ottaa arkiston käyttöön kanavalla (tv_archive-lippu): klikkaa suoraan päättynyttä ohjelmaa oppaan ruudukossa, pitkä painallus kanavalla → \"Katso uudelleen\" tai merkki kanavan ohjelmistossa. Jos palveluntarjoaja ei tue timeshiftiä, ominaisuus ei näy.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Mihin .ts-tiedostot tallennetaan — tyhjä = pluginin tallennustila
+
+id: Elimina
+msg: Poista
+
+id: Eliminare la registrazione
+msg: Poista tallenne
+
+id: Episodio non trovato
+msg: Jaksoa ei löytynyt
+
+id: Esporta preferiti in M3U
+msg: Vie suosikit M3U:ksi
+
+id: Esportazione fallita
+msg: Vienti epäonnistui
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: Katsotuilla jaksoilla on täppä listassa. Jakson lopussa seuraava käynnistyy automaattisesti (voi kytkeä pois Asetukset → Toisto → \"Toista seuraava jakso automaattisesti\").
+
+id: I file .ts registrati appariranno qui
+msg: Tallennetut .ts-tiedostot näkyvät täällä
+
+id: IN CORSO
+msg: KÄYNNISSÄ
+
+id: In corso
+msg: Käynnissä
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: Katselun aikana: REC-kuvake soittimen palkissa (OK videolla näyttää/piilottaa tiedot ja palkin) tallentaa virran .ts-tiedostoon pysäytykseen asti. Tallennettuja tiedostoja voi katsoa ja poistaa kohdasta Valikko → \"Tallenteet\"; kohdekansion voi vaihtaa Asetukset → Toisto.
+
+id: Nessun preferito da esportare
+msg: Ei suosikkeja vietäväksi
+
+id: Nessun promemoria attivo
+msg: Ei aktiivisia muistutuksia
+
+id: Nessun'altra puntata in palinsesto
+msg: Ei muita jaksoja ohjelmistossa
+
+id: Nessuna puntata futura da registrare
+msg: Ei tulevia jaksoja tallennettavaksi
+
+id: Nessuna registrazione completata
+msg: Ei valmiita tallenteita
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Kanavan ohjelmisto → tuleva ohjelma → merkki \"Tallenna\" → OK. Ohjelman alla oleva rivi \"Muistutus ja sarjan tallennus\" mahdollistaa myös pelkän ilmoituksen alussa (ilman tallennusta) ja kaikkien samannimisten jaksojen tallennuksen. Tallenteet käynnistyvät itsestään ja loppuvat ohjelman lopussa. Yksi kerrallaan: tallennus toista kanavaa katsottaessa voi epäonnistua, jos palveluntarjoaja sallii vain 1 yhteyden.
+
+id: Predefinita
+msg: Oletus
+
+id: Preferiti esportati
+msg: Suosikit viety
+
+id: Promemoria
+msg: Muistutus
+
+id: Promemoria attivato
+msg: Muistutus aktivoitu
+
+id: Promemoria attivo
+msg: Muistutus aktiivinen
+
+id: Promemoria e registrazione serie
+msg: Muistutus ja sarjan tallennus
+
+id: Promemoria rimosso
+msg: Muistutus poistettu
+
+id: Promemorie
+msg: Muistutukset
+
+id: Prossimo episodio
+msg: Seuraava jakso
+
+id: Registra tutta la serie
+msg: Tallenna koko sarja
+
+id: Registrazione eliminata
+msg: Tallenne poistettu
+
+id: Registrazione programmata, promemoria e serie
+msg: Ajastettu tallennus, muistutus ja sarja
+
+id: Registrazione singola puntata
+msg: Yhden jakson tallennus
+
+id: Salva i canali preferiti come playlist standard
+msg: Tallenna suosikkikanavat vakiopistalistan muotoon
+
+id: Sta iniziando
+msg: Alkaa nyt
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Käytä \"Tallenna\"-merkkiä ohjelman rivillä
+
+id: canali
+msg: kanavat
+
+id: cartella non scrivibile
+msg: kansio ei ole kirjoitettava
+
+id: fallita
+msg: epäonnistui
+
+id: puntate
+msg: jaksot
+
+id: puntate in palinsesto
+msg: jaksot ohjelmistossa
+

@@ -1,0 +1,976 @@
+language: Slovak
+native: Slovenčina
+
+id: Server (host[:port] o URL)
+msg: Server (host[:port] nebo URL)
+
+id: Username
+msg: Uživatelské jméno
+
+id: Password
+msg: Heslo
+
+id: Nome playlist
+msg: Názov playlistu
+
+id: Abilita EPG
+msg: Povoliť EPG
+
+id: URL XMLTV personalizzato (opzionale)
+msg: Vlastní XMLTV URL (volitelné)
+
+id: Aggiorna EPG ogni (ore)
+msg: Aktualizovat EPG každých (hodin)
+
+id: Correggi orario EPG (minuti)
+msg: Korekce času EPG (minuty)
+
+id: Aggiorna EPG all'avvio
+msg: Aktualizovat EPG při startu
+
+id: Log di debug
+msg: Ladiaci protokol
+
+id: Riproduzione
+msg: Prehrávanie
+
+id: Formato stream live
+msg: Formát živého streamu
+
+id: Automatico
+msg: Automaticky
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Formát filmů/epizod
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Doba info kanála po prepnutí (s)
+
+id: Riprendi ultimo canale all'avvio
+msg: Obnovit poslední kanál při startu
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Extra HTTP hlavičky (Název: hodnota na řádek)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Obnovit playlist každých (min, 0 = nikdy)
+
+id: Aspetto
+msg: Vzhľad
+
+id: Mostra numeri canale in guida
+msg: Zobrazit čísla kanálů v přehledu
+
+id: Mostra loghi canale in guida
+msg: Zobrazit loga kanálů v přehledu
+
+id: Ore visibili in guida
+msg: Viditelné hodiny v přehledu
+
+id: Opacita' pannelli (%)
+msg: Neprůhlednost panelů (%)
+
+id: Colore accento
+msg: Akcentní barva
+
+id: Blu
+msg: Modrá
+
+id: Verde
+msg: Zelená
+
+id: Arancione
+msg: Oranžová
+
+id: Rosso
+msg: Červená
+
+id: Viola
+msg: Fialová
+
+id: Controllo genitori
+msg: Rodičovský zámok
+
+id: PIN (vuoto = disattivo)
+msg: PIN (prázdny = vypnuté)
+
+id: Ordinamento cataloghi
+msg: Triedenie katalógov
+
+id: Predefinito
+msg: Predvolené
+
+id: Nome A-Z
+msg: Názov A-Z
+
+id: Aggiunti di recente
+msg: Nedávno pridané
+
+id: Voto
+msg: Hodnotenie
+
+id: Account
+msg: Účet
+
+id: Verifica connessione
+msg: Otestovať pripojenie
+
+id: Connessione OK
+msg: Pripojenie OK
+
+id: Errore
+msg: Chyba
+
+id: Inserisci credenziali…
+msg: Zadať prihlasovacie údaje…
+
+id: Ricarica EPG adesso
+msg: Znovu načíst EPG
+
+id: EPG: ricarico in corso…
+msg: EPG: načítání…
+
+id: EPG aggiornata
+msg: EPG aktualizováno
+
+id: EPG non disponibile
+msg: EPG nedostupné
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — klient Xtream Codes pro Movian.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Nastavte server a prihlasovacie údaje vyššie, potom otvorte službu z hlavnej stránky.
+
+id: Server (host:porta o URL)
+msg: Server (host:port nebo URL)
+
+id: Credenziali salvate
+msg: Prihlasovacie údaje uložené
+
+id: Playlist aggiornata
+msg: Playlist aktualizovaný
+
+id: Sleep timer disattivato
+msg: Časovač vypnutý
+
+id: Sleep timer: spegnimento tra
+msg: Časovač: vypnutie za
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Časovač: prehrávanie zastavené
+
+id: Backup salvato
+msg: Záloha uložena
+
+id: Backup fallito
+msg: Záloha selhala
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Záloha obnovena (oblíbené se použijí po restartu)
+
+id: Ripristino fallito
+msg: Obnovenie zlyhalo
+
+id: Preferiti
+msg: Obľúbené
+
+id: Recenti
+msg: Nedávne
+
+id: Tutti i canali
+msg: Všetky kanály
+
+id: Guida TV
+msg: TV prehľad
+
+id: Multi-view
+msg: Multi-view
+
+id: Film
+msg: Filmy
+
+id: Serie TV
+msg: Seriály
+
+id: Cerca
+msg: Hľadať
+
+id: Registrazioni
+msg: Nahrávky
+
+id: Guida
+msg: Pomoc
+
+id: Impostazioni
+msg: Nastavenia
+
+id: Playlist attiva
+msg: Aktívny playlist
+
+id: OK passa alla playlist successiva
+msg: OK prepne na ďalší playlist
+
+id: Nome mostrato nel menu
+msg: Názov v menu
+
+id: Server
+msg: Server
+
+id: host:porta o URL Xtream Codes
+msg: host:port nebo URL Xtream Codes
+
+id: URL EPG
+msg: URL EPG
+
+id: Lascia vuoto per usare la guida del server
+msg: Nechte prázdné pro přehled serveru
+
+id: Tipo playlist
+msg: Typ playlistu
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Platí jen pro nový playlist (Přidat)
+
+id: Refresh automatico playlist
+msg: Automatická obnova playlistu
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Znovu načte seznamy a přehled v intervalech
+
+id: Aggiungi playlist…
+msg: Pridať playlist…
+
+id: Modifica playlist attiva…
+msg: Upraviť aktívny playlist…
+
+id: Rimuovi playlist attiva
+msg: Odobrať aktívny playlist
+
+id: Guida TV (EPG)
+msg: TV prehľad (EPG)
+
+id: URL XMLTV personalizzato
+msg: Vlastní XMLTV URL
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Prázdné = xmltv.php serveru Xtream
+
+id: Aggiorna EPG ogni
+msg: Aktualizovat EPG každých
+
+id: Intervallo di refresh della guida
+msg: Interval obnovy přehledu
+
+id: Correggi orario EPG
+msg: Korekce času EPG
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Posune programy, když je přehled posunutý
+
+id: Formato film / episodi
+msg: Formát filmů / epizod
+
+id: Durata info canale
+msg: Doba info kanála
+
+id: Sempre visibile
+msg: Vždy viditelné
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: Doba viditelnosti panelu po přepnutí
+
+id: Riprendi ultimo canale
+msg: Obnovit poslední kanál
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: Při startu se přehled otevře na posledním sledovaném kanálu
+
+id: UA custom per API e stream sul server
+msg: Vlastní UA pro API a streamy serveru
+
+id: Header HTTP extra
+msg: Extra HTTP hlavičky
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: Jeden na řádek: \"Název: hodnota\" — platí pro API i přehled
+
+id: Sleep timer
+msg: Časovač
+
+id: Ferma la riproduzione dopo N minuti
+msg: Zastaví prehrávanie po N minútach
+
+id: Numeri canale
+msg: Čísla kanálov
+
+id: Numero progressivo nella guida
+msg: Pořadové číslo v přehledu
+
+id: Loghi canale
+msg: Loga kanálů
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Pořadí plakátů v sekcích Filmy a Seriály
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: Šířka časového okna mřížky EPG
+
+id: Opacita' pannelli
+msg: Neprůhlednost panelů
+
+id: Trasparenza di guide e menu sul video
+msg: Průhlednost přehledu a menu nad videem
+
+id: Colore di indicatori e linea \"adesso\"
+msg: Barva indikátorů a čáry \"nyní\"
+
+id: Ripristina ordine e numeri canali
+msg: Obnoviť poradie a čísla kanálov
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Zrušit přesuny a vlastní číslování
+
+id: Ripristina canali e gruppi nascosti
+msg: Obnoviť skryté kanály a skupiny
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Znovu zobrazit vše skryté
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Nenastavené
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Zamknúť skupiny s obsahom pre dospelých
+
+id: Gruppi bloccati
+msg: Zamknuté skupiny
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: Skupiny \"pre dospelých\" vyžadujú PIN
+
+id: Imposta un PIN per attivare il blocco
+msg: Nastavte PIN na aktiváciu zámku
+
+id: Gruppo live
+msg: Živá skupina
+
+id: Categoria film
+msg: Kategória filmov
+
+id: Categoria serie
+msg: Kategória seriálov
+
+id: Blocca
+msg: Zamknúť
+
+id: Esporta backup
+msg: Exportovat zálohu
+
+id: Salva impostazioni, preferiti e liste in
+msg: Uloží nastavení, oblíbené a seznamy do
+
+id: Ripristina backup
+msg: Obnoviť zálohu
+
+id: Carica impostazioni e liste dal file di backup
+msg: Načte nastavení a seznamy ze souboru zálohy
+
+id: Versione
+msg: Verze
+
+id: Stato
+msg: Stav
+
+id: Scadenza
+msg: Vypršanie
+
+id: Connessioni max
+msg: Max. připojení
+
+id: Impostazioni Movian…
+msg: Nastavenia Movian…
+
+id: Pagina impostazioni nativa del plugin
+msg: Natívna stránka nastavení pluginu
+
+id: Ripristinati
+msg: Obnovené
+
+id: elementi
+msg: položiek
+
+id: Nulla da ripristinare
+msg: Nic k obnovení
+
+id: (riapri il plugin)
+msg: (znova otvorte plugin)
+
+id: Ordine e numerazione ripristinati
+msg: Poradie a číslovanie obnovené
+
+id: Playlist rimossa
+msg: Playlist odobraný
+
+id: Inserisci il PIN
+msg: Zadajte PIN
+
+id: PIN errato
+msg: Zlý PIN
+
+id: Auto
+msg: Auto
+
+id: Tutto schermo
+msg: Celá obrazovka
+
+id: Formato
+msg: Formát
+
+id: Registrazione salvata (
+msg: Nahrávka uložená (
+
+id: MB) in
+msg: MB) do
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: Nahrávání není na tomto kanálu dostupné
+
+id: Registrazione avviata
+msg: Nahrávanie spustené
+
+id: canale
+msg: kanál
+
+id: Registrazione fallita
+msg: Nahrávanie zlyhalo
+
+id: Registrazione completata
+msg: Nahrávanie dokončené
+
+id: Registrazione programmata avviata
+msg: Naplánované nahrávanie spustené
+
+id: Registrazione programmata fallita
+msg: Naplánované nahrávanie zlyhalo
+
+id: Aggiunto ai preferiti
+msg: Pridané do obľúbených
+
+id: Rimosso dai preferiti
+msg: Odobrané z obľúbených
+
+id: Catch-up non supportato da questa playlist
+msg: Catch-up tento playlist nepodporuje
+
+id: Numero canale (vuoto = automatico)
+msg: Číslo kanála (prázdne = auto)
+
+id: Numero assegnato
+msg: Číslo priradené
+
+id: Numerazione automatica
+msg: Automatické číslovanie
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Nový názov kanála (prázdny = pôvodný)
+
+id: Canale rinominato in \"
+msg: Kanál premenovaný na \"
+
+id: Nome originale ripristinato
+msg: Pôvodný názov obnovený
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Kanál skrytý (obnoviť v Nastaveniach)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Skupina skrytá (obnoviť v Nastaveniach)
+
+id: Continua a guardare
+msg: Pokračovať v sledovaní
+
+id: Tutti
+msg: Všetky
+
+id: Playlist
+msg: Playlist
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: Systém
+
+id: Informazioni
+msg: Informácie
+
+id: Modifica playlist
+msg: Upraviť playlist
+
+id: Aggiungi playlist
+msg: Pridať playlist
+
+id: Tipo
+msg: Typ
+
+id: host:porta o URL del pannello Xtream
+msg: host:port nebo URL panelu Xtream
+
+id: URL EPG (opzionale)
+msg: URL EPG (volitelné)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Prázdné = xmltv.php serveru / url-tvg seznamu
+
+id: Annulla
+msg: Zrušiť
+
+id: Il server/URL e' obbligatorio
+msg: Server/URL je povinný
+
+id: Username obbligatorio per Xtream
+msg: Používateľské meno je pre Xtream povinné
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: Zadejte MAC (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Pripojenie zlyhalo
+
+id: Playlist aggiunta
+msg: Playlist pridaný
+
+id: Stagione
+msg: Séria
+
+id: Informazioni non disponibili
+msg: Informácie nedostupné
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Žiadne informácie o programe pre tento kanál
+
+id: Registrazione programmata rimossa
+msg: Naplánovaná nahrávka odobraná
+
+id: Registrazione programmata
+msg: Naplánovaná nahrávka
+
+id: alle
+msg: o
+
+id: Canale non trovato
+msg: Kanál nenájdený
+
+id: Registrazioni programmate
+msg: Naplánované nahrávky
+
+id: Nessuna registrazione programmata
+msg: Žiadne naplánované nahrávky
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Otvorte program kanála a pri budúcom programe zvoľte \"Nahrať\"
+
+id: Navigazione
+msg: Navigácia
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Šípky na pohyb, OK/klik na potvrdenie. Pravé tlačidlo myši alebo dlhý stisk (dotyk/ovládač) = kontextové menu. ESC/Späť = späť.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: Skupiny kanálů vlevo, kanály vpravo. OK na kanálu jej naladí; poslední sledovaný kanál se spustí při otevření, pokud je v Nastavení zapnuto \"Obnovit poslední kanál\".
+
+id: Preferiti e Recenti
+msg: Obľúbené a Nedávne
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Dlouhý stisk kanálu → \"Oblíbené\": objeví se ve skupině \"Oblíbené\" nahoře. Sledované kanály jdou do \"Nedávné\", seřazené podle posledního sledování.
+
+id: Menu canale (long-press)
+msg: Menu kanála (dlhý stisk)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Sledovat, Program (denní EPG), Catch-up, Oblíbené, Skrýt kanál, Přejmenovat, Nahoru/dolů (vlastní pořadí), Číslo kanálu (vlastní číslování), Multi-view.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Menu skupiny (dlhý stisk na skupinu)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Nahoru/dolů pro přeskládání skupin, Skrýt skupinu, Obnovit skryté. Pořadí se ukládá.
+
+id: Registrazione
+msg: Nahrávanie
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: Při sledování: ikona REC v liště přehrávače (OK na videu ukáže/skryje info a lištu) nahrává stream do souboru .ts ve složce recordings/ až do zastavení.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Program kanálu → budoucí pořad → odznak \"Nahrát\" → OK. Nahrávání se spustí samo v čas a skončí na konci pořadu. Seznam a zrušení jsou v \"Nahrávky\" v menu. Jedna najednou: nahrávání při sledování jiného kanálu může selhat, pokud poskytovatel povoluje jen 1 připojení.
+
+id: Rivedi (catch-up)
+msg: Catch-up (spätné prehranie)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Dostupné jen pokud poskytovatel povoluje archiv na kanálu (příznak tv_archive): dlouhý stisk kanálu → \"Catch-up\", nebo v programu mají skončené pořady modrý odznak. Pokud poskytovatel nepodporuje timeshift, položka se nezobrazí.
+
+id: Zap numerico
+msg: Číselné prepínanie
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Zadajte číslo kanála klávesmi 0-9 a potvrďte OK/Enter. \"Číslo kanála\" v kontextovom menu priradí vlastné číslo.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Menu → Multi-view: mozaika 2x2 so stlmeným zvukom; OK na dlaždici otvorí kanál na celú obrazovku.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Menu → Hľadať: hľadá kanály, filmy a seriály.
+
+id: Interfaccia
+msg: Rozhranie
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Menu → Nastavení → Vzhled: akcentní barva (zvýraznění a okraje přehledu), neprůhlednost panelů, čísla kanálů, loga. Změny se použijí okamžitě.
+
+id: Nascondere e bloccare
+msg: Skrývanie a zamykanie
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Skrývejte kanály/skupiny z kontextového menu; obnovujte v Nastavení nebo menu skupiny. S nastaveným PIN můžete zamknout celé kategorie (kontextové menu skupiny).
+
+id: Playlist multiple
+msg: Viaceré playlisty
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Nastavení → Playlisty: více účtů/zdrojů Xtream, M3U nebo Stalker, rychlé přepínání a záloha/obnova preferencí.
+
+id: Connessioni
+msg: Pripojenia
+
+id: Trial
+msg: Zkušební
+
+id: Creato il
+msg: Vytvořeno
+
+id: Protocollo
+msg: Protokol
+
+id: Timezone
+msg: Časové pásmo
+
+id: Orario server
+msg: Čas servera
+
+id: non caricata
+msg: nenahrané
+
+id: Apri
+msg: Otvoriť
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Nastaviť server Xtream Codes (host, používateľ, heslo)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, přehrávání, vzhled, rodičovský zámek
+
+id: Categorie
+msg: Kategorie
+
+id: Riproduci
+msg: Přehrát
+
+id: Dettagli
+msg: Detaily
+
+id: Cerca canali, film e serie…
+msg: Hľadať kanály, filmy a seriály…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Píšte a stlačte OK pre hľadanie kanálov, filmov a seriálov
+
+id: Seleziona un canale per iniziare
+msg: Vyberte kanál na začatie
+
+id: Gruppi
+msg: Skupiny
+
+id: No information
+msg: Žiadne informácie
+
+id: Guarda
+msg: Sledovať
+
+id: Palinsesto
+msg: Program
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Odobrať z obľúbených
+
+id: Aggiungi ai preferiti
+msg: Pridať do obľúbených
+
+id: Nascondi canale
+msg: Skryť kanál
+
+id: Rinomina canale
+msg: Premenovať kanál
+
+id: Sposta su
+msg: Hore
+
+id: Sposta giù
+msg: Dole
+
+id: Numero canale…
+msg: Číslo kanála…
+
+id: Nascondi gruppo
+msg: Skryť skupinu
+
+id: Ripristina nascosti
+msg: Obnoviť skryté
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Nahrať
+
+id: Stagioni
+msg: Série
+
+id: Canali — OK: assegna al tile selezionato
+msg: Kanály — OK: přiřadit vybrané dlaždici
+
+
+id: Nome playlist:
+msg: Názov playlistu:
+
+id: Server (host:porta o URL):
+msg: Server (host:port alebo URL):
+
+id: Username:
+msg: Používateľské meno:
+
+id: Password:
+msg: Heslo:
+
+id: URL EPG (vuoto = server Xtream):
+msg: URL EPG (prázdne = server Xtream):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (prázdny = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Extra hlavičky (Názov: hodnota, jedna na riadok):
+
+id: ore
+msg: hodín
+
+id: attivi
+msg: aktívnych
+
+id: Nessuno
+msg: Žiadne
+
+id: Movian (predefinito)
+msg: Movian (predvolené)
+
+id: Programma
+msg: Program
+
+id: file di backup non leggibile
+msg: súbor zálohy je nečitateľný
+
+id: URL del file lista .m3u/.m3u8
+msg: URL súboru zoznamu .m3u/.m3u8
+
+id: URL del portale
+msg: URL portálu
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC adresa (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Nevyžaduje sa
+
+id: Non richiesta
+msg: Nevyžaduje sa
+
+id: A fine episodio parte automaticamente il successivo
+msg: Na konci epizódy sa automaticky spustí ďalšia
+
+id: Attivo: sarai avvisato all'inizio
+msg: Aktívne: na začiatku budete upozornení
+
+id: Autoplay episodio successivo
+msg: Automatické prehranie ďalšej epizódy
+
+id: Avvisami quando inizia
+msg: Upozorni ma na začiatku
+
+id: Cartella non scrivibile
+msg: Priečinok nie je zapisovateľný
+
+id: Cartella registrazioni
+msg: Priečinok nahrávok
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Priečinok nahrávok (prázdne = predvolený)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Priečinok nahrávok (prázdne = predvolený):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: Priečinok nahrávok nie je zapisovateľný, použije sa predvolený
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Dostupné iba ak poskytovateľ povolí archív na kanáli (príznak tv_archive): priame kliknutie na skončený program v mriežke sprievodcu, dlhý stisk na kanáli → \"Pozrieť znova\", alebo odznak v programe kanála. Ak poskytovateľ nepodporuje timeshift, funkcia sa nezobrazí.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Kam ukladať súbory .ts — prázdne = úložisko pluginu
+
+id: Elimina
+msg: Zmazať
+
+id: Eliminare la registrazione
+msg: Zmazať nahrávku
+
+id: Episodio non trovato
+msg: Epizóda nenájdená
+
+id: Esporta preferiti in M3U
+msg: Exportovať obľúbené do M3U
+
+id: Esportazione fallita
+msg: Export zlyhal
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: Pozreté epizódy majú v zozname začiarknutie. Na konci epizódy sa automaticky spustí ďalšia (možno vypnúť v Nastavenia → Prehrávanie → \"Automatické prehranie ďalšej epizódy\").
+
+id: I file .ts registrati appariranno qui
+msg: Tu sa objavia nahrané súbory .ts
+
+id: IN CORSO
+msg: PREBIEHA
+
+id: In corso
+msg: Prebieha
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: Počas sledovania: ikona REC v lište prehrávača (OK na videu zobrazí/skryje info a lištu) zaznamenáva stream do súboru .ts až do zastavenia. Nahrané súbory možno prehrať a zmazať v Menu → \"Nahrávky\"; cieľový priečinok zmeníte v Nastavenia → Prehrávanie.
+
+id: Nessun preferito da esportare
+msg: Žiadne obľúbené na export
+
+id: Nessun promemoria attivo
+msg: Žiadne aktívne pripomenutia
+
+id: Nessun'altra puntata in palinsesto
+msg: Žiadne ďalšie diely v programe
+
+id: Nessuna puntata futura da registrare
+msg: Žiadne budúce diely na nahratie
+
+id: Nessuna registrazione completata
+msg: Žiadne dokončené nahrávky
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Program kanála → budúci program → odznak \"Nahrať\" → OK. Riadok \"Pripomenutie a nahrávanie seriálu\" pod programom umožňuje aj len upozornenie na začiatku (bez nahrávania) a nahratie všetkých dielov s rovnakým názvom. Nahrávky štartujú samé a končia na konci programu. Po jednej: nahrávanie pri sledovaní iného kanála môže zlyhať, ak poskytovateľ povoľuje len 1 pripojenie.
+
+id: Predefinita
+msg: Predvolený
+
+id: Preferiti esportati
+msg: Obľúbené exportované
+
+id: Promemoria
+msg: Pripomenutie
+
+id: Promemoria attivato
+msg: Pripomenutie aktivované
+
+id: Promemoria attivo
+msg: Pripomenutie aktívne
+
+id: Promemoria e registrazione serie
+msg: Pripomenutie a nahrávanie seriálu
+
+id: Promemoria rimosso
+msg: Pripomenutie odstránené
+
+id: Promemorie
+msg: Pripomenutia
+
+id: Prossimo episodio
+msg: Ďalšia epizóda
+
+id: Registra tutta la serie
+msg: Nahrať celý seriál
+
+id: Registrazione eliminata
+msg: Nahrávka zmazaná
+
+id: Registrazione programmata, promemoria e serie
+msg: Plánované nahrávanie, pripomenutie a seriál
+
+id: Registrazione singola puntata
+msg: Nahratie jedného dielu
+
+id: Salva i canali preferiti come playlist standard
+msg: Uložiť obľúbené kanály ako štandardný playlist
+
+id: Sta iniziando
+msg: Práve začína
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Použite odznak \"Nahrať\" na riadku programu
+
+id: canali
+msg: kanály
+
+id: cartella non scrivibile
+msg: priečinok nie je zapisovateľný
+
+id: fallita
+msg: zlyhala
+
+id: puntate
+msg: diely
+
+id: puntate in palinsesto
+msg: diely v programe
+

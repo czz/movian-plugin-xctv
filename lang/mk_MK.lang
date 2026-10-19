@@ -1,0 +1,976 @@
+language: Macedonian
+native: Македонски
+
+id: Server (host[:port] o URL)
+msg: Сервер (host[:port] или URL)
+
+id: Username
+msg: Корисничко име
+
+id: Password
+msg: Лозинка
+
+id: Nome playlist
+msg: Име на листа
+
+id: Abilita EPG
+msg: Вклучи EPG
+
+id: URL XMLTV personalizzato (opzionale)
+msg: Сопствен XMLTV URL (опционално)
+
+id: Aggiorna EPG ogni (ore)
+msg: Ажурирај EPG на секои (часа)
+
+id: Correggi orario EPG (minuti)
+msg: Корекција на време EPG (минути)
+
+id: Aggiorna EPG all'avvio
+msg: Ажурирај EPG при старт
+
+id: Log di debug
+msg: Дневник за дебагирање
+
+id: Riproduzione
+msg: Репродукција
+
+id: Formato stream live
+msg: Формат на live стрим
+
+id: Automatico
+msg: Автоматски
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Формат на филмови/епизоди
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Времетраење на инфо за канал по zap (сек)
+
+id: Riprendi ultimo canale all'avvio
+msg: Продолжи последен канал при старт
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Дополнителни HTTP заглавија (Име: вредност по ред)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Освежи листа на секои (мин, 0 = никогаш)
+
+id: Aspetto
+msg: Изглед
+
+id: Mostra numeri canale in guida
+msg: Покажи броеви на канали во водичот
+
+id: Mostra loghi canale in guida
+msg: Покажи логоа на канали во водичот
+
+id: Ore visibili in guida
+msg: Видливи часови во водичот
+
+id: Opacita' pannelli (%)
+msg: Непроѕирност на панели (%)
+
+id: Colore accento
+msg: Акцентна боја
+
+id: Blu
+msg: Сина
+
+id: Verde
+msg: Зелена
+
+id: Arancione
+msg: Портокалова
+
+id: Rosso
+msg: Црвена
+
+id: Viola
+msg: Виолетова
+
+id: Controllo genitori
+msg: Родителска контрола
+
+id: PIN (vuoto = disattivo)
+msg: PIN (празно = исклучено)
+
+id: Ordinamento cataloghi
+msg: Сортирање на каталози
+
+id: Predefinito
+msg: Стандардно
+
+id: Nome A-Z
+msg: Име А-Ж
+
+id: Aggiunti di recente
+msg: Неодамна додадени
+
+id: Voto
+msg: Оцена
+
+id: Account
+msg: Сметка
+
+id: Verifica connessione
+msg: Тестирај врска
+
+id: Connessione OK
+msg: Врска OK
+
+id: Errore
+msg: Грешка
+
+id: Inserisci credenziali…
+msg: Внеси акредитиви…
+
+id: Ricarica EPG adesso
+msg: Вчитај EPG повторно
+
+id: EPG: ricarico in corso…
+msg: EPG: се вчитува…
+
+id: EPG aggiornata
+msg: EPG ажуриран
+
+id: EPG non disponibile
+msg: EPG недостапен
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — Xtream Codes клиент за Movian.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Конфигурирајте сервер и акредитиви погоре, па отворете ја услугата од почетна.
+
+id: Server (host:porta o URL)
+msg: Сервер (host:port или URL)
+
+id: Credenziali salvate
+msg: Акредитивите се зачувани
+
+id: Playlist aggiornata
+msg: Листата е ажурирана
+
+id: Sleep timer disattivato
+msg: Тајмер за спиење исклучен
+
+id: Sleep timer: spegnimento tra
+msg: Тајмер: запира за
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Тајмер: репродукцијата е запрена
+
+id: Backup salvato
+msg: Резервата е зачувана
+
+id: Backup fallito
+msg: Резервата не успеа
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Резервата е вратена (омилените важат по рестарт)
+
+id: Ripristino fallito
+msg: Враќањето не успеа
+
+id: Preferiti
+msg: Омилени
+
+id: Recenti
+msg: Неодамнешни
+
+id: Tutti i canali
+msg: Сите канали
+
+id: Guida TV
+msg: ТВ водич
+
+id: Multi-view
+msg: Мулти-приказ
+
+id: Film
+msg: Филмови
+
+id: Serie TV
+msg: Серии
+
+id: Cerca
+msg: Пребарај
+
+id: Registrazioni
+msg: Снимки
+
+id: Guida
+msg: Помош
+
+id: Impostazioni
+msg: Поставки
+
+id: Playlist attiva
+msg: Активна листа
+
+id: OK passa alla playlist successiva
+msg: OK преминува на следната листа
+
+id: Nome mostrato nel menu
+msg: Име во менито
+
+id: Server
+msg: Сервер
+
+id: host:porta o URL Xtream Codes
+msg: host:port или Xtream Codes URL
+
+id: URL EPG
+msg: EPG URL
+
+id: Lascia vuoto per usare la guida del server
+msg: Оставете празно за водичот на серверот
+
+id: Tipo playlist
+msg: Тип на листа
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Важи само за новата листа (Додај)
+
+id: Refresh automatico playlist
+msg: Автоматско освежување на листи
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Ги вчитува повторно листите и водичот на интервали
+
+id: Aggiungi playlist…
+msg: Додај листа…
+
+id: Modifica playlist attiva…
+msg: Измени активна листа…
+
+id: Rimuovi playlist attiva
+msg: Отстрани активна листа
+
+id: Guida TV (EPG)
+msg: ТВ водич (EPG)
+
+id: URL XMLTV personalizzato
+msg: Сопствен XMLTV URL
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Празно = xmltv.php на Xtream серверот
+
+id: Aggiorna EPG ogni
+msg: Ажурирај EPG на секои
+
+id: Intervallo di refresh della guida
+msg: Интервал на освежување на водичот
+
+id: Correggi orario EPG
+msg: Корекција на време EPG
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Ги поместува програмите ако водичот е поместен
+
+id: Formato film / episodi
+msg: Формат на филмови / епизоди
+
+id: Durata info canale
+msg: Времетраење на инфо за канал
+
+id: Sempre visibile
+msg: Секогаш видливо
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: Време на видливост на панелот по zap
+
+id: Riprendi ultimo canale
+msg: Продолжи последен канал
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: При старт водичот се отвора на последниот гледан канал
+
+id: UA custom per API e stream sul server
+msg: Сопствен UA за API и стримови на серверот
+
+id: Header HTTP extra
+msg: Дополнителни HTTP заглавија
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: По еден на ред: \"Име: вредност\" — важи за API и водич
+
+id: Sleep timer
+msg: Тајмер за спиење
+
+id: Ferma la riproduzione dopo N minuti
+msg: Ја запира репродукцијата по N минути
+
+id: Numeri canale
+msg: Броеви на канали
+
+id: Numero progressivo nella guida
+msg: Реден број во водичот
+
+id: Loghi canale
+msg: Логоа на канали
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Редослед на постери во делови Филмови и Серии
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: Ширина на временскиот прозорец на EPG мрежата
+
+id: Opacita' pannelli
+msg: Непроѕирност на панели
+
+id: Trasparenza di guide e menu sul video
+msg: Проѕирност на водичот и менијата врз видеото
+
+id: Colore di indicatori e linea \"adesso\"
+msg: Боја на индикаторите и линијата \"сега\"
+
+id: Ripristina ordine e numeri canali
+msg: Врати редослед и броеви на канали
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Поништи преместувања и сопствена нумерација
+
+id: Ripristina canali e gruppi nascosti
+msg: Врати скриени канали и групи
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Покажи повторно сè што е скриено
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Не е поставено
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Блокирај групи со возрасна содржина
+
+id: Gruppi bloccati
+msg: Блокирани групи
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: \"Возрасните\" групи бараат PIN за отворање
+
+id: Imposta un PIN per attivare il blocco
+msg: Поставете PIN за активирање на блокирањето
+
+id: Gruppo live
+msg: Live група
+
+id: Categoria film
+msg: Филмска категорија
+
+id: Categoria serie
+msg: Сериска категорија
+
+id: Blocca
+msg: Блокирај
+
+id: Esporta backup
+msg: Извези резерва
+
+id: Salva impostazioni, preferiti e liste in
+msg: Ги зачувува поставките, омилените и листите во
+
+id: Ripristina backup
+msg: Врати резерва
+
+id: Carica impostazioni e liste dal file di backup
+msg: Ги вчитува поставките и листите од датотеката
+
+id: Versione
+msg: Верзија
+
+id: Stato
+msg: Статус
+
+id: Scadenza
+msg: Истекување
+
+id: Connessioni max
+msg: Макс. врски
+
+id: Impostazioni Movian…
+msg: Поставки на Movian…
+
+id: Pagina impostazioni nativa del plugin
+msg: Нативна страница за поставки на приклучокот
+
+id: Ripristinati
+msg: Вратени
+
+id: elementi
+msg: елементи
+
+id: Nulla da ripristinare
+msg: Нема што да се врати
+
+id: (riapri il plugin)
+msg: (отворете го приклучокот повторно)
+
+id: Ordine e numerazione ripristinati
+msg: Редоследот и нумерацијата се вратени
+
+id: Playlist rimossa
+msg: Листата е отстранета
+
+id: Inserisci il PIN
+msg: Внесете PIN
+
+id: PIN errato
+msg: Погрешен PIN
+
+id: Auto
+msg: Авто
+
+id: Tutto schermo
+msg: Цел екран
+
+id: Formato
+msg: Формат
+
+id: Registrazione salvata (
+msg: Снимката е зачувана (
+
+id: MB) in
+msg: МБ) во
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: Снимањето не е достапно на овој канал
+
+id: Registrazione avviata
+msg: Снимањето започна
+
+id: canale
+msg: канал
+
+id: Registrazione fallita
+msg: Снимањето не успеа
+
+id: Registrazione completata
+msg: Снимањето заврши
+
+id: Registrazione programmata avviata
+msg: Закажаното снимање започна
+
+id: Registrazione programmata fallita
+msg: Закажаното снимање не успеа
+
+id: Aggiunto ai preferiti
+msg: Додадено во омилени
+
+id: Rimosso dai preferiti
+msg: Отстрането од омилени
+
+id: Catch-up non supportato da questa playlist
+msg: Catch-up не е поддржан од оваа листа
+
+id: Numero canale (vuoto = automatico)
+msg: Број на канал (празно = авто)
+
+id: Numero assegnato
+msg: Бројот е доделен
+
+id: Numerazione automatica
+msg: Автоматска нумерација
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Ново име на канал (празно = оригинал)
+
+id: Canale rinominato in \"
+msg: Каналот е преименуван во \"
+
+id: Nome originale ripristinato
+msg: Оригиналното име е вратено
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Каналот е скриен (вратете во Поставки)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Групата е скриена (вратете во Поставки)
+
+id: Continua a guardare
+msg: Продолжи гледање
+
+id: Tutti
+msg: Сите
+
+id: Playlist
+msg: Листа
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: Систем
+
+id: Informazioni
+msg: Информации
+
+id: Modifica playlist
+msg: Измени листа
+
+id: Aggiungi playlist
+msg: Додај листа
+
+id: Tipo
+msg: Тип
+
+id: host:porta o URL del pannello Xtream
+msg: host:port или URL на Xtream панелот
+
+id: URL EPG (opzionale)
+msg: EPG URL (опционално)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Празно = xmltv.php на серверот / url-tvg на листата
+
+id: Annulla
+msg: Откажи
+
+id: Il server/URL e' obbligatorio
+msg: Серверот/URL е задолжителен
+
+id: Username obbligatorio per Xtream
+msg: Корисничкото име е задолжително за Xtream
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: Внесете MAC (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Врската не успеа
+
+id: Playlist aggiunta
+msg: Листата е додадена
+
+id: Stagione
+msg: Сезона
+
+id: Informazioni non disponibili
+msg: Информациите не се достапни
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Нема програмски информации за овој канал
+
+id: Registrazione programmata rimossa
+msg: Закажаната снимка е отстранета
+
+id: Registrazione programmata
+msg: Закажана снимка
+
+id: alle
+msg: во
+
+id: Canale non trovato
+msg: Каналот не е пронајден
+
+id: Registrazioni programmate
+msg: Закажани снимки
+
+id: Nessuna registrazione programmata
+msg: Нема закажани снимки
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Отворете ја програмата на канал и изберете \"Сними\" на идна емисија
+
+id: Navigazione
+msg: Навигација
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Стрелки за движење, OK/клик за потврда. Десен клик или долг притисок (допир/далечински) = контекстно мени. ESC/Назад = назад.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: Групите канали се лево, каналите десно. OK на канал го штимува; последниот гледан канал започнува при отворање ако \"Продолжи последен канал\" е вклучено во Поставки.
+
+id: Preferiti e Recenti
+msg: Омилени и Неодамнешни
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Долг притисок на канал → \"Омилени\": се појавува во групата \"Омилени\" горе. Гледаните канали одат во \"Неодамнешни\", по последно гледано.
+
+id: Menu canale (long-press)
+msg: Мени на канал (долг притисок)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Гледај, Програма (EPG на денот), Catch-up, Омилени, Скриј канал, Преименувај, Горе/долу (рачен ред), Број на канал (сопствена нумерација), Мулти-приказ.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Мени на група (долг притисок на група)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Горе/долу за преуредување на групи, Скриј група, Врати скриени. Редоследот се зачувува.
+
+id: Registrazione
+msg: Снимање
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: Додека гледате: REC иконата во лентата на плеерот (OK на видеото покажува/крие инфо и лента) снима во .ts датотека во папката recordings/ до запирање.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Програмата на канал → идна емисија → значка \"Сними\" → OK. Снимањето започнува само на време и завршува на крајот на емисијата. Листата и откажувањата се во \"Снимки\" во менито. Една истовремено: снимање додека гледате друг канал може да не успее ако провајдерот дозволува само 1 врска.
+
+id: Rivedi (catch-up)
+msg: Catch-up (преглед назад)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Достапно само ако провајдерот овозможува архива на каналот (знаме tv_archive): долг притисок на каналот → \"Catch-up\", или во програмата завршените емисии имаат сина значка. Ако провајдерот не поддржува тајмшифт, опцијата не се појавува.
+
+id: Zap numerico
+msg: Нумеричко префрлање
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Внесете го бројот на канал со тастерите 0-9 и потврдете со OK/Enter. \"Број на канал\" во контекстното мени доделува сопствен број.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Мени → Мулти-приказ: мозаик 2x2 со придушен звук; OK на поле го отвора каналот на цел екран.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Мени → Пребарај: пребарува канали, филмови и серии.
+
+id: Interfaccia
+msg: Интерфејс
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Мени → Поставки → Изглед: акцентна боја (истакнувања и рамки на водичот), непроѕирност на панели, броеви на канали, логоа. Промените важат веднаш.
+
+id: Nascondere e bloccare
+msg: Скривање и блокирање
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Скривајте канали/групи од контекстното мени; вратете ги од Поставки или менито на групата. Со PIN можете да блокирате цели категории (контекстно мени на групата).
+
+id: Playlist multiple
+msg: Повеќе листи
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Поставки → Листи: повеќе Xtream сметки/извори, M3U или Stalker, брзо префрлање и резерва/враќање на поставките.
+
+id: Connessioni
+msg: Врски
+
+id: Trial
+msg: Проба
+
+id: Creato il
+msg: Создадено
+
+id: Protocollo
+msg: Протокол
+
+id: Timezone
+msg: Временска зона
+
+id: Orario server
+msg: Време на серверот
+
+id: non caricata
+msg: не е вчитана
+
+id: Apri
+msg: Отвори
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Конфигурирај Xtream Codes сервер (host, корисник, лозинка)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, репродукција, изглед, родителска контрола
+
+id: Categorie
+msg: Категории
+
+id: Riproduci
+msg: Пушти
+
+id: Dettagli
+msg: Детали
+
+id: Cerca canali, film e serie…
+msg: Пребарај канали, филмови и серии…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Пишете и притиснете OK за пребарување канали, филмови и серии
+
+id: Seleziona un canale per iniziare
+msg: Изберете канал за да почнете
+
+id: Gruppi
+msg: Групи
+
+id: No information
+msg: Нема информации
+
+id: Guarda
+msg: Гледај
+
+id: Palinsesto
+msg: Програма
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Отстрани од омилени
+
+id: Aggiungi ai preferiti
+msg: Додај во омилени
+
+id: Nascondi canale
+msg: Скриј канал
+
+id: Rinomina canale
+msg: Преименувај канал
+
+id: Sposta su
+msg: Горе
+
+id: Sposta giù
+msg: Долу
+
+id: Numero canale…
+msg: Број на канал…
+
+id: Nascondi gruppo
+msg: Скриј група
+
+id: Ripristina nascosti
+msg: Врати скриени
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Сними
+
+id: Stagioni
+msg: Сезони
+
+id: Canali — OK: assegna al tile selezionato
+msg: Канали — OK: додели на избраното поле
+
+
+id: Nome playlist:
+msg: Име на листа:
+
+id: Server (host:porta o URL):
+msg: Сервер (host:port или URL):
+
+id: Username:
+msg: Корисничко име:
+
+id: Password:
+msg: Лозинка:
+
+id: URL EPG (vuoto = server Xtream):
+msg: EPG URL (празно = Xtream сервер):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (празно = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Дополнителни заглавија (Име: вредност, по едно на ред):
+
+id: ore
+msg: часа
+
+id: attivi
+msg: активни
+
+id: Nessuno
+msg: Нема
+
+id: Movian (predefinito)
+msg: Movian (стандардно)
+
+id: Programma
+msg: Програма
+
+id: file di backup non leggibile
+msg: датотеката со резерва не се чита
+
+id: URL del file lista .m3u/.m3u8
+msg: URL на датотеката со листа .m3u/.m3u8
+
+id: URL del portale
+msg: URL на порталот
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC адреса (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Не е потребно
+
+id: Non richiesta
+msg: Не е потребно
+
+id: A fine episodio parte automaticamente il successivo
+msg: На крајот на епизодата следната започнува автоматски
+
+id: Attivo: sarai avvisato all'inizio
+msg: Активно: ќе бидете известени на почетокот
+
+id: Autoplay episodio successivo
+msg: Автоматска репродукција на следната епизода
+
+id: Avvisami quando inizia
+msg: Извести ме кога ќе започне
+
+id: Cartella non scrivibile
+msg: Папката не е запишлива
+
+id: Cartella registrazioni
+msg: Папка за снимки
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Папка за снимки (празно = стандардна)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Папка за снимки (празно = стандардна):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: Папката за снимки не е запишлива, се користи стандардната
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Достапно само ако провајдерот го овозможува архивот на каналот (ознака tv_archive): директен клик на завршена програма во решетката на водичот, долг притисок на каналот → \"Погледни повторно\" или ознаката во програмата на каналот. Ако провајдерот не поддржува timeshift, функцијата не се појавува.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Каде да се зачувуваат .ts датотеки — празно = складиште на приклучокот
+
+id: Elimina
+msg: Избриши
+
+id: Eliminare la registrazione
+msg: Избриши ја снимката
+
+id: Episodio non trovato
+msg: Епизодата не е пронајдена
+
+id: Esporta preferiti in M3U
+msg: Извези омилени во M3U
+
+id: Esportazione fallita
+msg: Извозот не успеа
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: Прегледаните епизоди имаат штикла во листата. На крајот на епизодата следната започнува автоматски (може да се исклучи во Поставки → Репродукција → \"Автоматска репродукција на следната епизода\").
+
+id: I file .ts registrati appariranno qui
+msg: Снимените .ts датотеки ќе се појават тука
+
+id: IN CORSO
+msg: ВО ТЕК
+
+id: In corso
+msg: Во тек
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: Додека гледате: REC иконата во лентата на плеерот (OK на видеото прикажува/крие информации и лента) ја снима струјата во .ts датотека до запирање. Снимените датотеки се гледаат и бришат од Мени → \"Снимки\"; целната папка се менува во Поставки → Репродукција.
+
+id: Nessun preferito da esportare
+msg: Нема омилени за извоз
+
+id: Nessun promemoria attivo
+msg: Нема активни потсетувања
+
+id: Nessun'altra puntata in palinsesto
+msg: Нема други епизоди во програмата
+
+id: Nessuna puntata futura da registrare
+msg: Нема идни епизоди за снимање
+
+id: Nessuna registrazione completata
+msg: Нема завршени снимки
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Програма на канал → идна програма → ознака \"Сними\" → OK. Редот \"Потсетување и снимање на серија\" под програмата овозможува и само известување на почетокот (без снимање) и снимање на сите епизоди со ист наслов. Снимките почнуваат самите и завршуваат на крајот на програмата. По една: снимање додека гледате друг канал може да не успее ако провајдерот дозволува само 1 врска.
+
+id: Predefinita
+msg: Стандардна
+
+id: Preferiti esportati
+msg: Омилените се извезени
+
+id: Promemoria
+msg: Потсетување
+
+id: Promemoria attivato
+msg: Потсетувањето е активирано
+
+id: Promemoria attivo
+msg: Потсетувањето е активно
+
+id: Promemoria e registrazione serie
+msg: Потсетување и снимање на серија
+
+id: Promemoria rimosso
+msg: Потсетувањето е отстрането
+
+id: Promemorie
+msg: Потсетувања
+
+id: Prossimo episodio
+msg: Следна епизода
+
+id: Registra tutta la serie
+msg: Сними ја целата серија
+
+id: Registrazione eliminata
+msg: Снимката е избришана
+
+id: Registrazione programmata, promemoria e serie
+msg: Закажано снимање, потсетување и серија
+
+id: Registrazione singola puntata
+msg: Снимање на една епизода
+
+id: Salva i canali preferiti come playlist standard
+msg: Зачувај ги омилените канали како стандардна листа
+
+id: Sta iniziando
+msg: Започнува сега
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Користете ја ознаката \"Сними\" на редот на програмата
+
+id: canali
+msg: канали
+
+id: cartella non scrivibile
+msg: папката не е запишлива
+
+id: fallita
+msg: не успеа
+
+id: puntate
+msg: епизоди
+
+id: puntate in palinsesto
+msg: епизоди во програмата
+

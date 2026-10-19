@@ -1,0 +1,976 @@
+language: Greek
+native: Ελληνικά
+
+id: Server (host[:port] o URL)
+msg: Διακομιστής (host[:port] ή URL)
+
+id: Username
+msg: Όνομα χρήστη
+
+id: Password
+msg: Κωδικός
+
+id: Nome playlist
+msg: Όνομα λίστας
+
+id: Abilita EPG
+msg: Ενεργοποίηση EPG
+
+id: URL XMLTV personalizzato (opzionale)
+msg: Προσαρμοσμένο URL XMLTV (προαιρετικό)
+
+id: Aggiorna EPG ogni (ore)
+msg: Ενημέρωση EPG κάθε (ώρες)
+
+id: Correggi orario EPG (minuti)
+msg: Διόρθωση ώρας EPG (λεπτά)
+
+id: Aggiorna EPG all'avvio
+msg: Ενημέρωση EPG κατά την εκκίνηση
+
+id: Log di debug
+msg: Αρχείο εντοπισμού σφαλμάτων
+
+id: Riproduzione
+msg: Αναπαραγωγή
+
+id: Formato stream live
+msg: Μορφή ζωντανής ροής
+
+id: Automatico
+msg: Αυτόματο
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Μορφή ταινιών/επεισοδίων
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Διάρκεια πληροφοριών καναλιού μετά το zap (δευτ.)
+
+id: Riprendi ultimo canale all'avvio
+msg: Συνέχιση τελευταίου καναλιού στην εκκίνηση
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Επιπλέον HTTP headers (Όνομα: τιμή ανά γραμμή)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Ανανέωση λίστας κάθε (λεπτά, 0 = ποτέ)
+
+id: Aspetto
+msg: Εμφάνιση
+
+id: Mostra numeri canale in guida
+msg: Εμφάνιση αριθμών καναλιών στον οδηγό
+
+id: Mostra loghi canale in guida
+msg: Εμφάνιση λογότυπων καναλιών στον οδηγό
+
+id: Ore visibili in guida
+msg: Ορατές ώρες στον οδηγό
+
+id: Opacita' pannelli (%)
+msg: Αδιαφάνεια πάνελ (%)
+
+id: Colore accento
+msg: Χρώμα έμφασης
+
+id: Blu
+msg: Μπλε
+
+id: Verde
+msg: Πράσινο
+
+id: Arancione
+msg: Πορτοκαλί
+
+id: Rosso
+msg: Κόκκινο
+
+id: Viola
+msg: Μωβ
+
+id: Controllo genitori
+msg: Γονικός έλεγχος
+
+id: PIN (vuoto = disattivo)
+msg: PIN (κενό = ανενεργό)
+
+id: Ordinamento cataloghi
+msg: Ταξινόμηση καταλόγων
+
+id: Predefinito
+msg: Προεπιλογή
+
+id: Nome A-Z
+msg: Όνομα Α-Ω
+
+id: Aggiunti di recente
+msg: Πρόσφατα προστιθέμενα
+
+id: Voto
+msg: Βαθμολογία
+
+id: Account
+msg: Λογαριασμός
+
+id: Verifica connessione
+msg: Έλεγχος σύνδεσης
+
+id: Connessione OK
+msg: Σύνδεση OK
+
+id: Errore
+msg: Σφάλμα
+
+id: Inserisci credenziali…
+msg: Εισαγωγή στοιχείων…
+
+id: Ricarica EPG adesso
+msg: Επαναφόρτωση EPG τώρα
+
+id: EPG: ricarico in corso…
+msg: EPG: επαναφόρτωση…
+
+id: EPG aggiornata
+msg: EPG ενημερώθηκε
+
+id: EPG non disponibile
+msg: EPG μη διαθέσιμο
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — πελάτης Xtream Codes για Movian.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Ρυθμίστε διακομιστή και στοιχεία παραπάνω, μετά ανοίξτε την υπηρεσία από την αρχική.
+
+id: Server (host:porta o URL)
+msg: Διακομιστής (host:port ή URL)
+
+id: Credenziali salvate
+msg: Τα στοιχεία αποθηκεύτηκαν
+
+id: Playlist aggiornata
+msg: Η λίστα ενημερώθηκε
+
+id: Sleep timer disattivato
+msg: Χρονοδιακόπτης ανενεργός
+
+id: Sleep timer: spegnimento tra
+msg: Χρονοδιακόπτης: διακοπή σε
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Χρονοδιακόπτης: η αναπαραγωγή σταμάτησε
+
+id: Backup salvato
+msg: Το αντίγραφο αποθηκεύτηκε
+
+id: Backup fallito
+msg: Το αντίγραφο απέτυχε
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Το αντίγραφο επαναφέρθηκε (τα αγαπημένα θα ισχύσουν μετά την επανεκκίνηση)
+
+id: Ripristino fallito
+msg: Η επαναφορά απέτυχε
+
+id: Preferiti
+msg: Αγαπημένα
+
+id: Recenti
+msg: Πρόσφατα
+
+id: Tutti i canali
+msg: Όλα τα κανάλια
+
+id: Guida TV
+msg: Οδηγός TV
+
+id: Multi-view
+msg: Πολλαπλή προβολή
+
+id: Film
+msg: Ταινίες
+
+id: Serie TV
+msg: Σειρές
+
+id: Cerca
+msg: Αναζήτηση
+
+id: Registrazioni
+msg: Εγγραφές
+
+id: Guida
+msg: Βοήθεια
+
+id: Impostazioni
+msg: Ρυθμίσεις
+
+id: Playlist attiva
+msg: Ενεργή λίστα
+
+id: OK passa alla playlist successiva
+msg: Το OK μεταβαίνει στην επόμενη λίστα
+
+id: Nome mostrato nel menu
+msg: Όνομα στο μενού
+
+id: Server
+msg: Διακομιστής
+
+id: host:porta o URL Xtream Codes
+msg: host:port ή URL Xtream Codes
+
+id: URL EPG
+msg: URL EPG
+
+id: Lascia vuoto per usare la guida del server
+msg: Αφήστε κενό για τον οδηγό του διακομιστή
+
+id: Tipo playlist
+msg: Τύπος λίστας
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Ισχύει μόνο για τη νέα λίστα (Προσθήκη)
+
+id: Refresh automatico playlist
+msg: Αυτόματη ανανέωση λίστας
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Επαναφορτώνει λίστες και οδηγό σε διαστήματα
+
+id: Aggiungi playlist…
+msg: Προσθήκη λίστας…
+
+id: Modifica playlist attiva…
+msg: Επεξεργασία ενεργής λίστας…
+
+id: Rimuovi playlist attiva
+msg: Αφαίρεση ενεργής λίστας
+
+id: Guida TV (EPG)
+msg: Οδηγός TV (EPG)
+
+id: URL XMLTV personalizzato
+msg: Προσαρμοσμένο URL XMLTV
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Κενό = xmltv.php του διακομιστή Xtream
+
+id: Aggiorna EPG ogni
+msg: Ενημέρωση EPG κάθε
+
+id: Intervallo di refresh della guida
+msg: Διάστημα ανανέωσης οδηγού
+
+id: Correggi orario EPG
+msg: Διόρθωση ώρας EPG
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Μετατοπίζει τα προγράμματα αν ο οδηγός είναι εκτός
+
+id: Formato film / episodi
+msg: Μορφή ταινιών / επεισοδίων
+
+id: Durata info canale
+msg: Διάρκεια πληροφοριών καναλιού
+
+id: Sempre visibile
+msg: Πάντα ορατό
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: Χρόνος ορατότητας του πάνελ μετά το zap
+
+id: Riprendi ultimo canale
+msg: Συνέχιση τελευταίου καναλιού
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: Στην εκκίνηση ο οδηγός ανοίγει στο τελευταίο κανάλι
+
+id: UA custom per API e stream sul server
+msg: Προσαρμοσμένο UA για API και ροές
+
+id: Header HTTP extra
+msg: Επιπλέον HTTP headers
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: Ένα ανά γραμμή: \"Όνομα: τιμή\" — ισχύει για API και οδηγό
+
+id: Sleep timer
+msg: Χρονοδιακόπτης
+
+id: Ferma la riproduzione dopo N minuti
+msg: Σταματά την αναπαραγωγή μετά από N λεπτά
+
+id: Numeri canale
+msg: Αριθμοί καναλιών
+
+id: Numero progressivo nella guida
+msg: Σειριακός αριθμός στον οδηγό
+
+id: Loghi canale
+msg: Λογότυπα καναλιών
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Σειρά αφισών στις ενότητες Ταινίες και Σειρές
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: Πλάτος χρονικού παραθύρου του πλέγματος EPG
+
+id: Opacita' pannelli
+msg: Αδιαφάνεια πάνελ
+
+id: Trasparenza di guide e menu sul video
+msg: Διαφάνεια οδηγού και μενού πάνω στο βίντεο
+
+id: Colore di indicatori e linea \"adesso\"
+msg: Χρώμα δεικτών και γραμμής \"τώρα\"
+
+id: Ripristina ordine e numeri canali
+msg: Επαναφορά σειράς και αριθμών καναλιών
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Αναίρεση μετακινήσεων και προσαρμοσμένης αρίθμησης
+
+id: Ripristina canali e gruppi nascosti
+msg: Επαναφορά κρυφών καναλιών και ομάδων
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Επανεμφάνιση όσων κρύφτηκαν
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Δεν ορίστηκε
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Κλείδωμα ομάδων με περιεχόμενο ενηλίκων
+
+id: Gruppi bloccati
+msg: Κλειδωμένες ομάδες
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: Οι ομάδες \"ενηλίκων\" ζητούν PIN για άνοιγμα
+
+id: Imposta un PIN per attivare il blocco
+msg: Ορίστε PIN για ενεργοποίηση κλειδώματος
+
+id: Gruppo live
+msg: Ομάδα live
+
+id: Categoria film
+msg: Κατηγορία ταινιών
+
+id: Categoria serie
+msg: Κατηγορία σειρών
+
+id: Blocca
+msg: Κλείδωμα
+
+id: Esporta backup
+msg: Εξαγωγή αντιγράφου
+
+id: Salva impostazioni, preferiti e liste in
+msg: Αποθηκεύει ρυθμίσεις, αγαπημένα και λίστες σε
+
+id: Ripristina backup
+msg: Επαναφορά αντιγράφου
+
+id: Carica impostazioni e liste dal file di backup
+msg: Φορτώνει ρυθμίσεις και λίστες από το αρχείο αντιγράφου
+
+id: Versione
+msg: Έκδοση
+
+id: Stato
+msg: Κατάσταση
+
+id: Scadenza
+msg: Λήξη
+
+id: Connessioni max
+msg: Μέγ. συνδέσεις
+
+id: Impostazioni Movian…
+msg: Ρυθμίσεις Movian…
+
+id: Pagina impostazioni nativa del plugin
+msg: Εγγενής σελίδα ρυθμίσεων του plugin
+
+id: Ripristinati
+msg: Επαναφέρθηκαν
+
+id: elementi
+msg: στοιχεία
+
+id: Nulla da ripristinare
+msg: Τίποτα προς επαναφορά
+
+id: (riapri il plugin)
+msg: (ανοίξτε ξανά το plugin)
+
+id: Ordine e numerazione ripristinati
+msg: Η σειρά και η αρίθμηση επαναφέρθηκαν
+
+id: Playlist rimossa
+msg: Η λίστα αφαιρέθηκε
+
+id: Inserisci il PIN
+msg: Εισάγετε το PIN
+
+id: PIN errato
+msg: Λάθος PIN
+
+id: Auto
+msg: Αυτό
+
+id: Tutto schermo
+msg: Πλήρης οθόνη
+
+id: Formato
+msg: Μορφή
+
+id: Registrazione salvata (
+msg: Η εγγραφή αποθηκεύτηκε (
+
+id: MB) in
+msg: MB) σε
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: Η εγγραφή δεν είναι διαθέσιμη σε αυτό το κανάλι
+
+id: Registrazione avviata
+msg: Η εγγραφή ξεκίνησε
+
+id: canale
+msg: κανάλι
+
+id: Registrazione fallita
+msg: Η εγγραφή απέτυχε
+
+id: Registrazione completata
+msg: Η εγγραφή ολοκληρώθηκε
+
+id: Registrazione programmata avviata
+msg: Η προγραμματισμένη εγγραφή ξεκίνησε
+
+id: Registrazione programmata fallita
+msg: Η προγραμματισμένη εγγραφή απέτυχε
+
+id: Aggiunto ai preferiti
+msg: Προστέθηκε στα αγαπημένα
+
+id: Rimosso dai preferiti
+msg: Αφαιρέθηκε από τα αγαπημένα
+
+id: Catch-up non supportato da questa playlist
+msg: Το catch-up δεν υποστηρίζεται από αυτή τη λίστα
+
+id: Numero canale (vuoto = automatico)
+msg: Αριθμός καναλιού (κενό = αυτόματο)
+
+id: Numero assegnato
+msg: Ο αριθμός εκχωρήθηκε
+
+id: Numerazione automatica
+msg: Αυτόματη αρίθμηση
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Νέο όνομα καναλιού (κενό = αρχικό)
+
+id: Canale rinominato in \"
+msg: Το κανάλι μετονομάστηκε σε \"
+
+id: Nome originale ripristinato
+msg: Το αρχικό όνομα επαναφέρθηκε
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Το κανάλι κρύφτηκε (επαναφορά από τις Ρυθμίσεις)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Η ομάδα κρύφτηκε (επαναφορά από τις Ρυθμίσεις)
+
+id: Continua a guardare
+msg: Συνέχιση παρακολούθησης
+
+id: Tutti
+msg: Όλα
+
+id: Playlist
+msg: Λίστα
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: Σύστημα
+
+id: Informazioni
+msg: Πληροφορίες
+
+id: Modifica playlist
+msg: Επεξεργασία λίστας
+
+id: Aggiungi playlist
+msg: Προσθήκη λίστας
+
+id: Tipo
+msg: Τύπος
+
+id: host:porta o URL del pannello Xtream
+msg: host:port ή URL πίνακα Xtream
+
+id: URL EPG (opzionale)
+msg: URL EPG (προαιρετικό)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Κενό = xmltv.php του διακομιστή / url-tvg της λίστας
+
+id: Annulla
+msg: Άκυρο
+
+id: Il server/URL e' obbligatorio
+msg: Ο διακομιστής/το URL είναι υποχρεωτικό
+
+id: Username obbligatorio per Xtream
+msg: Το όνομα χρήστη είναι υποχρεωτικό για Xtream
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: Εισάγετε MAC (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Η σύνδεση απέτυχε
+
+id: Playlist aggiunta
+msg: Η λίστα προστέθηκε
+
+id: Stagione
+msg: Σεζόν
+
+id: Informazioni non disponibili
+msg: Πληροφορίες μη διαθέσιμες
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Καμία πληροφορία προγράμματος για αυτό το κανάλι
+
+id: Registrazione programmata rimossa
+msg: Η προγραμματισμένη εγγραφή αφαιρέθηκε
+
+id: Registrazione programmata
+msg: Προγραμματισμένη εγγραφή
+
+id: alle
+msg: στις
+
+id: Canale non trovato
+msg: Το κανάλι δεν βρέθηκε
+
+id: Registrazioni programmate
+msg: Προγραμματισμένες εγγραφές
+
+id: Nessuna registrazione programmata
+msg: Καμία προγραμματισμένη εγγραφή
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Ανοίξτε το πρόγραμμα ενός καναλιού και επιλέξτε \"Εγγραφή\" σε μελλοντική εκπομπή
+
+id: Navigazione
+msg: Πλοήγηση
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Βέλη για μετακίνηση, OK/κλικ για επιβεβαίωση. Δεξί κλικ ή παρατεταμένο πάτημα (αφή/τηλεχειριστήριο) = μενού περιβάλλοντος. ESC/Πίσω = πίσω.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: Οι ομάδες καναλιών αριστερά, τα κανάλια δεξιά. Το OK σε κανάλι το συντονίζει· το τελευταίο κανάλι ξεκινά στο άνοιγμα αν το \"Συνέχιση τελευταίου καναλιού\" είναι ενεργό στις Ρυθμίσεις.
+
+id: Preferiti e Recenti
+msg: Αγαπημένα και Πρόσφατα
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Παρατεταμένο πάτημα σε κανάλι → \"Αγαπημένα\": εμφανίζεται στην ομάδα \"Αγαπημένα\" ψηλά. Τα κανάλια που είδατε πηγαίνουν στα \"Πρόσφατα\", ταξινομημένα κατά τελευταία προβολή.
+
+id: Menu canale (long-press)
+msg: Μενού καναλιού (παρατεταμένο πάτημα)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Παρακολούθηση, Πρόγραμμα (EPG ημέρας), Catch-up, Αγαπημένα, Απόκρυψη καναλιού, Μετονομασία, Πάνω/κάτω (χειροκίνητη σειρά), Αριθμός καναλιού (προσαρμοσμένη αρίθμηση), Πολλαπλή προβολή.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Μενού ομάδας (παρατεταμένο πάτημα στην ομάδα)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Πάνω/κάτω για αναδιάταξη ομάδων, Απόκρυψη ομάδας, Επαναφορά κρυφών. Η σειρά διατηρείται.
+
+id: Registrazione
+msg: Εγγραφή
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: Κατά την προβολή: το εικονίδιο REC στη μπάρα αναπαραγωγής (το OK στο βίντεο δείχνει/κρύβει πληροφορίες και μπάρα) εγγράφει τη ροή σε αρχείο .ts στον φάκελο recordings/ μέχρι τη διακοπή.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Πρόγραμμα καναλιού → μελλοντική εκπομπή → σήμα \"Εγγραφή\" → OK. Η εγγραφή ξεκινά μόνη της στην ώρα της και σταματά στο τέλος της εκπομπής. Η λίστα και οι ακυρώσεις είναι στις \"Εγγραφές\" του μενού. Μία τη φορά: εγγραφή ενώ βλέπετε άλλο κανάλι μπορεί να αποτύχει αν ο πάροχος επιτρέπει μόνο 1 σύνδεση.
+
+id: Rivedi (catch-up)
+msg: Catch-up (επανάληψη)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Διαθέσιμο μόνο αν ο πάροχος ενεργοποιεί το αρχείο στο κανάλι (flag tv_archive): παρατεταμένο πάτημα στο κανάλι → \"Catch-up\", ή στο πρόγραμμα οι ολοκληρωμένες εκπομπές έχουν το μπλε σήμα. Αν ο πάροχος δεν υποστηρίζει timeshift, η επιλογή δεν εμφανίζεται.
+
+id: Zap numerico
+msg: Αριθμητικό zap
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Πληκτρολογήστε τον αριθμό καναλιού με τα πλήκτρα 0-9 και επιβεβαιώστε με OK/Enter. Το \"Αριθμός καναλιού\" στο μενού περιβάλλοντος εκχωρεί προσαρμοσμένο αριθμό.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Μενού → Πολλαπλή προβολή: μωσαϊκό 2x2 με σίγαση· το OK σε κελί ανοίγει το κανάλι σε πλήρη οθόνη.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Μενού → Αναζήτηση: αναζητά κανάλια, ταινίες και σειρές.
+
+id: Interfaccia
+msg: Διεπαφή
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Μενού → Ρυθμίσεις → Εμφάνιση: χρώμα έμφασης (επισημάνσεις και πλαίσια οδηγού), αδιαφάνεια πάνελ, αριθμοί καναλιών, λογότυπα. Οι αλλαγές εφαρμόζονται αμέσως.
+
+id: Nascondere e bloccare
+msg: Απόκρυψη και κλείδωμα
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Κρύψτε κανάλια/ομάδες από το μενού περιβάλλοντος· επαναφέρετε από τις Ρυθμίσεις ή το μενού της ομάδας. Με PIN μπορείτε να κλειδώσετε ολόκληρες κατηγορίες (μενού περιβάλλοντος της ομάδας).
+
+id: Playlist multiple
+msg: Πολλαπλές λίστες
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Ρυθμίσεις → Λίστες: πολλοί λογαριασμοί/πηγές Xtream, M3U ή Stalker, γρήγορη εναλλαγή και αντίγραφο/επαναφορά προτιμήσεων.
+
+id: Connessioni
+msg: Συνδέσεις
+
+id: Trial
+msg: Δοκιμαστικό
+
+id: Creato il
+msg: Δημιουργήθηκε
+
+id: Protocollo
+msg: Πρωτόκολλο
+
+id: Timezone
+msg: Ζώνη ώρας
+
+id: Orario server
+msg: Ώρα διακομιστή
+
+id: non caricata
+msg: δεν φορτώθηκε
+
+id: Apri
+msg: Άνοιγμα
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Ρύθμιση διακομιστή Xtream Codes (host, όνομα χρήστη, κωδικός)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, αναπαραγωγή, εμφάνιση, γονικός έλεγχος
+
+id: Categorie
+msg: Κατηγορίες
+
+id: Riproduci
+msg: Αναπαραγωγή
+
+id: Dettagli
+msg: Λεπτομέρειες
+
+id: Cerca canali, film e serie…
+msg: Αναζήτηση καναλιών, ταινιών και σειρών…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Πληκτρολογήστε και πατήστε OK για αναζήτηση καναλιών, ταινιών και σειρών
+
+id: Seleziona un canale per iniziare
+msg: Επιλέξτε κανάλι για να ξεκινήσετε
+
+id: Gruppi
+msg: Ομάδες
+
+id: No information
+msg: Καμία πληροφορία
+
+id: Guarda
+msg: Προβολή
+
+id: Palinsesto
+msg: Πρόγραμμα
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Αφαίρεση από αγαπημένα
+
+id: Aggiungi ai preferiti
+msg: Προσθήκη στα αγαπημένα
+
+id: Nascondi canale
+msg: Απόκρυψη καναλιού
+
+id: Rinomina canale
+msg: Μετονομασία καναλιού
+
+id: Sposta su
+msg: Μετακίνηση πάνω
+
+id: Sposta giù
+msg: Μετακίνηση κάτω
+
+id: Numero canale…
+msg: Αριθμός καναλιού…
+
+id: Nascondi gruppo
+msg: Απόκρυψη ομάδας
+
+id: Ripristina nascosti
+msg: Επαναφορά κρυφών
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Εγγραφή
+
+id: Stagioni
+msg: Σεζόν
+
+id: Canali — OK: assegna al tile selezionato
+msg: Κανάλια — OK: ανάθεση στο επιλεγμένο κελί
+
+
+id: Nome playlist:
+msg: Όνομα λίστας:
+
+id: Server (host:porta o URL):
+msg: Διακομιστής (host:port ή URL):
+
+id: Username:
+msg: Όνομα χρήστη:
+
+id: Password:
+msg: Κωδικός:
+
+id: URL EPG (vuoto = server Xtream):
+msg: URL EPG (κενό = διακομιστής Xtream):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (κενό = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Επιπλέον headers (Όνομα: τιμή, ένα ανά γραμμή):
+
+id: ore
+msg: ώρες
+
+id: attivi
+msg: ενεργά
+
+id: Nessuno
+msg: Κανένα
+
+id: Movian (predefinito)
+msg: Movian (προεπιλογή)
+
+id: Programma
+msg: Εκπομπή
+
+id: file di backup non leggibile
+msg: το αρχείο αντιγράφου δεν διαβάζεται
+
+id: URL del file lista .m3u/.m3u8
+msg: URL του αρχείου λίστας .m3u/.m3u8
+
+id: URL del portale
+msg: URL πύλης
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: Διεύθυνση MAC (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Δεν απαιτείται
+
+id: Non richiesta
+msg: Δεν απαιτείται
+
+id: A fine episodio parte automaticamente il successivo
+msg: Στο τέλος του επεισοδίου το επόμενο ξεκινά αυτόματα
+
+id: Attivo: sarai avvisato all'inizio
+msg: Ενεργό: θα ειδοποιηθείτε στην έναρξη
+
+id: Autoplay episodio successivo
+msg: Αυτόματη αναπαραγωγή επόμενου επεισοδίου
+
+id: Avvisami quando inizia
+msg: Ειδοποίησέ με όταν ξεκινά
+
+id: Cartella non scrivibile
+msg: Ο φάκελος δεν είναι εγγράψιμος
+
+id: Cartella registrazioni
+msg: Φάκελος εγγραφών
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Φάκελος εγγραφών (κενό = προεπιλογή)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Φάκελος εγγραφών (κενό = προεπιλογή):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: Ο φάκελος εγγραφών δεν είναι εγγράψιμος, χρησιμοποιείται ο προεπιλεγμένος
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Διαθέσιμο μόνο αν ο πάροχος ενεργοποιεί το αρχείο στο κανάλι (σημαία tv_archive): απευθείας κλικ σε ολοκληρωμένο πρόγραμμα στο πλέγμα του οδηγού, παρατεταμένο πάτημα στο κανάλι → \"Επανάληψη\" ή το σήμα στο πρόγραμμα του καναλιού. Αν ο πάροχος δεν υποστηρίζει timeshift, η λειτουργία δεν εμφανίζεται.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Πού να αποθηκεύονται τα αρχεία .ts — κενό = αποθήκη του plugin
+
+id: Elimina
+msg: Διαγραφή
+
+id: Eliminare la registrazione
+msg: Διαγραφή της εγγραφής
+
+id: Episodio non trovato
+msg: Το επεισόδιο δεν βρέθηκε
+
+id: Esporta preferiti in M3U
+msg: Εξαγωγή αγαπημένων σε M3U
+
+id: Esportazione fallita
+msg: Η εξαγωγή απέτυχε
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: Τα επεισόδια που έχετε δει έχουν σημάδι επιλογής στη λίστα. Στο τέλος του επεισοδίου το επόμενο ξεκινά αυτόματα (απενεργοποιείται στις Ρυθμίσεις → Αναπαραγωγή → \"Αυτόματη αναπαραγωγή επόμενου επεισοδίου\").
+
+id: I file .ts registrati appariranno qui
+msg: Τα εγγεγραμμένα αρχεία .ts θα εμφανιστούν εδώ
+
+id: IN CORSO
+msg: ΣΕ ΕΞΕΛΙΞΗ
+
+id: In corso
+msg: Σε εξέλιξη
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: Κατά την προβολή: το εικονίδιο REC στη μπάρα του player (OK στο βίντεο εμφανίζει/κρύβει πληροφορίες και μπάρα) εγγράφει τη ροή σε αρχείο .ts μέχρι τη διακοπή. Τα εγγεγραμμένα αρχεία αναπαράγονται και διαγράφονται από Μενού → \"Εγγραφές\"· ο φάκελος προορισμού αλλάζει στις Ρυθμίσεις → Αναπαραγωγή.
+
+id: Nessun preferito da esportare
+msg: Κανένα αγαπημένο προς εξαγωγή
+
+id: Nessun promemoria attivo
+msg: Καμία ενεργή υπενθύμιση
+
+id: Nessun'altra puntata in palinsesto
+msg: Κανένα άλλο επεισόδιο στο πρόγραμμα
+
+id: Nessuna puntata futura da registrare
+msg: Κανένα μελλοντικό επεισόδιο προς εγγραφή
+
+id: Nessuna registrazione completata
+msg: Καμία ολοκληρωμένη εγγραφή
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Πρόγραμμα καναλιού → μελλοντικό πρόγραμμα → σήμα \"Εγγραφή\" → OK. Η γραμμή \"Υπενθύμιση και εγγραφή σειράς\" κάτω από το πρόγραμμα επιτρέπει επίσης μόνο ειδοποίηση στην έναρξη (χωρίς εγγραφή) και εγγραφή όλων των επεισοδίων με τον ίδιο τίτλο. Οι εγγραφές ξεκινούν μόνες τους και σταματούν στο τέλος του προγράμματος. Μία κάθε φορά: η εγγραφή ενώ βλέπετε άλλο κανάλι μπορεί να αποτύχει αν ο πάροχος επιτρέπει μόνο 1 σύνδεση.
+
+id: Predefinita
+msg: Προεπιλογή
+
+id: Preferiti esportati
+msg: Τα αγαπημένα εξήχθησαν
+
+id: Promemoria
+msg: Υπενθύμιση
+
+id: Promemoria attivato
+msg: Υπενθύμιση ενεργοποιήθηκε
+
+id: Promemoria attivo
+msg: Υπενθύμιση ενεργή
+
+id: Promemoria e registrazione serie
+msg: Υπενθύμιση και εγγραφή σειράς
+
+id: Promemoria rimosso
+msg: Η υπενθύμιση αφαιρέθηκε
+
+id: Promemorie
+msg: Υπενθυμίσεις
+
+id: Prossimo episodio
+msg: Επόμενο επεισόδιο
+
+id: Registra tutta la serie
+msg: Εγγραφή όλης της σειράς
+
+id: Registrazione eliminata
+msg: Η εγγραφή διαγράφηκε
+
+id: Registrazione programmata, promemoria e serie
+msg: Προγραμματισμένη εγγραφή, υπενθύμιση και σειρά
+
+id: Registrazione singola puntata
+msg: Εγγραφή ενός επεισοδίου
+
+id: Salva i canali preferiti come playlist standard
+msg: Αποθήκευση αγαπημένων καναλιών ως τυπική λίστα αναπαραγωγής
+
+id: Sta iniziando
+msg: Ξεκινά τώρα
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Χρησιμοποιήστε το σήμα \"Εγγραφή\" στη γραμμή του προγράμματος
+
+id: canali
+msg: κανάλια
+
+id: cartella non scrivibile
+msg: ο φάκελος δεν είναι εγγράψιμος
+
+id: fallita
+msg: απέτυχε
+
+id: puntate
+msg: επεισόδια
+
+id: puntate in palinsesto
+msg: επεισόδια στο πρόγραμμα
+

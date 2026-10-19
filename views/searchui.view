@@ -1,0 +1,31 @@
+#import "skin://theme.view"
+
+// XCtv search — campo di testo: i risultati
+// aprono la pagina interna xctv:results: (solo XCtv — la
+// ricerca globale search: rimane disponibile dalla home).
+
+widget(container_z, {
+
+  widget(quad, {
+    color: [0.05, 0.06, 0.08];
+  });
+
+  widget(container_y, {
+
+    PageHeader(_("Cerca"));
+
+    widget(container_y, {
+      padding: [2em, 1em];
+      spacing: 1em;
+
+      SearchBar("xctv:results:", _("Cerca canali, film e serie…"));
+
+      widget(label, {
+        caption: _("Digita e premi OK per cercare tra canali, film e serie");
+        size: 0.9em;
+        color: 0.5;
+        padding: [0.5em, 0];
+      });
+    });
+  });
+});

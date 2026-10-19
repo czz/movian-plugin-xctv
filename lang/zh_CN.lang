@@ -1,0 +1,976 @@
+language: Chinese (Simplified)
+native: 简体中文
+
+id: Server (host[:port] o URL)
+msg: 服务器 (host[:端口] 或 URL)
+
+id: Username
+msg: 用户名
+
+id: Password
+msg: 密码
+
+id: Nome playlist
+msg: 播放列表名称
+
+id: Abilita EPG
+msg: 启用 EPG
+
+id: URL XMLTV personalizzato (opzionale)
+msg: 自定义 XMLTV 地址（可选）
+
+id: Aggiorna EPG ogni (ore)
+msg: EPG 更新间隔（小时）
+
+id: Correggi orario EPG (minuti)
+msg: EPG 时间校正（分钟）
+
+id: Aggiorna EPG all'avvio
+msg: 启动时更新 EPG
+
+id: Log di debug
+msg: 调试日志
+
+id: Riproduzione
+msg: 播放
+
+id: Formato stream live
+msg: 直播流格式
+
+id: Automatico
+msg: 自动
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: 电影/剧集格式
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: 换台后频道信息显示时长（秒）
+
+id: Riprendi ultimo canale all'avvio
+msg: 启动时恢复上次频道
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: 额外 HTTP 头（每行 名称: 值）
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: 播放列表刷新间隔（分钟，0 = 从不）
+
+id: Aspetto
+msg: 外观
+
+id: Mostra numeri canale in guida
+msg: 在指南中显示频道号
+
+id: Mostra loghi canale in guida
+msg: 在指南中显示频道台标
+
+id: Ore visibili in guida
+msg: 指南中显示的小时数
+
+id: Opacita' pannelli (%)
+msg: 面板不透明度 (%)
+
+id: Colore accento
+msg: 强调色
+
+id: Blu
+msg: 蓝色
+
+id: Verde
+msg: 绿色
+
+id: Arancione
+msg: 橙色
+
+id: Rosso
+msg: 红色
+
+id: Viola
+msg: 紫色
+
+id: Controllo genitori
+msg: 家长控制
+
+id: PIN (vuoto = disattivo)
+msg: PIN（留空 = 关闭）
+
+id: Ordinamento cataloghi
+msg: 目录排序
+
+id: Predefinito
+msg: 默认
+
+id: Nome A-Z
+msg: 名称 A-Z
+
+id: Aggiunti di recente
+msg: 最近添加
+
+id: Voto
+msg: 评分
+
+id: Account
+msg: 账户
+
+id: Verifica connessione
+msg: 测试连接
+
+id: Connessione OK
+msg: 连接成功
+
+id: Errore
+msg: 错误
+
+id: Inserisci credenziali…
+msg: 输入凭据…
+
+id: Ricarica EPG adesso
+msg: 立即重新加载 EPG
+
+id: EPG: ricarico in corso…
+msg: EPG：正在重新加载…
+
+id: EPG aggiornata
+msg: EPG 已更新
+
+id: EPG non disponibile
+msg: EPG 不可用
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — Movian 的 Xtream Codes 客户端。
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: 在上方配置服务器和凭据，然后从主页打开服务。
+
+id: Server (host:porta o URL)
+msg: 服务器（host:端口 或 URL）
+
+id: Credenziali salvate
+msg: 凭据已保存
+
+id: Playlist aggiornata
+msg: 播放列表已更新
+
+id: Sleep timer disattivato
+msg: 睡眠定时器已关闭
+
+id: Sleep timer: spegnimento tra
+msg: 睡眠定时器：将于
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: 睡眠定时器：播放已停止
+
+id: Backup salvato
+msg: 备份已保存
+
+id: Backup fallito
+msg: 备份失败
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: 备份已恢复（收藏将在重启后生效）
+
+id: Ripristino fallito
+msg: 恢复失败
+
+id: Preferiti
+msg: 收藏
+
+id: Recenti
+msg: 最近观看
+
+id: Tutti i canali
+msg: 全部频道
+
+id: Guida TV
+msg: 电视指南
+
+id: Multi-view
+msg: 多画面
+
+id: Film
+msg: 电影
+
+id: Serie TV
+msg: 剧集
+
+id: Cerca
+msg: 搜索
+
+id: Registrazioni
+msg: 录制
+
+id: Guida
+msg: 帮助
+
+id: Impostazioni
+msg: 设置
+
+id: Playlist attiva
+msg: 当前播放列表
+
+id: OK passa alla playlist successiva
+msg: 按 OK 切换到下一个播放列表
+
+id: Nome mostrato nel menu
+msg: 菜单中显示的名称
+
+id: Server
+msg: 服务器
+
+id: host:porta o URL Xtream Codes
+msg: host:端口 或 Xtream Codes 地址
+
+id: URL EPG
+msg: EPG 地址
+
+id: Lascia vuoto per usare la guida del server
+msg: 留空使用服务器指南
+
+id: Tipo playlist
+msg: 播放列表类型
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: 仅对新的播放列表生效（添加）
+
+id: Refresh automatico playlist
+msg: 播放列表自动刷新
+
+id: Ricarica liste e guida a intervalli regolari
+msg: 按间隔重新加载列表和指南
+
+id: Aggiungi playlist…
+msg: 添加播放列表…
+
+id: Modifica playlist attiva…
+msg: 编辑当前播放列表…
+
+id: Rimuovi playlist attiva
+msg: 删除当前播放列表
+
+id: Guida TV (EPG)
+msg: 电视指南 (EPG)
+
+id: URL XMLTV personalizzato
+msg: 自定义 XMLTV 地址
+
+id: Vuoto = xmltv.php del server Xtream
+msg: 留空 = Xtream 服务器的 xmltv.php
+
+id: Aggiorna EPG ogni
+msg: EPG 更新间隔
+
+id: Intervallo di refresh della guida
+msg: 指南刷新间隔
+
+id: Correggi orario EPG
+msg: EPG 时间校正
+
+id: Shift dei programmi se la guida e' sfasata
+msg: 当指南偏移时校正节目时间
+
+id: Formato film / episodi
+msg: 电影 / 剧集格式
+
+id: Durata info canale
+msg: 频道信息时长
+
+id: Sempre visibile
+msg: 始终显示
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: 换台后面板的显示时间
+
+id: Riprendi ultimo canale
+msg: 恢复上次频道
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: 启动时指南打开上次观看的频道
+
+id: UA custom per API e stream sul server
+msg: 服务器 API 和流的自定义 UA
+
+id: Header HTTP extra
+msg: 额外 HTTP 头
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: 每行一个：\"名称: 值\" — 适用于 API 和指南
+
+id: Sleep timer
+msg: 睡眠定时器
+
+id: Ferma la riproduzione dopo N minuti
+msg: N 分钟后停止播放
+
+id: Numeri canale
+msg: 频道号
+
+id: Numero progressivo nella guida
+msg: 指南中的序号
+
+id: Loghi canale
+msg: 频道台标
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: 电影和剧集区海报排序
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: EPG 网格时间窗口宽度
+
+id: Opacita' pannelli
+msg: 面板不透明度
+
+id: Trasparenza di guide e menu sul video
+msg: 视频上指南和菜单的透明度
+
+id: Colore di indicatori e linea \"adesso\"
+msg: 指示器和\"现在\"线的颜色
+
+id: Ripristina ordine e numeri canali
+msg: 重置顺序和频道号
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: 撤销移动和自定义编号
+
+id: Ripristina canali e gruppi nascosti
+msg: 恢复隐藏的频道和分组
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: 重新显示所有已隐藏内容
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: 未设置
+
+id: Blocca i gruppi con contenuti per adulti
+msg: 锁定含成人内容的分组
+
+id: Gruppi bloccati
+msg: 已锁定分组
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: 打开\"成人\"分组需要输入 PIN
+
+id: Imposta un PIN per attivare il blocco
+msg: 设置 PIN 以启用锁定
+
+id: Gruppo live
+msg: 直播分组
+
+id: Categoria film
+msg: 电影分类
+
+id: Categoria serie
+msg: 剧集分类
+
+id: Blocca
+msg: 锁定
+
+id: Esporta backup
+msg: 导出备份
+
+id: Salva impostazioni, preferiti e liste in
+msg: 将设置、收藏和列表保存到
+
+id: Ripristina backup
+msg: 恢复备份
+
+id: Carica impostazioni e liste dal file di backup
+msg: 从备份文件加载设置和列表
+
+id: Versione
+msg: 版本
+
+id: Stato
+msg: 状态
+
+id: Scadenza
+msg: 到期
+
+id: Connessioni max
+msg: 最大连接数
+
+id: Impostazioni Movian…
+msg: Movian 设置…
+
+id: Pagina impostazioni nativa del plugin
+msg: 插件原生设置页
+
+id: Ripristinati
+msg: 已恢复
+
+id: elementi
+msg: 项
+
+id: Nulla da ripristinare
+msg: 没有可恢复的内容
+
+id: (riapri il plugin)
+msg: （重新打开插件）
+
+id: Ordine e numerazione ripristinati
+msg: 顺序和编号已重置
+
+id: Playlist rimossa
+msg: 播放列表已删除
+
+id: Inserisci il PIN
+msg: 输入 PIN
+
+id: PIN errato
+msg: PIN 错误
+
+id: Auto
+msg: 自动
+
+id: Tutto schermo
+msg: 全屏
+
+id: Formato
+msg: 格式
+
+id: Registrazione salvata (
+msg: 录制已保存（
+
+id: MB) in
+msg: MB）到
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: 此频道无法录制
+
+id: Registrazione avviata
+msg: 录制已开始
+
+id: canale
+msg: 频道
+
+id: Registrazione fallita
+msg: 录制失败
+
+id: Registrazione completata
+msg: 录制已完成
+
+id: Registrazione programmata avviata
+msg: 计划录制已开始
+
+id: Registrazione programmata fallita
+msg: 计划录制失败
+
+id: Aggiunto ai preferiti
+msg: 已加入收藏
+
+id: Rimosso dai preferiti
+msg: 已移出收藏
+
+id: Catch-up non supportato da questa playlist
+msg: 此播放列表不支持回看
+
+id: Numero canale (vuoto = automatico)
+msg: 频道号（留空 = 自动）
+
+id: Numero assegnato
+msg: 已分配号码
+
+id: Numerazione automatica
+msg: 自动编号
+
+id: Nuovo nome canale (vuoto = originale)
+msg: 新频道名（留空 = 原名）
+
+id: Canale rinominato in \"
+msg: 频道已重命名为 \"
+
+id: Nome originale ripristinato
+msg: 已恢复原名
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: 频道已隐藏（可在设置中恢复）
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: 分组已隐藏（可在设置中恢复）
+
+id: Continua a guardare
+msg: 继续观看
+
+id: Tutti
+msg: 全部
+
+id: Playlist
+msg: 播放列表
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: 系统
+
+id: Informazioni
+msg: 信息
+
+id: Modifica playlist
+msg: 编辑播放列表
+
+id: Aggiungi playlist
+msg: 添加播放列表
+
+id: Tipo
+msg: 类型
+
+id: host:porta o URL del pannello Xtream
+msg: host:端口 或 Xtream 面板地址
+
+id: URL EPG (opzionale)
+msg: EPG 地址（可选）
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: 留空 = 服务器 xmltv.php / 列表 url-tvg
+
+id: Annulla
+msg: 取消
+
+id: Il server/URL e' obbligatorio
+msg: 服务器/URL 为必填项
+
+id: Username obbligatorio per Xtream
+msg: Xtream 需要用户名
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: 输入 MAC（aa:bb:cc:dd:ee:ff）
+
+id: Connessione fallita
+msg: 连接失败
+
+id: Playlist aggiunta
+msg: 播放列表已添加
+
+id: Stagione
+msg: 季
+
+id: Informazioni non disponibili
+msg: 信息不可用
+
+id: Nessuna informazione palinsesto per questo canale
+msg: 此频道无节目单信息
+
+id: Registrazione programmata rimossa
+msg: 计划录制已删除
+
+id: Registrazione programmata
+msg: 计划录制
+
+id: alle
+msg: 于
+
+id: Canale non trovato
+msg: 未找到频道
+
+id: Registrazioni programmate
+msg: 计划录制
+
+id: Nessuna registrazione programmata
+msg: 没有计划录制
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: 打开频道的节目单，在未来节目上选择\"录制\"
+
+id: Navigazione
+msg: 导航
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: 方向键移动，OK/点击确认。鼠标右键或长按（触屏/遥控器）= 上下文菜单。ESC/返回 = 后退。
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: 频道分组在左，频道在右。按 OK 切换频道；若设置中启用了\"恢复上次频道\"，打开时会自动播放上次观看的频道。
+
+id: Preferiti e Recenti
+msg: 收藏和最近观看
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: 长按频道 → \"收藏\"：频道出现在顶部的\"收藏\"分组中。观看过的频道进入\"最近观看\"，按最近观看排序。
+
+id: Menu canale (long-press)
+msg: 频道菜单（长按）
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: 观看、节目单（当日 EPG）、回看、收藏、隐藏频道、重命名、上移/下移（手动排序）、频道号（自定义编号）、多画面。
+
+id: Menu gruppo (long-press sul gruppo)
+msg: 分组菜单（长按分组）
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: 上移/下移重新排序分组、隐藏分组、恢复隐藏。顺序会被保存。
+
+id: Registrazione
+msg: 录制
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: 观看时：播放器栏上的 REC 图标（在视频上按 OK 显示/隐藏信息和栏）将流录制为 recordings/ 文件夹中的 .ts 文件，直到停止。
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: 频道节目单 → 未来节目 → \"录制\"标记 → OK。录制会在到点自动开始并在节目结束时停止。列表和取消在菜单的\"录制\"中。一次只能录一个：如果提供商只允许 1 个连接，观看其他频道时录制可能失败。
+
+id: Rivedi (catch-up)
+msg: 回看 (catch-up)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: 仅当提供商在该频道启用存档（tv_archive 标志）时可用：长按频道 → \"回看\"，或节目单中已结束的节目显示蓝色标记。如果提供商不支持时移，该选项不会出现。
+
+id: Zap numerico
+msg: 数字换台
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: 用 0-9 键输入频道号并按 OK/Enter 确认。上下文菜单中的\"频道号\"可指定自定义号码。
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: 菜单 → 多画面：2x2 静音马赛克；在某格上按 OK 全屏打开该频道。
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: 菜单 → 搜索：搜索频道、电影和剧集。
+
+id: Interfaccia
+msg: 界面
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: 菜单 → 设置 → 外观：强调色（指南高亮和边框）、面板不透明度、频道号、台标。更改立即生效。
+
+id: Nascondere e bloccare
+msg: 隐藏和锁定
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: 通过上下文菜单隐藏频道/分组；从设置或分组菜单恢复。设置 PIN 后可锁定整个分类（分组上下文菜单）。
+
+id: Playlist multiple
+msg: 多播放列表
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: 设置 → 播放列表：多个 Xtream 账户/源、M3U 或 Stalker，快速切换及偏好的备份/恢复。
+
+id: Connessioni
+msg: 连接数
+
+id: Trial
+msg: 试用
+
+id: Creato il
+msg: 创建于
+
+id: Protocollo
+msg: 协议
+
+id: Timezone
+msg: 时区
+
+id: Orario server
+msg: 服务器时间
+
+id: non caricata
+msg: 未加载
+
+id: Apri
+msg: 打开
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: 配置 Xtream Codes 服务器（主机、用户名、密码）
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG、播放、外观、家长控制
+
+id: Categorie
+msg: 分类
+
+id: Riproduci
+msg: 播放
+
+id: Dettagli
+msg: 详情
+
+id: Cerca canali, film e serie…
+msg: 搜索频道、电影和剧集…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: 输入后按 OK 搜索频道、电影和剧集
+
+id: Seleziona un canale per iniziare
+msg: 选择一个频道开始
+
+id: Gruppi
+msg: 分组
+
+id: No information
+msg: 暂无信息
+
+id: Guarda
+msg: 观看
+
+id: Palinsesto
+msg: 节目单
+
+id: Rivedi
+msg: 回看
+
+id: Rimuovi dai preferiti
+msg: 移出收藏
+
+id: Aggiungi ai preferiti
+msg: 加入收藏
+
+id: Nascondi canale
+msg: 隐藏频道
+
+id: Rinomina canale
+msg: 重命名频道
+
+id: Sposta su
+msg: 上移
+
+id: Sposta giù
+msg: 下移
+
+id: Numero canale…
+msg: 频道号…
+
+id: Nascondi gruppo
+msg: 隐藏分组
+
+id: Ripristina nascosti
+msg: 恢复隐藏
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: 录制
+
+id: Stagioni
+msg: 季
+
+id: Canali — OK: assegna al tile selezionato
+msg: 频道 — OK：分配到所选格子
+
+
+id: Nome playlist:
+msg: 播放列表名称：
+
+id: Server (host:porta o URL):
+msg: 服务器（host:port 或 URL）：
+
+id: Username:
+msg: 用户名：
+
+id: Password:
+msg: 密码：
+
+id: URL EPG (vuoto = server Xtream):
+msg: EPG URL（留空 = Xtream 服务器）：
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent（留空 = Movian）：
+
+id: Header extra (Nome: valore, uno per riga):
+msg: 额外 HTTP 头（每行一个 名称: 值）：
+
+id: ore
+msg: 小时
+
+id: attivi
+msg: 个已启用
+
+id: Nessuno
+msg: 无
+
+id: Movian (predefinito)
+msg: Movian（默认）
+
+id: Programma
+msg: 节目
+
+id: file di backup non leggibile
+msg: 备份文件不可读
+
+id: URL del file lista .m3u/.m3u8
+msg: .m3u/.m3u8 列表文件 URL
+
+id: URL del portale
+msg: 门户 URL
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC 地址 (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: 不需要
+
+id: Non richiesta
+msg: 不需要
+
+id: A fine episodio parte automaticamente il successivo
+msg: 一集结束后自动播放下一集
+
+id: Attivo: sarai avvisato all'inizio
+msg: 已启用：开始时将通知您
+
+id: Autoplay episodio successivo
+msg: 自动播放下一集
+
+id: Avvisami quando inizia
+msg: 开始时通知我
+
+id: Cartella non scrivibile
+msg: 文件夹不可写
+
+id: Cartella registrazioni
+msg: 录像文件夹
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: 录像文件夹（留空 = 默认）
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: 录像文件夹（留空 = 默认）：
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: 录像文件夹不可写，将使用默认文件夹
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: 仅在提供商为频道启用存档（tv_archive 标志）时可用：直接点击节目表网格中已结束的节目、长按频道 → \"回看\"，或频道节目单中的标记。如果提供商不支持时移，则该功能不会出现。
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: .ts 文件保存位置 — 留空 = 插件存储
+
+id: Elimina
+msg: 删除
+
+id: Eliminare la registrazione
+msg: 删除录像
+
+id: Episodio non trovato
+msg: 未找到剧集
+
+id: Esporta preferiti in M3U
+msg: 将收藏导出为 M3U
+
+id: Esportazione fallita
+msg: 导出失败
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: 已观看的剧集在列表中带有对勾标记。一集结束后自动播放下一集（可在 设置 → 播放 → \"自动播放下一集\" 中关闭）。
+
+id: I file .ts registrati appariranno qui
+msg: 已录制的 .ts 文件将显示在这里
+
+id: IN CORSO
+msg: 进行中
+
+id: In corso
+msg: 进行中
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: 观看时：播放器栏中的 REC 图标（在视频上按 OK 显示/隐藏信息和进度条）将流录制为 .ts 文件直到停止。已录制的文件可在 菜单 → \"录像\" 中播放和删除；目标文件夹可在 设置 → 播放 中更改。
+
+id: Nessun preferito da esportare
+msg: 没有可导出的收藏
+
+id: Nessun promemoria attivo
+msg: 没有活动提醒
+
+id: Nessun'altra puntata in palinsesto
+msg: 节目表中没有其他剧集
+
+id: Nessuna puntata futura da registrare
+msg: 没有可录制的未来剧集
+
+id: Nessuna registrazione completata
+msg: 没有已完成的录像
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: 频道节目单 → 未来节目 → \"录制\"标记 → OK。节目下方的\"提醒与剧集录制\"行还允许仅在开始时提醒（不录制）以及录制所有同名剧集。录像自动开始并在节目结束时停止。一次一个：如果提供商仅允许 1 个连接，在观看其他频道时录制可能会失败。
+
+id: Predefinita
+msg: 默认
+
+id: Preferiti esportati
+msg: 收藏已导出
+
+id: Promemoria
+msg: 提醒
+
+id: Promemoria attivato
+msg: 提醒已启用
+
+id: Promemoria attivo
+msg: 提醒已激活
+
+id: Promemoria e registrazione serie
+msg: 提醒与剧集录制
+
+id: Promemoria rimosso
+msg: 提醒已移除
+
+id: Promemorie
+msg: 提醒
+
+id: Prossimo episodio
+msg: 下一集
+
+id: Registra tutta la serie
+msg: 录制整季
+
+id: Registrazione eliminata
+msg: 录像已删除
+
+id: Registrazione programmata, promemoria e serie
+msg: 定时录像、提醒与剧集
+
+id: Registrazione singola puntata
+msg: 单集录制
+
+id: Salva i canali preferiti come playlist standard
+msg: 将收藏频道保存为标准播放列表
+
+id: Sta iniziando
+msg: 即将开始
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: 使用节目行上的\"录制\"标记
+
+id: canali
+msg: 频道
+
+id: cartella non scrivibile
+msg: 文件夹不可写
+
+id: fallita
+msg: 失败
+
+id: puntate
+msg: 集
+
+id: puntate in palinsesto
+msg: 节目表中的剧集
+

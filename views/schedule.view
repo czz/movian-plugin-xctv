@@ -1,0 +1,143 @@
+#import "skin://theme.view"
+#import "skin://styles/style_list.view"
+
+// XCtv channel schedule — full-day programme list for one channel.
+// Each row is a passive 'event' item with metadata.start/stop/
+// title/description/isCurrent.
+
+widget(container_z, {
+
+  // sfondo scuro pieno (palette dark)
+  widget(quad, {
+    color: [0.05, 0.06, 0.08];
+  });
+
+  widget(container_y, {
+
+    PageHeader($self.model.metadata.title);
+
+    widget(list_y, {
+
+      id: "scrollable";
+      navWrap: true;
+      chaseFocus: true;
+      filterConstraintY: true;
+
+      clipOffsetTop: 3em;
+      scrollThresholdTop: 4em;
+      scrollThresholdBottom: $ui.universeBottomHeight + 2em;
+      clipOffsetBottom: $ui.universeBottomHeight;
+      clipAlpha: 0.2;
+      clipBlur: 1;
+
+      cloner($self.model.nodes, container_z, {
+
+        height: 3.6em;
+        focusable: true;
+
+        // il focus iniziale cade sul programma in onda
+        suggestFocus($self.metadata.isCurrent);
+
+        ListItemBevel();
+        ListItemHighlight();
+
+        // OK su un programma in archivio → pagina catch-up
+        onEvent(activate,
+                navOpen($self.url, void, $self, $parent.model, void, $parent.url),
+                !isVoid($self.url));
+
+        widget(container_x, {
+          style: "ListItem";
+
+          // left accent for the on-air event
+          widget(quad, {
+            width: 0.25em;
+            color: select($self.metadata.isCurrent, [0.2, 0.6, 1.0], 0);
+            alpha: select($self.metadata.isCurrent, 1, 0);
+          });
+
+          widget(container_y, {
+            width: 7em;
+            align: center;
+
+            widget(label, {
+              caption: fmt("%s", strftime($self.metadata.start, "%H:%M"));
+              size: 1.1em;
+              color: select($self.metadata.isCurrent, [0.4, 0.8, 1.0], 0.9);
+            });
+
+            widget(label, {
+              caption: strftime($self.metadata.stop, "%H:%M");
+              size: 0.8em;
+              color: 0.5;
+            });
+          });
+
+          widget(container_y, {
+            filterConstraintX: true;
+            align: top;
+            spacing: 0.2em;
+
+            widget(label, {
+              caption: $self.metadata.title;
+              style: select($self.metadata.isCurrent, "ListItemLabel", "ListItemLabelDimmed");
+              filterConstraintX: true;
+              ellipsize: true;
+            });
+
+            widget(label, {
+              hidden: isVoid($self.metadata.description);
+              caption: $self.metadata.description;
+              style: "ListItemLabelDimmed";
+              size: 0.8em;
+              maxlines: 2;
+              filterConstraintX: true;
+              ellipsize: true;
+            });
+          });
+
+          // badge "Rivedi" per i programmi in archivio
+          widget(container_z, {
+            width: 4.5em;
+            align: center;
+            hidden: !$self.metadata.canReplay;
+
+            widget(quad, {
+              color: [0.13, 0.59, 0.95];
+              alpha: select(isNavFocused(), 0.9, 0.55);
+            });
+            widget(label, {
+              caption: _("Rivedi");
+              size: 0.75em;
+              color: 1;
+              align: center;
+              padding: [0.4em, 0.4em];
+            });
+          });
+
+          // badge "Registra"/"REC" per i programmi futuri:
+          // OK schedula la registrazione, un secondo OK la rimuove
+          widget(container_z, {
+            width: 5.5em;
+            align: center;
+            hidden: !($self.metadata.canSched || $self.metadata.isSched);
+
+            widget(quad, {
+              color: select($self.metadata.isSched, [0.85, 0.15, 0.15], [0.3, 0.3, 0.3]);
+              alpha: select(isNavFocused(), 0.9, 0.55);
+            });
+            widget(label, {
+              caption: select($self.metadata.isSched, _("● REC"), _("Registra"));
+              size: 0.75em;
+              color: 1;
+              align: center;
+              padding: [0.4em, 0.4em];
+            });
+          });
+        });
+      });
+    });
+  });
+
+  ScrollBar("scrollable", 3em, $ui.universeBottomHeight);
+});

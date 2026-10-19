@@ -1,0 +1,976 @@
+language: Japanese
+native: 日本語
+
+id: Server (host[:port] o URL)
+msg: サーバー (host[:port] または URL)
+
+id: Username
+msg: ユーザー名
+
+id: Password
+msg: パスワード
+
+id: Nome playlist
+msg: プレイリスト名
+
+id: Abilita EPG
+msg: EPG を有効化
+
+id: URL XMLTV personalizzato (opzionale)
+msg: カスタム XMLTV URL（任意）
+
+id: Aggiorna EPG ogni (ore)
+msg: EPG 更新間隔（時間）
+
+id: Correggi orario EPG (minuti)
+msg: EPG 時刻補正（分）
+
+id: Aggiorna EPG all'avvio
+msg: 起動時に EPG を更新
+
+id: Log di debug
+msg: デバッグログ
+
+id: Riproduzione
+msg: 再生
+
+id: Formato stream live
+msg: ライブストリーム形式
+
+id: Automatico
+msg: 自動
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: 映画/エピソード形式
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: ザッピング後のチャンネル情報表示時間（秒）
+
+id: Riprendi ultimo canale all'avvio
+msg: 起動時に前回のチャンネルを再開
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: 追加 HTTP ヘッダー（1行に 名前: 値）
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: プレイリスト更新間隔（分、0 = なし）
+
+id: Aspetto
+msg: 外観
+
+id: Mostra numeri canale in guida
+msg: ガイドにチャンネル番号を表示
+
+id: Mostra loghi canale in guida
+msg: ガイドにチャンネルロゴを表示
+
+id: Ore visibili in guida
+msg: ガイドの表示時間幅
+
+id: Opacita' pannelli (%)
+msg: パネルの不透明度 (%)
+
+id: Colore accento
+msg: アクセントカラー
+
+id: Blu
+msg: 青
+
+id: Verde
+msg: 緑
+
+id: Arancione
+msg: オレンジ
+
+id: Rosso
+msg: 赤
+
+id: Viola
+msg: 紫
+
+id: Controllo genitori
+msg: ペアレンタルコントロール
+
+id: PIN (vuoto = disattivo)
+msg: PIN（空 = 無効）
+
+id: Ordinamento cataloghi
+msg: カタログの並び順
+
+id: Predefinito
+msg: デフォルト
+
+id: Nome A-Z
+msg: 名前 A-Z
+
+id: Aggiunti di recente
+msg: 最近追加
+
+id: Voto
+msg: 評価
+
+id: Account
+msg: アカウント
+
+id: Verifica connessione
+msg: 接続テスト
+
+id: Connessione OK
+msg: 接続 OK
+
+id: Errore
+msg: エラー
+
+id: Inserisci credenziali…
+msg: 認証情報を入力…
+
+id: Ricarica EPG adesso
+msg: EPG を今すぐ再読み込み
+
+id: EPG: ricarico in corso…
+msg: EPG：再読み込み中…
+
+id: EPG aggiornata
+msg: EPG 更新済み
+
+id: EPG non disponibile
+msg: EPG 利用不可
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — Movian 用 Xtream Codes クライアント。
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: 上でサーバーと認証情報を設定し、ホームからサービスを開いてください。
+
+id: Server (host:porta o URL)
+msg: サーバー（host:port または URL）
+
+id: Credenziali salvate
+msg: 認証情報を保存しました
+
+id: Playlist aggiornata
+msg: プレイリストを更新しました
+
+id: Sleep timer disattivato
+msg: スリープタイマー無効
+
+id: Sleep timer: spegnimento tra
+msg: スリープタイマー：停止まで
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: スリープタイマー：再生を停止しました
+
+id: Backup salvato
+msg: バックアップを保存しました
+
+id: Backup fallito
+msg: バックアップ失敗
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: バックアップを復元しました（お気に入りは再起動後に反映）
+
+id: Ripristino fallito
+msg: 復元失敗
+
+id: Preferiti
+msg: お気に入り
+
+id: Recenti
+msg: 最近視聴
+
+id: Tutti i canali
+msg: すべてのチャンネル
+
+id: Guida TV
+msg: テレビガイド
+
+id: Multi-view
+msg: マルチビュー
+
+id: Film
+msg: 映画
+
+id: Serie TV
+msg: ドラマ
+
+id: Cerca
+msg: 検索
+
+id: Registrazioni
+msg: 録画
+
+id: Guida
+msg: ヘルプ
+
+id: Impostazioni
+msg: 設定
+
+id: Playlist attiva
+msg: 現在のプレイリスト
+
+id: OK passa alla playlist successiva
+msg: OK で次のプレイリストへ
+
+id: Nome mostrato nel menu
+msg: メニューに表示する名前
+
+id: Server
+msg: サーバー
+
+id: host:porta o URL Xtream Codes
+msg: host:port または Xtream Codes URL
+
+id: URL EPG
+msg: EPG URL
+
+id: Lascia vuoto per usare la guida del server
+msg: 空欄でサーバーのガイドを使用
+
+id: Tipo playlist
+msg: プレイリスト種別
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: 新しいプレイリストにのみ適用（追加）
+
+id: Refresh automatico playlist
+msg: プレイリストの自動更新
+
+id: Ricarica liste e guida a intervalli regolari
+msg: 一定間隔でリストとガイドを再読み込み
+
+id: Aggiungi playlist…
+msg: プレイリストを追加…
+
+id: Modifica playlist attiva…
+msg: 現在のプレイリストを編集…
+
+id: Rimuovi playlist attiva
+msg: 現在のプレイリストを削除
+
+id: Guida TV (EPG)
+msg: テレビガイド (EPG)
+
+id: URL XMLTV personalizzato
+msg: カスタム XMLTV URL
+
+id: Vuoto = xmltv.php del server Xtream
+msg: 空欄 = Xtream サーバーの xmltv.php
+
+id: Aggiorna EPG ogni
+msg: EPG 更新間隔
+
+id: Intervallo di refresh della guida
+msg: ガイド更新間隔
+
+id: Correggi orario EPG
+msg: EPG 時刻補正
+
+id: Shift dei programmi se la guida e' sfasata
+msg: ガイドがずれている場合に番組時刻を補正
+
+id: Formato film / episodi
+msg: 映画 / エピソード形式
+
+id: Durata info canale
+msg: チャンネル情報の表示時間
+
+id: Sempre visibile
+msg: 常に表示
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: ザッピング後のパネル表示時間
+
+id: Riprendi ultimo canale
+msg: 前回のチャンネルを再開
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: 起動時にガイドが最後に見たチャンネルを開きます
+
+id: UA custom per API e stream sul server
+msg: サーバーの API とストリーム用カスタム UA
+
+id: Header HTTP extra
+msg: 追加 HTTP ヘッダー
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: 1行に1つ：\"名前: 値\" — API とガイドに適用
+
+id: Sleep timer
+msg: スリープタイマー
+
+id: Ferma la riproduzione dopo N minuti
+msg: N 分後に再生を停止
+
+id: Numeri canale
+msg: チャンネル番号
+
+id: Numero progressivo nella guida
+msg: ガイド内の連番
+
+id: Loghi canale
+msg: チャンネルロゴ
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: 映画・ドラマセクションのポスター順
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: EPG グリッドの時間幅
+
+id: Opacita' pannelli
+msg: パネルの不透明度
+
+id: Trasparenza di guide e menu sul video
+msg: 動画上のガイドとメニューの透明度
+
+id: Colore di indicatori e linea \"adesso\"
+msg: インジケーターと「現在」ラインの色
+
+id: Ripristina ordine e numeri canali
+msg: 順序とチャンネル番号をリセット
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: 移動とカスタム番号を取り消し
+
+id: Ripristina canali e gruppi nascosti
+msg: 非表示のチャンネルとグループを復元
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: 非表示にしたものをすべて再表示
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: 未設定
+
+id: Blocca i gruppi con contenuti per adulti
+msg: アダルトコンテンツのグループをロック
+
+id: Gruppi bloccati
+msg: ロックされたグループ
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: 「アダルト」グループは開くときに PIN を要求
+
+id: Imposta un PIN per attivare il blocco
+msg: PIN を設定してロックを有効化
+
+id: Gruppo live
+msg: ライブグループ
+
+id: Categoria film
+msg: 映画カテゴリ
+
+id: Categoria serie
+msg: ドラマカテゴリ
+
+id: Blocca
+msg: ロック
+
+id: Esporta backup
+msg: バックアップをエクスポート
+
+id: Salva impostazioni, preferiti e liste in
+msg: 設定・お気に入り・リストの保存先
+
+id: Ripristina backup
+msg: バックアップを復元
+
+id: Carica impostazioni e liste dal file di backup
+msg: バックアップファイルから設定とリストを読み込み
+
+id: Versione
+msg: バージョン
+
+id: Stato
+msg: 状態
+
+id: Scadenza
+msg: 有効期限
+
+id: Connessioni max
+msg: 最大接続数
+
+id: Impostazioni Movian…
+msg: Movian 設定…
+
+id: Pagina impostazioni nativa del plugin
+msg: プラグインのネイティブ設定ページ
+
+id: Ripristinati
+msg: 復元済み
+
+id: elementi
+msg: 件
+
+id: Nulla da ripristinare
+msg: 復元するものがありません
+
+id: (riapri il plugin)
+msg: （プラグインを開き直してください）
+
+id: Ordine e numerazione ripristinati
+msg: 順序と番号をリセットしました
+
+id: Playlist rimossa
+msg: プレイリストを削除しました
+
+id: Inserisci il PIN
+msg: PIN を入力
+
+id: PIN errato
+msg: PIN が違います
+
+id: Auto
+msg: 自動
+
+id: Tutto schermo
+msg: 全画面
+
+id: Formato
+msg: 形式
+
+id: Registrazione salvata (
+msg: 録画を保存しました（
+
+id: MB) in
+msg: MB）保存先：
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: このチャンネルでは録画できません
+
+id: Registrazione avviata
+msg: 録画を開始しました
+
+id: canale
+msg: チャンネル
+
+id: Registrazione fallita
+msg: 録画失敗
+
+id: Registrazione completata
+msg: 録画完了
+
+id: Registrazione programmata avviata
+msg: 予約録画を開始しました
+
+id: Registrazione programmata fallita
+msg: 予約録画に失敗しました
+
+id: Aggiunto ai preferiti
+msg: お気に入りに追加しました
+
+id: Rimosso dai preferiti
+msg: お気に入りから削除しました
+
+id: Catch-up non supportato da questa playlist
+msg: このプレイリストはキャッチアップ非対応
+
+id: Numero canale (vuoto = automatico)
+msg: チャンネル番号（空 = 自動）
+
+id: Numero assegnato
+msg: 番号を割り当てました
+
+id: Numerazione automatica
+msg: 自動番号付け
+
+id: Nuovo nome canale (vuoto = originale)
+msg: 新しいチャンネル名（空 = 元の名前）
+
+id: Canale rinominato in \"
+msg: チャンネル名を変更：「
+
+id: Nome originale ripristinato
+msg: 元の名前を復元しました
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: チャンネルを非表示にしました（設定から復元）
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: グループを非表示にしました（設定から復元）
+
+id: Continua a guardare
+msg: 視聴を続ける
+
+id: Tutti
+msg: すべて
+
+id: Playlist
+msg: プレイリスト
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: システム
+
+id: Informazioni
+msg: 情報
+
+id: Modifica playlist
+msg: プレイリストを編集
+
+id: Aggiungi playlist
+msg: プレイリストを追加
+
+id: Tipo
+msg: 種別
+
+id: host:porta o URL del pannello Xtream
+msg: host:port または Xtream パネル URL
+
+id: URL EPG (opzionale)
+msg: EPG URL（任意）
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: 空欄 = サーバーの xmltv.php / リストの url-tvg
+
+id: Annulla
+msg: キャンセル
+
+id: Il server/URL e' obbligatorio
+msg: サーバー/URL は必須です
+
+id: Username obbligatorio per Xtream
+msg: Xtream にはユーザー名が必要です
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: MAC を入力（aa:bb:cc:dd:ee:ff）
+
+id: Connessione fallita
+msg: 接続に失敗しました
+
+id: Playlist aggiunta
+msg: プレイリストを追加しました
+
+id: Stagione
+msg: シーズン
+
+id: Informazioni non disponibili
+msg: 情報がありません
+
+id: Nessuna informazione palinsesto per questo canale
+msg: このチャンネルの番組情報はありません
+
+id: Registrazione programmata rimossa
+msg: 予約録画を削除しました
+
+id: Registrazione programmata
+msg: 予約録画
+
+id: alle
+msg: の
+
+id: Canale non trovato
+msg: チャンネルが見つかりません
+
+id: Registrazioni programmate
+msg: 予約録画
+
+id: Nessuna registrazione programmata
+msg: 予約録画はありません
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: チャンネルの番組表を開き、未来の番組で「録画」を選択
+
+id: Navigazione
+msg: ナビゲーション
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: 矢印キーで移動、OK/クリックで確定。マウス右クリックまたは長押し（タッチ/リモコン）= コンテキストメニュー。ESC/戻る = 前に戻る。
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: チャンネルグループが左、チャンネルが右。チャンネルで OK を押すと選局。設定で「前回のチャンネルを再開」が有効なら、起動時に最後に見たチャンネルが再開します。
+
+id: Preferiti e Recenti
+msg: お気に入りと最近視聴
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: チャンネルを長押し → 「お気に入り」：上部の「お気に入り」グループに表示。視聴したチャンネルは「最近視聴」に入り、最終視聴順に並びます。
+
+id: Menu canale (long-press)
+msg: チャンネルメニュー（長押し）
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: 視聴、番組表（当日 EPG）、キャッチアップ、お気に入り、チャンネル非表示、名前変更、上/下へ移動（手動順序）、チャンネル番号（カスタム番号）、マルチビュー。
+
+id: Menu gruppo (long-press sul gruppo)
+msg: グループメニュー（グループを長押し）
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: 上/下へ移動でグループを並べ替え、グループを非表示、非表示を復元。順序は保持されます。
+
+id: Registrazione
+msg: 録画
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: 視聴中：プレーヤーバーの REC アイコン（動画上で OK で情報とバーを表示/非表示）が recordings/ フォルダに .ts ファイルとして録画します。
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: チャンネル番組表 → 未来の番組 →「録画」バッジ → OK。録画は時刻になると自動で始まり、番組終了で止まります。一覧とキャンセルはメニューの「録画」にあります。同時に1件のみ：プロバイダーが1接続しか許可しない場合、別チャンネル視聴中の録画は失敗することがあります。
+
+id: Rivedi (catch-up)
+msg: キャッチアップ（見逃し）
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: プロバイダーがチャンネルでアーカイブを有効にしている場合のみ利用可能（tv_archive フラグ）：チャンネル長押し →「キャッチアップ」、または番組表で終了した番組に青いバッジが表示。プロバイダーがタイムシフト非対応なら項目は表示されません。
+
+id: Zap numerico
+msg: 数字ザッピング
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: 0-9 キーでチャンネル番号を入力し OK/Enter で確定。コンテキストメニューの「チャンネル番号」で任意の番号を割り当てられます。
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: メニュー → マルチビュー：ミュート音声の 2x2 モザイク。タイルで OK を押すとそのチャンネルが全画面になります。
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: メニュー → 検索：チャンネル・映画・ドラマを検索。
+
+id: Interfaccia
+msg: インターフェース
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: メニュー → 設定 → 外観：アクセントカラー（ガイドのハイライトと枠線）、パネル不透明度、チャンネル番号、ロゴ。変更は即時反映。
+
+id: Nascondere e bloccare
+msg: 非表示とロック
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: コンテキストメニューからチャンネル/グループを非表示；設定またはグループメニューから復元。PIN を設定するとカテゴリ全体をロックできます（グループのコンテキストメニュー）。
+
+id: Playlist multiple
+msg: 複数のプレイリスト
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: 設定 → プレイリスト：複数の Xtream アカウント/ソース、M3U、Stalker、素早い切替と設定のバックアップ/復元。
+
+id: Connessioni
+msg: 接続数
+
+id: Trial
+msg: トライアル
+
+id: Creato il
+msg: 作成日
+
+id: Protocollo
+msg: プロトコル
+
+id: Timezone
+msg: タイムゾーン
+
+id: Orario server
+msg: サーバー時刻
+
+id: non caricata
+msg: 未読み込み
+
+id: Apri
+msg: 開く
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Xtream Codes サーバーを設定（ホスト、ユーザー名、パスワード）
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG、再生、外観、ペアレンタルコントロール
+
+id: Categorie
+msg: カテゴリ
+
+id: Riproduci
+msg: 再生
+
+id: Dettagli
+msg: 詳細
+
+id: Cerca canali, film e serie…
+msg: チャンネル・映画・ドラマを検索…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: 入力して OK でチャンネル・映画・ドラマを検索
+
+id: Seleziona un canale per iniziare
+msg: チャンネルを選んで開始
+
+id: Gruppi
+msg: グループ
+
+id: No information
+msg: 情報なし
+
+id: Guarda
+msg: 視聴
+
+id: Palinsesto
+msg: 番組表
+
+id: Rivedi
+msg: キャッチアップ
+
+id: Rimuovi dai preferiti
+msg: お気に入りから削除
+
+id: Aggiungi ai preferiti
+msg: お気に入りに追加
+
+id: Nascondi canale
+msg: チャンネルを非表示
+
+id: Rinomina canale
+msg: チャンネル名を変更
+
+id: Sposta su
+msg: 上へ移動
+
+id: Sposta giù
+msg: 下へ移動
+
+id: Numero canale…
+msg: チャンネル番号…
+
+id: Nascondi gruppo
+msg: グループを非表示
+
+id: Ripristina nascosti
+msg: 非表示を復元
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: 録画
+
+id: Stagioni
+msg: シーズン
+
+id: Canali — OK: assegna al tile selezionato
+msg: チャンネル — OK：選択したタイルに割り当て
+
+
+id: Nome playlist:
+msg: プレイリスト名：
+
+id: Server (host:porta o URL):
+msg: サーバー（host:port または URL）：
+
+id: Username:
+msg: ユーザー名：
+
+id: Password:
+msg: パスワード：
+
+id: URL EPG (vuoto = server Xtream):
+msg: EPG URL（空欄 = Xtream サーバー）：
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent（空欄 = Movian）：
+
+id: Header extra (Nome: valore, uno per riga):
+msg: 追加ヘッダー（1行に1つ 名前: 値）：
+
+id: ore
+msg: 時間
+
+id: attivi
+msg: 件有効
+
+id: Nessuno
+msg: なし
+
+id: Movian (predefinito)
+msg: Movian（デフォルト）
+
+id: Programma
+msg: 番組
+
+id: file di backup non leggibile
+msg: バックアップファイルが読めません
+
+id: URL del file lista .m3u/.m3u8
+msg: .m3u/.m3u8 リストファイルの URL
+
+id: URL del portale
+msg: ポータル URL
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC アドレス (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: 不要
+
+id: Non richiesta
+msg: 不要
+
+id: A fine episodio parte automaticamente il successivo
+msg: エピソード終了時に次のエピソードを自動再生します
+
+id: Attivo: sarai avvisato all'inizio
+msg: 有効：開始時に通知されます
+
+id: Autoplay episodio successivo
+msg: 次のエピソードを自動再生
+
+id: Avvisami quando inizia
+msg: 開始時に通知する
+
+id: Cartella non scrivibile
+msg: フォルダに書き込めません
+
+id: Cartella registrazioni
+msg: 録画フォルダ
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: 録画フォルダ（空 = デフォルト）
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: 録画フォルダ（空 = デフォルト）：
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: 録画フォルダに書き込めないため、デフォルトを使用します
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: プロバイダがチャンネルでアーカイブを有効にしている場合のみ利用可能です（tv_archive フラグ）：ガイドグリッドで終了した番組を直接クリック、チャンネルを長押し → 「追っかけ再生」、または番組表のバッジ。プロバイダがタイムシフトに対応していない場合、この機能は表示されません。
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: .ts ファイルの保存先 — 空 = プラグインのストレージ
+
+id: Elimina
+msg: 削除
+
+id: Eliminare la registrazione
+msg: 録画を削除しますか
+
+id: Episodio non trovato
+msg: エピソードが見つかりません
+
+id: Esporta preferiti in M3U
+msg: お気に入りを M3U にエクスポート
+
+id: Esportazione fallita
+msg: エクスポートに失敗しました
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: 視聴済みのエピソードにはリストにチェックマークが付きます。エピソード終了時に次のエピソードが自動再生されます（設定 → 再生 → 「次のエピソードを自動再生」で無効にできます）。
+
+id: I file .ts registrati appariranno qui
+msg: 録画した .ts ファイルがここに表示されます
+
+id: IN CORSO
+msg: 録画中
+
+id: In corso
+msg: 進行中
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: 視聴中：プレーヤーバーの REC アイコン（動画上で OK を押すと情報とバーを表示/非表示）で、停止するまでストリームを .ts ファイルに録画します。録画したファイルは メニュー → 「録画」で再生・削除できます。保存先フォルダは 設定 → 再生 で変更できます。
+
+id: Nessun preferito da esportare
+msg: エクスポートするお気に入りがありません
+
+id: Nessun promemoria attivo
+msg: 有効なリマインダーがありません
+
+id: Nessun'altra puntata in palinsesto
+msg: 番組表に他のエピソードがありません
+
+id: Nessuna puntata futura da registrare
+msg: 録画できる将来のエピソードがありません
+
+id: Nessuna registrazione completata
+msg: 完了した録画がありません
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: チャンネル番組表 → 未来の番組 → 「録画」バッジ → OK。番組の下の「リマインダーとシリーズ録画」行では、開始時の通知のみ（録画なし）と、同じタイトルの全エピソードの録画も可能です。録画は自動で開始し番組終了時に停止します。一度に1件：プロバイダが接続を1つしか許可しない場合、他のチャンネル視聴中の録画は失敗する可能性があります。
+
+id: Predefinita
+msg: デフォルト
+
+id: Preferiti esportati
+msg: お気に入りをエクスポートしました
+
+id: Promemoria
+msg: リマインダー
+
+id: Promemoria attivato
+msg: リマインダーを設定しました
+
+id: Promemoria attivo
+msg: リマインダー有効
+
+id: Promemoria e registrazione serie
+msg: リマインダーとシリーズ録画
+
+id: Promemoria rimosso
+msg: リマインダーを削除しました
+
+id: Promemorie
+msg: リマインダー
+
+id: Prossimo episodio
+msg: 次のエピソード
+
+id: Registra tutta la serie
+msg: シリーズ全話を録画
+
+id: Registrazione eliminata
+msg: 録画を削除しました
+
+id: Registrazione programmata, promemoria e serie
+msg: 予約録画・リマインダー・シリーズ
+
+id: Registrazione singola puntata
+msg: 単一エピソードの録画
+
+id: Salva i canali preferiti come playlist standard
+msg: お気に入りチャンネルを標準プレイリストとして保存
+
+id: Sta iniziando
+msg: まもなく開始
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: 番組行の「録画」バッジを使用
+
+id: canali
+msg: チャンネル
+
+id: cartella non scrivibile
+msg: フォルダに書き込めません
+
+id: fallita
+msg: 失敗
+
+id: puntate
+msg: エピソード
+
+id: puntate in palinsesto
+msg: 番組表のエピソード
+

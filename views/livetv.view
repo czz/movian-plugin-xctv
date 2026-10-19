@@ -1,0 +1,1452 @@
+#import "skin://theme.view"
+#import "skin://styles/style_list.view"
+
+// XCtv Live TV — Guida TV con rail e griglia EPG.
+//
+// Video fullscreen dietro una griglia EPG semi-trasparente:
+//   [pannello gruppi | colonna canali | celle programmi]
+//   riga oraria in alto, now-line verticale, riga focalizzata che
+//   si espande con logo grande + descrizione, info card in alto a
+//   sinistra ad ogni zap .
+//
+// View-local state:
+//   $view.osd  — griglia visibile
+//   $view.info — info card visibile (auto-hide ~5s)
+//
+// Contract con il plugin (model.eventSink):
+//   "watch:N"    — sintonizza il canale N
+//   "group:N"    — cambia gruppo
+//   "Channel+/-" — zap canale precedente/successivo
+// Il plugin scrive: model.zapurl (videoparams), zapidx, zapnum,
+// zaptitle, zapicon, zapnow*/zapnext*, model.groups, model.nodes,
+// model.gridslots, model.gridspan, model.nowoff, metadata.gridcells
+// su ogni item canale.
+
+$view.osd  = 1;   // la griglia parte aperta
+$view.info = 0;
+$view.menu = 0;   // drawer sezioni app (sinistra dei gruppi)
+$view.ctx  = 0;   // popup contestuale canale
+$view.gctx = 0;   // popup contestuale gruppo (ordina/nascondi)
+$view.ctxar = 0;  // canale con archivio catch-up
+
+// ---- tasti di pagina ----
+
+// BACK a strati: popup contestuale -> drawer -> info ->
+// video pulito riapre la griglia. A griglia aperta back propaga
+// al navigator: torna alla pagina precedente (o esce se e' la
+// prima — la guida si richiude solo scegliendo un canale o col
+// tasto menu, altrimenti back non uscirebbe mai).
+onEvent(back, { $view.gctx = 0; focus("groupslist"); }, $view.gctx);
+onEvent(back, { $view.ctx = 0; focus("chanlist"); }, $view.ctx);
+onEvent(back, { $view.menu = 0; focus("groupslist"); }, $view.menu && !$view.ctx);
+onEvent(back, { $view.info = 0; focus("zaproot"); }, !$view.osd && $view.info);
+onEvent(back, { $view.osd = 1; $view.info = 0; focus("chanlist"); },
+      !$view.osd && !$view.menu && !$view.ctx);
+
+// MENU apre/chiude la griglia.
+onEvent(menu,     { $view.info = 0; $view.osd = 1; focus("chanlist"); }, !$view.osd);
+onEvent(menu,     { $view.osd = 0; focus("zaproot"); }, $view.osd);
+onEvent(itemMenu, { $view.info = 0; $view.osd = 1; focus("chanlist"); }, !$view.osd);
+
+// UP/DOWN mentre si guarda apre la guida .
+onEvent(up,   { $view.info = 0; $view.osd = 1; focus("chanlist"); }, !$view.osd);
+onEvent(down, { $view.info = 0; $view.osd = 1; focus("chanlist"); }, !$view.osd);
+
+// CH± zap mentre si guarda; l'info card appare ad ogni zap.
+onEvent("Channel+", {
+  $view.info = 1;
+  fireEvent(deliverEvent($self.model.eventSink, "Channel+"));
+}, !$view.osd);
+onEvent("Channel-", {
+  $view.info = 1;
+  fireEvent(deliverEvent($self.model.eventSink, "Channel-"));
+}, !$view.osd);
+
+// auto-hide dell'info card (secondi da model.zapinfosecs, default 5)
+onInactivity(select(!$view.osd && $view.info,
+                    select(isVoid($self.model.zapinfosecs), 5,
+                           $self.model.zapinfosecs), 0), {
+  $view.info = 0;
+  focus("zaproot");
+});
+
+// bordo sottile delle celle (pattern di epggrid.view — niente
+// widget con dimensioni senza unita' nei corpi dei cloner)
+#define XcCellHair() {
+  widget(border, {
+    border: 0.05em;
+    color: 0.14;
+  });
+}
+
+widget(container_z, {
+
+  // OK mentre si guarda mostra/nasconde l'info card + barra player.
+  onEvent(activate, {
+    toggle($view.info);
+    focus(select($view.info, "pb-pause", "zaproot"));
+  }, !$view.osd && !isVoid($self.model.zapurl));
+
+  // Root focus holder — tiene gli eventi direzionali quando la
+  // griglia e' chiusa (idioma "zaproot" di tvplay.view).
+  widget(container_z, {
+    id: "zaproot";
+    focusable: !$view.osd;
+  });
+
+  // fondo nero dietro il video — senza questo traspare il
+  // background del tema di Movian durante la riproduzione
+  widget(quad, {
+    color: 0;
+    hidden: isVoid($self.model.zapurl);
+  });
+
+  // ---- video sintonizzato, sempre fullscreen ----
+  widget(video, {
+    source: $self.model.zapurl;
+    primary: true;
+    hidden: isVoid($self.model.zapurl);
+  });
+
+  // placeholder prima della prima sintonizzazione
+  widget(container_z, {
+    hidden: !isVoid($self.model.zapurl);
+
+    widget(label, {
+      caption: _("Seleziona un canale per iniziare");
+      align: center;
+      size: 1.4em;
+      color: 0.7;
+    });
+  });
+
+  // ---- digit zap: numero in digitazione (in basso a destra) ----
+  widget(container_x, {
+    align: right;
+    hidden: !$self.model.numinput;
+
+    widget(container_z, {
+      padding: [0.9em, 0.5em];
+      margin: 1em;
+
+      widget(quad, {
+        color: [0.11, 0.13, 0.16];
+        alpha: 0.95;
+      });
+      widget(border, {
+        border: 0.06em;
+        color: [0.13, 0.59, 0.95];
+      });
+
+      widget(label, {
+        caption: fmt("%d", $self.model.numinput);
+        size: 2.2em;
+        color: 1;
+        align: center;
+      });
+    });
+  });
+
+  // ---- info card (in alto a sinistra, dopo lo zap) ----
+  widget(container_y, {
+    align: top;
+    hidden: isVoid($self.model.zapurl) || $view.osd || !$view.info;
+    alpha: $self.model.palpha ?? 1;
+
+    widget(container_x, {
+      padding: 0.9em;
+
+      widget(container_z, {
+        width: 36em;
+
+        widget(quad, {
+          color: [0.06, 0.08, 0.10];
+          alpha: 0.92;
+        });
+
+        widget(container_x, {
+          padding: 0.9em;
+          spacing: 1em;
+
+          // numero + logo + nome canale
+          widget(container_y, {
+            width: 7.5em;
+            spacing: 0.3em;
+
+            widget(container_x, {
+              spacing: 0.7em;
+
+              widget(label, {
+                caption: $self.model.zapnum;
+                size: 1.5em;
+                color: [0.565, 0.792, 0.976];
+                font: "skin://fonts/RobotoCondensed-Light.ttf";
+                hidden: !$self.model.shownums;
+              });
+
+              widget(deck, {
+                width: 5em;
+                height: 2.4em;
+                hidden: !$self.model.showlogos;
+
+                widget(label, {
+                  align: center;
+                  caption: $self.model.zaptitle;
+                  size: 0.8em;
+                  maxlines: 2;
+                });
+
+                widget(image, {
+                  source: $self.model.zapicon;
+                  align: center;
+                });
+
+                page: select(isVoid($self.model.zapicon), 0, 1);
+              });
+            });
+
+            widget(label, {
+              caption: $self.model.zaptitle;
+              size: 0.9em;
+              color: 0.75;
+              font: "skin://fonts/RobotoCondensed-Light.ttf";
+            });
+          });
+
+          // programma in onda + prossimo
+          widget(container_y, {
+            filterConstraintX: true;
+            spacing: 0.35em;
+
+            widget(label, {
+              caption: $self.model.zapnowtitle;
+              size: 1.3em;
+              filterConstraintX: true;
+              ellipsize: true;
+            });
+
+            widget(container_x, {
+              spacing: 0.7em;
+              hidden: !($self.model.zapnowstop > $self.model.zapnowstart);
+
+              widget(label, {
+                caption: fmt("%s — %s",
+                             strftime($self.model.zapnowstart, "%H:%M"),
+                             strftime($self.model.zapnowstop, "%H:%M"));
+                size: 0.85em;
+                color: 0.7;
+              });
+
+              widget(container_x, {
+                weight: 1;
+                height: 0.35em;
+                align: center;
+
+                widget(quad, {
+                  weight: clamp(
+                    ($core.clock.unixtime - $self.model.zapnowstart) /
+                    ($self.model.zapnowstop - $self.model.zapnowstart), 0, 1);
+                  color: [0.9, 0.9, 0.9];
+                });
+                widget(quad, {
+                  weight: 1 - clamp(
+                    ($core.clock.unixtime - $self.model.zapnowstart) /
+                    ($self.model.zapnowstop - $self.model.zapnowstart), 0, 1);
+                  alpha: 0.25;
+                });
+              });
+
+              widget(label, {
+                caption: fmt("%d min",
+                  clamp(int(($self.model.zapnowstop -
+                             $core.clock.unixtime) / 60), 0, 9999));
+                size: 0.85em;
+                color: 0.7;
+              });
+            });
+
+            widget(label, {
+              hidden: isVoid($self.model.zapnowdesc) ||
+                      $self.model.zapnowdesc == "";
+              caption: $self.model.zapnowdesc;
+              size: 0.85em;
+              color: 0.6;
+              maxlines: 3;
+            });
+
+            widget(label, {
+              hidden: !($self.model.zapnextstart > 0);
+              caption: fmt("%s — %s   %s",
+                           strftime($self.model.zapnextstart, "%H:%M"),
+                           strftime($self.model.zapnextstop, "%H:%M"),
+                           $self.model.zapnexttitle);
+              size: 0.85em;
+              color: 0.55;
+              filterConstraintX: true;
+              ellipsize: true;
+            });
+          });
+        });
+      });
+
+      // orologio in alto a destra
+      space(1);
+      widget(container_z, {
+        widget(quad, {
+          color: [0.06, 0.08, 0.10];
+          alpha: 0.85;
+        });
+        widget(label, {
+          caption: strftime($core.clock.unixtime, "%H:%M");
+          padding: [0.8em, 0.35em];
+          size: 1em;
+          color: 0.85;
+        });
+      });
+    });
+  });
+
+  // ---- barra player (in basso, appare con l'info card) ----
+  widget(container_y, {
+    align: bottom;
+    hidden: !$view.info || isVoid($self.model.zapurl);
+    alpha: $self.model.palpha ?? 1;
+
+    widget(container_z, {
+      height: 4.6em;
+
+      widget(quad, {
+        color: [0.05, 0.06, 0.08];
+        alpha: 0.94;
+      });
+
+      // filo accentato sul bordo superiore
+      widget(container_y, {
+        align: top;
+        widget(quad, {
+          height: 0.08em;
+          color: [0.13, 0.59, 0.95];
+        });
+      });
+
+      widget(container_x, {
+        padding: [1em, 0];
+        spacing: 1.1em;
+        align: center;
+
+        // logo canale
+        widget(container_z, {
+          width: 4.6em;
+          height: 2.6em;
+
+          widget(quad, {
+            color: [0.09, 0.11, 0.14];
+            alpha: 0.9;
+          });
+          widget(image, {
+            source: $self.model.zapicon;
+            padding: 0.3em;
+            hidden: isVoid($self.model.zapicon) ||
+                    $self.model.zapicon == "";
+          });
+        });
+
+        // numero + nome canale, programma in onda e progresso
+        widget(container_y, {
+          weight: 1;
+          spacing: 0.35em;
+
+          widget(container_x, {
+            spacing: 0.8em;
+
+            widget(label, {
+              caption: $self.model.zapnum;
+              size: 1.1em;
+              color: [0.565, 0.792, 0.976];
+              font: "skin://fonts/RobotoCondensed-Light.ttf";
+              hidden: !$self.model.shownums;
+            });
+
+            widget(label, {
+              caption: $self.model.zaptitle;
+              size: 1.05em;
+              color: 0.95;
+            });
+
+            widget(label, {
+              caption: fmt("%s — %s  %s",
+                           strftime($self.model.zapnowstart, "%H:%M"),
+                           strftime($self.model.zapnowstop, "%H:%M"),
+                           $self.model.zapnowtitle);
+              size: 0.85em;
+              color: 0.7;
+              hidden: !($self.model.zapnowstop > $self.model.zapnowstart);
+              filterConstraintX: true;
+              ellipsize: true;
+            });
+          });
+
+          // avanzamento del programma in onda
+          widget(container_x, {
+            height: 0.35em;
+            hidden: !($self.model.zapnowstop > $self.model.zapnowstart);
+
+            widget(quad, {
+              weight: clamp(
+                ($core.clock.unixtime - $self.model.zapnowstart) /
+                ($self.model.zapnowstop - $self.model.zapnowstart), 0, 1);
+              color: [0.13, 0.59, 0.95];
+            });
+            widget(quad, {
+              weight: 1 - clamp(
+                ($core.clock.unixtime - $self.model.zapnowstart) /
+                ($self.model.zapnowstop - $self.model.zapnowstart), 0, 1);
+              alpha: 0.2;
+            });
+          });
+        });
+
+        // pulsanti: guida, canale -/+, pausa
+        widget(container_y, {
+          space(1);
+          widget(container_x, {
+            height: 3em;
+            spacing: 0.4em;
+          
+
+          widget(container_z, {
+            id: "pb-guide";
+            focusable: true;
+            width: 3em;
+            onEvent(activate, {
+              $view.info = 0;
+              $view.osd = 1;
+              focus("chanlist");
+            });
+            widget(quad, {
+              additive: true;
+              alpha: 0.1 * isHovered() + 0.6 * isNavFocused();
+            });
+            widget(icon, {
+              size: 1.7em;
+              source: "skin://icons/ic_list_48px.svg";
+            });
+          });
+
+          widget(container_z, {
+            id: "pb-prev";
+            focusable: true;
+            width: 3em;
+            onEvent(activate, {
+              fireEvent(deliverEvent($self.model.eventSink, "Channel-"));
+            });
+            widget(quad, {
+              additive: true;
+              alpha: 0.1 * isHovered() + 0.6 * isNavFocused();
+            });
+            widget(icon, {
+              size: 1.7em;
+              source: "skin://icons/ic_skip_previous_48px.svg";
+            });
+          });
+
+          widget(container_z, {
+            id: "pb-pause";
+            focusable: true;
+            width: 3em;
+            onEvent(activate, {
+              fireEvent(deliverEvent($core.media.current.eventSink,
+                                     "PlayPause"));
+            });
+            widget(quad, {
+              additive: true;
+              alpha: 0.1 * isHovered() + 0.6 * isNavFocused();
+            });
+            widget(icon, {
+              size: 1.7em;
+              source: translate($core.media.current.playstatus,
+                                "skin://icons/ic_pause_48px.svg",
+                                "pause",
+                                "skin://icons/ic_play_arrow_48px.svg");
+              alpha: select($core.media.current.canPause, 1, 0.35);
+            });
+          });
+
+          widget(container_z, {
+            id: "pb-next";
+            focusable: true;
+            width: 3em;
+            onEvent(activate, {
+              fireEvent(deliverEvent($self.model.eventSink, "Channel+"));
+            });
+            widget(quad, {
+              additive: true;
+              alpha: 0.1 * isHovered() + 0.6 * isNavFocused();
+            });
+            widget(icon, {
+              size: 1.7em;
+              source: "skin://icons/ic_skip_next_48px.svg";
+            });
+          });
+
+          widget(container_z, {
+            id: "pb-audio";
+            focusable: true;
+            width: 3em;
+            onEvent(activate, {
+              fireEvent(deliverEvent($self.model.eventSink, "cycleaudio"));
+            });
+            widget(quad, {
+              additive: true;
+              alpha: 0.1 * isHovered() + 0.6 * isNavFocused();
+            });
+            widget(icon, {
+              size: 1.7em;
+              source: "skin://icons/ic_audiotrack_48px.svg";
+            });
+          });
+
+          widget(container_z, {
+            id: "pb-subs";
+            focusable: true;
+            width: 3em;
+            onEvent(activate, {
+              fireEvent(deliverEvent($self.model.eventSink, "cyclesubs"));
+            });
+            widget(quad, {
+              additive: true;
+              alpha: 0.1 * isHovered() + 0.6 * isNavFocused();
+            });
+            widget(icon, {
+              size: 1.7em;
+              source: "skin://icons/ic_subtitles_48px.svg";
+            });
+          });
+
+          widget(container_z, {
+            id: "pb-aspect";
+            focusable: true;
+            width: 3em;
+            onEvent(activate, {
+              fireEvent(deliverEvent($self.model.eventSink, "aspect"));
+            });
+            widget(quad, {
+              additive: true;
+              alpha: 0.1 * isHovered() + 0.6 * isNavFocused();
+            });
+            widget(icon, {
+              size: 1.7em;
+              source: "skin://icons/ic_fullscreen_48px.svg";
+            });
+          });
+
+          widget(container_z, {
+            id: "pb-rec";
+            focusable: true;
+            width: 3em;
+            onEvent(activate, {
+              fireEvent(deliverEvent($self.model.eventSink, "record"));
+            });
+            widget(quad, {
+              additive: true;
+              alpha: 0.1 * isHovered() + 0.6 * isNavFocused();
+            });
+            widget(icon, {
+              size: 1.7em;
+              source: "skin://icons/ic_videocam_48px.svg";
+              color: select($self.model.recording, [1, 0.2, 0.2], [1, 1, 1]);
+            });
+          });
+      });
+          space(1);
+        });
+      });
+    });
+  });
+
+  // ---- guida TV ----
+  widget(container_x, {
+    hidden: !$view.osd;
+    alpha: $self.model.palpha ?? 1;
+
+    // ====== pannello gruppi ======
+    widget(container_z, {
+      width: 12em;
+
+      // left apre il drawer sezioni , right torna
+      // ai canali — entrambi consumati.
+      onEvent(right, { focus("chanlist"); }, true);
+      onEvent(left,  { $view.menu = 1; focus("menulist"); }, !$view.menu);
+
+      widget(quad, {
+        color: [0.13, 0.16, 0.19];
+        alpha: 0.97;
+      });
+
+      widget(container_y, {
+
+        widget(label, {
+          caption: _("Gruppi");
+          size: 1.05em;
+          height: 2.5em;
+          padding: [1em, 0];
+          color: 0.95;
+        });
+
+        widget(list_y, {
+          id: "groupslist";
+          navWrap: true;
+          chaseFocus: true;
+          filterConstraintY: true;
+
+          cloner($self.model.groups, container_z, {
+            height: 2.7em;
+            focusable: true;
+            selectOnFocus: true;
+
+            suggestFocus($self.sel);
+
+            ListItemBevel();
+            ListItemHighlight();
+
+            // prima ricarica i canali (i cloni vengono ricreati),
+            // poi sposta il focus sulla lista fresca
+            onEvent(activate, {
+              fireEvent(deliverEvent($parent.model.eventSink,
+                                     fmt("group:%d", $self.xidx)));
+              focus("chanlist");
+            });
+
+            // long-press: menu contestuale del gruppo — riordina,
+            // nascondi, ripristina
+            onEvent(itemMenu, {
+              $view.gctx = 1;
+              $view.ctxx = $self.xidx;
+              $view.gctxhide = $self.metadata.canhide;
+              focus("gctxlist");
+            });
+
+            widget(container_x, {
+              padding: [1em, 0];
+              spacing: 0.6em;
+
+              widget(label, {
+                caption: $self.metadata.title;
+                size: 0.95em;
+                color: 0.9;
+                filterConstraintX: true;
+                ellipsize: true;
+                align: center;
+              });
+
+              widget(icon, {
+                source: "skin://icons/ic_check_48px.svg";
+                size: 1em;
+                color: [0.13, 0.59, 0.95];
+                hidden: !$self.sel;
+              });
+            });
+          });
+        });
+      });
+    });
+
+    // ====== griglia canali + programmi ======
+    widget(container_z, {
+      weight: 1;
+      filterConstraintX: true;
+
+      // velatura sul video per leggibilita' delle celle
+      widget(quad, {
+        color: 0;
+        alpha: 0.35;
+      });
+
+      widget(container_y, {
+
+        // ---- riga oraria ----
+        widget(container_z, {
+          height: 2em;
+
+          // layer slot temporali: spacer statico (20em = colonna
+          // canali) + cloner con cloni pesati
+          widget(container_x, {
+            widget(quad, { width: 17em; alpha: 0; });
+
+            cloner($self.model.gridslots, container_z, {
+              weight: $self.metadata.stop - $self.metadata.start;
+              filterConstraintX: true;
+
+              widget(quad, {
+                color: 0;
+                alpha: 0.65;
+              });
+              XcCellHair();
+
+              widget(label, {
+                caption: strftime($self.metadata.start, "%H:%M");
+                padding: [0.6em, 0];
+                size: 0.85em;
+                color: 0.7;
+                align: left;
+              });
+            });
+          });
+
+          // cella data+ora in overlay sopra la colonna canali —
+          // i suoi binding dinamici (orologio) non devono stare
+          // nello stesso container_x del cloner
+          widget(container_z, {
+            width: 17em;
+            align: left;
+
+            widget(quad, {
+              color: 0;
+              alpha: 0.65;
+            });
+            XcCellHair();
+
+            widget(label, {
+              caption: fmt("%s, %s",
+                           strftime($core.clock.unixtime, "%d/%m"),
+                           strftime($core.clock.unixtime, "%H:%M"));
+              padding: [0.7em, 0];
+              size: 0.85em;
+              color: 0.75;
+              align: left;
+            });
+          });
+        });
+
+        // ---- righe canali + now-line ----
+        widget(container_z, {
+
+          widget(list_y, {
+            id: "chanlist";
+            navWrap: true;
+            chaseFocus: true;
+            filterConstraintY: true;
+
+            cloner($self.model.nodes, container_x, {
+
+              height: 2.9em;
+              focusable: true;
+              selectOnFocus: true;
+
+              // il canale sintonizzato suggerisce il focus iniziale
+              suggestFocus($self.metadata.xidx == $parent.model.zapidx);
+
+              // OK: sintonizza e chiude la guida
+              onEvent(activate, {
+                $view.osd = 0;
+                $view.info = 1;
+                focus("zaproot");
+                fireEvent(deliverEvent($parent.model.eventSink,
+                                       fmt("watch:%d", $self.metadata.xidx)));
+              });
+
+              // long-press: menu contestuale canale 
+              onEvent(itemMenu, {
+                $view.ctx = 1;
+                $view.ctxx = $self.metadata.xidx;
+                $view.ctxurl = $self.metadata.epgurl;
+                $view.ctxfav = $self.metadata.fav;
+                $view.ctxar = $self.metadata.archive;
+                focus("ctxlist");
+              });
+
+              // consuma RIGHT: le celle non sono focusable e
+              // l'evento aprirebbe la sidebar di Movian
+              onEvent(right, { $view.osd = $view.osd; }, true);
+
+              // ---- cella canale (figlio diretto, come
+              // epggrid.view) ----
+              widget(container_z, {
+                width: 17em;
+
+                widget(quad, {
+                  color: select(isNavFocused(),
+                                [0.10, 0.20, 0.30], 0);
+                  alpha: select(isNavFocused(), 0.95, 0.6);
+                });
+                XcCellHair();
+
+                widget(container_x, {
+
+                  widget(label, {
+                    caption: $self.metadata.num ?? ($self.metadata.xidx + 1);
+                    width: 3em;
+                    align: right;
+                    padding: [0.4em, 0];
+                    size: 1em;
+                    color: [0.565, 0.792, 0.976];
+                    font: "skin://fonts/RobotoCondensed-Light.ttf";
+                    hidden: !$parent.model.shownums;
+                  });
+
+                  widget(deck, {
+                    width: select($parent.model.showlogos, 4.4em, 0);
+                    hidden: !$parent.model.showlogos;
+
+                    widget(label, {
+                      align: center;
+                      caption: $self.metadata.title;
+                      size: 0.75em;
+                      maxlines: 2;
+                      ellipsize: true;
+                    });
+
+                    widget(container_z, {
+                      widget(quad, {
+                        color: 0;
+                        alpha: 0.4;
+                      });
+                      widget(image, {
+                        source: $self.metadata.icon;
+                        padding: 0.25em;
+                      });
+                    });
+
+                    page: select(isVoid($self.metadata.icon), 0, 1);
+                  });
+
+                  widget(label, {
+                    caption: $self.metadata.title;
+                    padding: [0.5em, 0];
+                    size: 0.95em;
+                    color: select(isNavFocused(), 1, 0.9);
+                    filterConstraintX: true;
+                    ellipsize: true;
+                    align: left;
+                  });
+
+                  widget(icon, {
+                    source: "skin://icons/ic_favorite_48px.svg";
+                    size: 0.9em;
+                    padding: [0.3em, 0];
+                    color: [1.0, 0.78, 0.16];
+                    hidden: !$self.metadata.fav;
+                  });
+                });
+              });
+
+              // ---- celle programmi (cloner figlio diretto) ----
+              cloner($self.metadata.gridcells, container_z, {
+                weight: $self.metadata.stop - $self.metadata.start;
+                filterConstraintX: true;
+
+                // click su un programma gia' finito di un canale con
+                // archivio: riproduce quella finestra via catch-up
+                // (il filtro "passato" e' anche nel sink JS)
+                onEvent(activate, {
+                  fireEvent(deliverEvent($parent.model.eventSink,
+                    fmt("catchupat:%d:%d:%d", $self.metadata.xidx,
+                        $self.metadata.estart, $self.metadata.estop)));
+                });
+
+                widget(quad, {
+                  color: select($self.metadata.cur,
+                                [0.08, 0.17, 0.24], 0);
+                  alpha: select($self.metadata.cur, 0.9, 0.55);
+                });
+                XcCellHair();
+
+                // marker catch-up: tacchetta a sinistra sui programmi
+                // gia' finiti dei canali con archivio
+                widget(container_x, {
+                  widget(quad, {
+                    width: 0.35em;
+                    color: [0.2, 0.75, 0.35];
+                    alpha: 0.9;
+                    hidden: !($parent.metadata.archive &&
+                              !$self.metadata.empty &&
+                              $self.metadata.stop < $core.clock.unixtime);
+                  });
+                  space(1);
+                });
+
+                widget(container_y, {
+
+                  widget(label, {
+                    caption: select($self.metadata.empty,
+                                    _("No information"),
+                                    $self.metadata.title);
+                    padding: [0.6em, 0];
+                    size: 0.85em;
+                    color: select(
+                      $self.metadata.empty,
+                      0.45,
+                      select($self.metadata.stop <
+                             $core.clock.unixtime, 0.5, 0.95));
+                    align: left;
+                    filterConstraintX: true;
+                    ellipsize: true;
+                  });
+
+                  space(1);
+
+                  // striscia di avanzamento nella cella in onda
+                  widget(container_x, {
+                    height: 0.18em;
+                    hidden: !$self.metadata.cur;
+
+                    widget(quad, {
+                      weight: clamp(
+                        ($core.clock.unixtime - $self.metadata.start) /
+                        ($self.metadata.stop - $self.metadata.start),
+                        0, 1);
+                      filterConstraintX: true;
+                      color: [0.13, 0.59, 0.95];
+                    });
+                    widget(quad, {
+                      weight: 1 - clamp(
+                        ($core.clock.unixtime - $self.metadata.start) /
+                        ($self.metadata.stop - $self.metadata.start),
+                        0, 1);
+                      filterConstraintX: true;
+                      alpha: 0.25;
+                    });
+                  });
+                });
+              });
+            });
+          });
+
+          // now-line verticale sulla griglia
+          widget(container_x, {
+            hidden: $self.model.nowoff < 0 ||
+                    $self.model.nowoff > $self.model.gridspan;
+
+            widget(quad, {
+              width: 17em;
+              alpha: 0;
+            });
+
+            widget(quad, {
+              weight: $self.model.nowoff + 0;
+              filterConstraintX: true;
+              alpha: 0;
+            });
+            widget(quad, {
+              width: 0.15em;
+              color: [0.13, 0.59, 0.95];
+            });
+            widget(quad, {
+              weight: $self.model.gridspan - $self.model.nowoff;
+              filterConstraintX: true;
+              alpha: 0;
+            });
+          });
+        });
+      });
+    });
+  });
+
+  // ---- drawer sezioni app (← oltre i gruppi) ----
+  widget(container_x, {
+    hidden: !$view.osd || !$view.menu;
+
+    widget(container_z, {
+      width: 15em;
+
+      widget(quad, {
+        color: [0.09, 0.11, 0.14];
+        alpha: 0.98;
+      });
+
+      widget(container_y, {
+
+        widget(label, {
+          caption: "XCtv";
+          size: 1.2em;
+          height: 2.2em;
+          padding: [1em, 0];
+          color: [0.565, 0.792, 0.976];
+          font: "skin://fonts/RobotoCondensed-Light.ttf";
+        });
+
+        widget(list_y, {
+          id: "menulist";
+          navWrap: true;
+          chaseFocus: true;
+          filterConstraintY: true;
+
+          cloner($self.model.menu, container_z, {
+            height: 3em;
+            focusable: true;
+            selectOnFocus: true;
+
+            suggestFocus($self.xidx == 0);
+
+            ListItemBevel();
+            ListItemHighlight();
+
+            // voce con URL -> nuova pagina; voce senza URL
+            // (Guida TV = siamo gia' qui) -> chiudi e guarda
+            onEvent(activate,
+                    navOpen($self.url),
+                    $self.url != '');
+            onEvent(activate, {
+              $view.menu = 0;
+              $view.osd = 0;
+              focus("zaproot");
+            }, $self.url == '');
+
+            onEvent(right, {
+              $view.menu = 0;
+              focus("groupslist");
+            }, true);
+
+            widget(container_x, {
+              padding: [1em, 0];
+              spacing: 0.8em;
+
+              widget(icon, {
+                source: $self.metadata.icon;
+                size: 1.2em;
+                color: select(isNavFocused(), [0.565, 0.792, 0.976], 0.7);
+              });
+
+              widget(label, {
+                caption: $self.metadata.title;
+                size: 1em;
+                color: select(isNavFocused(), 1, 0.85);
+                filterConstraintX: true;
+                ellipsize: true;
+                align: center;
+              });
+            });
+          });
+        });
+      });
+    });
+
+    space(1);
+  });
+
+  // ---- popup contestuale canale (long-press, ) ----
+  widget(container_z, {
+    hidden: !$view.ctx || !$view.osd;
+
+    // velatura di sfondo — back o click fuori chiudono il popup
+    widget(quad, {
+      color: 0;
+      alpha: 0.4;
+      onEvent(back, { $view.ctx = 0; focus("chanlist"); }, true);
+      onEvent(activate, { $view.ctx = 0; focus("chanlist"); }, true);
+    });
+
+    widget(container_x, {
+      align: center;
+
+      widget(container_z, {
+        width: 16em;
+
+        widget(quad, {
+          color: [0.11, 0.13, 0.16];
+          alpha: 0.98;
+        });
+        widget(border, {
+          border: 0.05em;
+          color: 0.3;
+        });
+
+        widget(list_y, {
+          id: "ctxlist";
+          navWrap: true;
+          filterConstraintY: true;
+
+          // Guarda
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              $view.osd = 0;
+              $view.info = 1;
+              focus("zaproot");
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("watch:%d", $view.ctxx)));
+            });
+
+            widget(label, {
+              caption: _("Guarda");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Palinsesto (EPG completo del canale)
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              fireEvent(navOpen($view.ctxurl));
+            });
+
+            widget(label, {
+              caption: _("Palinsesto");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Rivedi — catch-up sul programma appena finito
+          // (solo canali con archivio tv_archive)
+          widget(container_z, {
+            hidden: !$view.ctxar;
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              $view.osd = 0;
+              $view.info = 1;
+              focus("zaproot");
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("catchup:%d", $view.ctxx)));
+            });
+
+            widget(label, {
+              caption: _("Rivedi");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Preferito on/off
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              focus("chanlist");
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("fav:%d", $view.ctxx)));
+            });
+
+            widget(label, {
+              caption: select($view.ctxfav,
+                              _("Rimuovi dai preferiti"),
+                              _("Aggiungi ai preferiti"));
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Nascondi canale
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              focus("chanlist");
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("hide:%d", $view.ctxx)));
+            });
+
+            widget(label, {
+              caption: _("Nascondi canale");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Rinomina canale
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              focus("chanlist");
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("rename:%d", $view.ctxx)));
+            });
+
+            widget(label, {
+              caption: _("Rinomina canale");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Sposta su
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              focus("chanlist");
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("moveup:%d", $view.ctxx)));
+            });
+
+            widget(label, {
+              caption: _("Sposta su");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Sposta giu'
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              focus("chanlist");
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("movedown:%d", $view.ctxx)));
+            });
+
+            widget(label, {
+              caption: _("Sposta giù");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Numero canale personalizzato
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              focus("chanlist");
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("setnum:%d", $view.ctxx)));
+            });
+
+            widget(label, {
+              caption: _("Numero canale…");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Multi-view — mosaico 2x2 di canali
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              fireEvent(navOpen("xctv:multiview"));
+            });
+
+            widget(label, {
+              caption: _("Multi-view");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Annulla — chiude il popup
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.ctx = 0;
+              focus("chanlist");
+            });
+
+            widget(label, {
+              caption: _("Annulla");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+        });
+      });
+
+      space(1);
+    });
+  });
+
+  // ---- popup contestuale gruppo (long-press sul gruppo) ----
+  widget(container_z, {
+    hidden: !$view.gctx;
+
+    widget(quad, {
+      color: 0;
+      alpha: 0.4;
+      onEvent(back, { $view.gctx = 0; focus("groupslist"); }, true);
+      onEvent(activate, { $view.gctx = 0; focus("groupslist"); }, true);
+    });
+
+    widget(container_x, {
+      align: center;
+
+      widget(container_z, {
+        width: 16em;
+
+        widget(quad, {
+          color: [0.11, 0.13, 0.16];
+          alpha: 0.98;
+        });
+        widget(border, {
+          border: 0.05em;
+          color: 0.3;
+        });
+
+        widget(list_y, {
+          id: "gctxlist";
+          navWrap: true;
+          filterConstraintY: true;
+
+          // Sposta su — il popup resta aperto per spostamenti multipli
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("gmoveup:%d", $view.ctxx)));
+              // il gruppo si sposta di una posizione: ctxx lo segue
+              // cosi' il prossimo OK muove di nuovo lo stesso gruppo
+              $view.ctxx = clamp($view.ctxx - 1, 0, 9999);
+            });
+
+            widget(label, {
+              caption: _("Sposta su");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Sposta giu'
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("gmovedown:%d", $view.ctxx)));
+              $view.ctxx = $view.ctxx + 1;
+            });
+
+            widget(label, {
+              caption: _("Sposta giù");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Nascondi gruppo — non su Preferiti/Recenti/Tutti
+          widget(container_z, {
+            hidden: !$view.gctxhide;
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.gctx = 0;
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     fmt("hidegroup:%d", $view.ctxx)));
+              focus("groupslist");
+            });
+
+            widget(label, {
+              caption: _("Nascondi gruppo");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Ripristina canali e gruppi nascosti
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.gctx = 0;
+              fireEvent(deliverEvent($self.model.eventSink,
+                                     "unhide:0"));
+              focus("groupslist");
+            });
+
+            widget(label, {
+              caption: _("Ripristina nascosti");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+
+          // Annulla — chiude il popup
+          widget(container_z, {
+            height: 2.8em;
+            focusable: true;
+            ListItemBevel();
+            ListItemHighlight();
+
+            onEvent(activate, {
+              $view.gctx = 0;
+              focus("groupslist");
+            });
+
+            widget(label, {
+              caption: _("Annulla");
+              padding: [1em, 0];
+              size: 1em;
+              align: center;
+            });
+          });
+        });
+      });
+    });
+  });
+});

@@ -1,0 +1,976 @@
+language: Dutch
+native: Nederlands
+
+id: Server (host[:port] o URL)
+msg: Server (host[:poort] of URL)
+
+id: Username
+msg: Gebruikersnaam
+
+id: Password
+msg: Wachtwoord
+
+id: Nome playlist
+msg: Lijstnaam
+
+id: Abilita EPG
+msg: EPG inschakelen
+
+id: URL XMLTV personalizzato (opzionale)
+msg: Aangepaste XMLTV-URL (optioneel)
+
+id: Aggiorna EPG ogni (ore)
+msg: EPG bijwerken elke (uur)
+
+id: Correggi orario EPG (minuti)
+msg: EPG-tijdcorrectie (minuten)
+
+id: Aggiorna EPG all'avvio
+msg: EPG bijwerken bij opstarten
+
+id: Log di debug
+msg: Debug-log
+
+id: Riproduzione
+msg: Afspelen
+
+id: Formato stream live
+msg: Livestream-formaat
+
+id: Automatico
+msg: Automatisch
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Film-/afleveringformaat
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Kanaalinfo-duur na zappen (sec)
+
+id: Riprendi ultimo canale all'avvio
+msg: Laatste kanaal hervatten bij opstarten
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Extra HTTP-headers (Naam: waarde per regel)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Lijst verversen elke (min, 0 = nooit)
+
+id: Aspetto
+msg: Uiterlijk
+
+id: Mostra numeri canale in guida
+msg: Kanaalnummers in gids tonen
+
+id: Mostra loghi canale in guida
+msg: Kanaallogo's in gids tonen
+
+id: Ore visibili in guida
+msg: Zichtbare uren in gids
+
+id: Opacita' pannelli (%)
+msg: Paneelopaciteit (%)
+
+id: Colore accento
+msg: Accentkleur
+
+id: Blu
+msg: Blauw
+
+id: Verde
+msg: Groen
+
+id: Arancione
+msg: Oranje
+
+id: Rosso
+msg: Rood
+
+id: Viola
+msg: Paars
+
+id: Controllo genitori
+msg: Ouderlijk toezicht
+
+id: PIN (vuoto = disattivo)
+msg: PIN (leeg = uit)
+
+id: Ordinamento cataloghi
+msg: Catalogus-sortering
+
+id: Predefinito
+msg: Standaard
+
+id: Nome A-Z
+msg: Naam A-Z
+
+id: Aggiunti di recente
+msg: Recent toegevoegd
+
+id: Voto
+msg: Beoordeling
+
+id: Account
+msg: Account
+
+id: Verifica connessione
+msg: Verbinding testen
+
+id: Connessione OK
+msg: Verbinding OK
+
+id: Errore
+msg: Fout
+
+id: Inserisci credenziali…
+msg: Inloggegevens invoeren…
+
+id: Ricarica EPG adesso
+msg: EPG nu herladen
+
+id: EPG: ricarico in corso…
+msg: EPG: herladen…
+
+id: EPG aggiornata
+msg: EPG bijgewerkt
+
+id: EPG non disponibile
+msg: EPG niet beschikbaar
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — Xtream Codes-client voor Movian.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Stel hierboven server en inloggegevens in en open daarna de dienst vanuit home.
+
+id: Server (host:porta o URL)
+msg: Server (host:poort of URL)
+
+id: Credenziali salvate
+msg: Inloggegevens opgeslagen
+
+id: Playlist aggiornata
+msg: Lijst bijgewerkt
+
+id: Sleep timer disattivato
+msg: Slaaptimer uit
+
+id: Sleep timer: spegnimento tra
+msg: Slaaptimer: stopt over
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Slaaptimer: afspelen gestopt
+
+id: Backup salvato
+msg: Back-up opgeslagen
+
+id: Backup fallito
+msg: Back-up mislukt
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Back-up hersteld (favorieten worden actief na herstart)
+
+id: Ripristino fallito
+msg: Herstel mislukt
+
+id: Preferiti
+msg: Favorieten
+
+id: Recenti
+msg: Recent
+
+id: Tutti i canali
+msg: Alle kanalen
+
+id: Guida TV
+msg: TV-gids
+
+id: Multi-view
+msg: Multiview
+
+id: Film
+msg: Films
+
+id: Serie TV
+msg: Series
+
+id: Cerca
+msg: Zoeken
+
+id: Registrazioni
+msg: Opnames
+
+id: Guida
+msg: Help
+
+id: Impostazioni
+msg: Instellingen
+
+id: Playlist attiva
+msg: Actieve lijst
+
+id: OK passa alla playlist successiva
+msg: OK schakelt naar de volgende lijst
+
+id: Nome mostrato nel menu
+msg: Naam in het menu
+
+id: Server
+msg: Server
+
+id: host:porta o URL Xtream Codes
+msg: host:poort of Xtream Codes-URL
+
+id: URL EPG
+msg: EPG-URL
+
+id: Lascia vuoto per usare la guida del server
+msg: Leeg laten om de servergids te gebruiken
+
+id: Tipo playlist
+msg: Lijsttype
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Geldt alleen voor de nieuwe lijst (Toevoegen)
+
+id: Refresh automatico playlist
+msg: Automatisch lijsten verversen
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Herlaadt lijsten en gids op intervallen
+
+id: Aggiungi playlist…
+msg: Lijst toevoegen…
+
+id: Modifica playlist attiva…
+msg: Actieve lijst bewerken…
+
+id: Rimuovi playlist attiva
+msg: Actieve lijst verwijderen
+
+id: Guida TV (EPG)
+msg: TV-gids (EPG)
+
+id: URL XMLTV personalizzato
+msg: Aangepaste XMLTV-URL
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Leeg = xmltv.php van de Xtream-server
+
+id: Aggiorna EPG ogni
+msg: EPG bijwerken elke
+
+id: Intervallo di refresh della guida
+msg: Ververstinterval van de gids
+
+id: Correggi orario EPG
+msg: EPG-tijdcorrectie
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Verschuift programmatijden als de gids afwijkt
+
+id: Formato film / episodi
+msg: Film- / afleveringformaat
+
+id: Durata info canale
+msg: Kanaalinfo-duur
+
+id: Sempre visibile
+msg: Altijd zichtbaar
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: Zichtbaarheidsduur van het paneel na zappen
+
+id: Riprendi ultimo canale
+msg: Laatste kanaal hervatten
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: Bij opstarten opent de gids op het laatst bekeken kanaal
+
+id: UA custom per API e stream sul server
+msg: Aangepaste UA voor API en streams op de server
+
+id: Header HTTP extra
+msg: Extra HTTP-headers
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: Eén per regel: \"Naam: waarde\" — geldt voor API en gids
+
+id: Sleep timer
+msg: Slaaptimer
+
+id: Ferma la riproduzione dopo N minuti
+msg: Stopt afspelen na N minuten
+
+id: Numeri canale
+msg: Kanaalnummers
+
+id: Numero progressivo nella guida
+msg: Volgnummer in de gids
+
+id: Loghi canale
+msg: Kanaallogo's
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Postervolgorde in Films- en Series-secties
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: Breedte van het EPG-rastertijdvak
+
+id: Opacita' pannelli
+msg: Paneelopaciteit
+
+id: Trasparenza di guide e menu sul video
+msg: Transparantie van gids en menu's over video
+
+id: Colore di indicatori e linea \"adesso\"
+msg: Kleur van indicatoren en \"nu\"-lijn
+
+id: Ripristina ordine e numeri canali
+msg: Volgorde en kanaalnummers herstellen
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Verplaatsingen en eigen nummering ongedaan maken
+
+id: Ripristina canali e gruppi nascosti
+msg: Verborgen kanalen en groepen herstellen
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Alles Verborgene weer tonen
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Niet ingesteld
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Groepen met volwassen content blokkeren
+
+id: Gruppi bloccati
+msg: Geblokkeerde groepen
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: \"Volwassen\"-groepen vragen de PIN om te openen
+
+id: Imposta un PIN per attivare il blocco
+msg: Stel een PIN in om blokkering te activeren
+
+id: Gruppo live
+msg: Live-groep
+
+id: Categoria film
+msg: Film-categorie
+
+id: Categoria serie
+msg: Serie-categorie
+
+id: Blocca
+msg: Blokkeren
+
+id: Esporta backup
+msg: Back-up exporteren
+
+id: Salva impostazioni, preferiti e liste in
+msg: Slaat instellingen, favorieten en lijsten op in
+
+id: Ripristina backup
+msg: Back-up herstellen
+
+id: Carica impostazioni e liste dal file di backup
+msg: Laadt instellingen en lijsten uit het back-upbestand
+
+id: Versione
+msg: Versie
+
+id: Stato
+msg: Status
+
+id: Scadenza
+msg: Vervalt
+
+id: Connessioni max
+msg: Max. verbindingen
+
+id: Impostazioni Movian…
+msg: Movian-instellingen…
+
+id: Pagina impostazioni nativa del plugin
+msg: Eigen instellingenpagina van de plugin
+
+id: Ripristinati
+msg: Hersteld
+
+id: elementi
+msg: items
+
+id: Nulla da ripristinare
+msg: Niets te herstellen
+
+id: (riapri il plugin)
+msg: (open de plugin opnieuw)
+
+id: Ordine e numerazione ripristinati
+msg: Volgorde en nummering hersteld
+
+id: Playlist rimossa
+msg: Lijst verwijderd
+
+id: Inserisci il PIN
+msg: PIN invoeren
+
+id: PIN errato
+msg: Verkeerde PIN
+
+id: Auto
+msg: Auto
+
+id: Tutto schermo
+msg: Volledig scherm
+
+id: Formato
+msg: Formaat
+
+id: Registrazione salvata (
+msg: Opname opgeslagen (
+
+id: MB) in
+msg: MB) naar
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: Opname niet beschikbaar op dit kanaal
+
+id: Registrazione avviata
+msg: Opname gestart
+
+id: canale
+msg: kanaal
+
+id: Registrazione fallita
+msg: Opname mislukt
+
+id: Registrazione completata
+msg: Opname voltooid
+
+id: Registrazione programmata avviata
+msg: Geplande opname gestart
+
+id: Registrazione programmata fallita
+msg: Geplande opname mislukt
+
+id: Aggiunto ai preferiti
+msg: Aan favorieten toegevoegd
+
+id: Rimosso dai preferiti
+msg: Uit favorieten verwijderd
+
+id: Catch-up non supportato da questa playlist
+msg: Catch-up niet ondersteund door deze lijst
+
+id: Numero canale (vuoto = automatico)
+msg: Kanaalnummer (leeg = automatisch)
+
+id: Numero assegnato
+msg: Nummer toegewezen
+
+id: Numerazione automatica
+msg: Automatische nummering
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Nieuwe kanaalnaam (leeg = origineel)
+
+id: Canale rinominato in \"
+msg: Kanaal hernoemd naar \"
+
+id: Nome originale ripristinato
+msg: Originele naam hersteld
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Kanaal verborgen (herstellen via Instellingen)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Groep verborgen (herstellen via Instellingen)
+
+id: Continua a guardare
+msg: Verder kijken
+
+id: Tutti
+msg: Alle
+
+id: Playlist
+msg: Lijst
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: Systeem
+
+id: Informazioni
+msg: Informatie
+
+id: Modifica playlist
+msg: Lijst bewerken
+
+id: Aggiungi playlist
+msg: Lijst toevoegen
+
+id: Tipo
+msg: Type
+
+id: host:porta o URL del pannello Xtream
+msg: host:poort of Xtream-paneel-URL
+
+id: URL EPG (opzionale)
+msg: EPG-URL (optioneel)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Leeg = xmltv.php van de server / url-tvg van de lijst
+
+id: Annulla
+msg: Annuleren
+
+id: Il server/URL e' obbligatorio
+msg: Server/URL is verplicht
+
+id: Username obbligatorio per Xtream
+msg: Gebruikersnaam verplicht voor Xtream
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: MAC invoeren (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Verbinding mislukt
+
+id: Playlist aggiunta
+msg: Lijst toegevoegd
+
+id: Stagione
+msg: Seizoen
+
+id: Informazioni non disponibili
+msg: Informatie niet beschikbaar
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Geen programma-informatie voor dit kanaal
+
+id: Registrazione programmata rimossa
+msg: Geplande opname verwijderd
+
+id: Registrazione programmata
+msg: Geplande opname
+
+id: alle
+msg: om
+
+id: Canale non trovato
+msg: Kanaal niet gevonden
+
+id: Registrazioni programmate
+msg: Geplande opnames
+
+id: Nessuna registrazione programmata
+msg: Geen geplande opnames
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Open het programma van een kanaal en kies \"Opnemen\" bij een toekomstig programma
+
+id: Navigazione
+msg: Navigatie
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Pijlen om te bewegen, OK/klik om te bevestigen. Rechtermuisknop of lang indrukken (touch/afstandsbediening) = contextmenu. ESC/Terug = terug.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: Kanaalgroepen links, kanalen rechts. OK op een kanaal stemt af; het laatst bekeken kanaal start bij openen als \"Laatste kanaal hervatten\" aan staat in Instellingen.
+
+id: Preferiti e Recenti
+msg: Favorieten en Recent
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Lang op een kanaal drukken → \"Favorieten\": verschijnt bovenaan in de groep \"Favorieten\". Bekeken kanalen komen in \"Recent\", gesorteerd op laatst bekeken.
+
+id: Menu canale (long-press)
+msg: Kanaalmenu (lang indrukken)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Kijken, Programma (dag-EPG), Catch-up, Favorieten, Kanaal verbergen, Hernoemen, Omhoog/omlaag (handmatige volgorde), Kanaalnummer (eigen nummering), Multiview.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Groepsmenu (lang op groep drukken)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Omhoog/omlaag om groepen te herschikken, Groep verbergen, Verborgen herstellen. De volgorde blijft bewaard.
+
+id: Registrazione
+msg: Opname
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: Tijdens het kijken: het REC-icoon in de spelerbalk (OK op video toont/verbergt info en balk) neemt de stream op als .ts-bestand in de map recordings/ tot het stoppen.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Kanaalprogramma → toekomstig programma → badge \"Opnemen\" → OK. De opname start vanzelf op tijd en stopt aan het einde. Lijst en annuleringen staan onder \"Opnames\" in het menu. Eén tegelijk: opnemen terwijl je een ander kanaal kijkt kan mislukken als de provider maar 1 verbinding toelaat.
+
+id: Rivedi (catch-up)
+msg: Catch-up (terugkijken)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Alleen beschikbaar als de provider het archief op het kanaal inschakelt (tv_archive-vlag): lang op het kanaal drukken → \"Catch-up\", of in het programma hebben afgelopen uitzendingen de blauwe badge. Zonder timeshift-ondersteuning verschijnt de optie niet.
+
+id: Zap numerico
+msg: Numeriek zappen
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Typ het kanaalnummer met de toetsen 0-9 en bevestig met OK/Enter. \"Kanaalnummer\" in het contextmenu wijst een eigen nummer toe.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Menu → Multiview: 2x2-mozaïek met gedempt geluid; OK op een tegel opent het kanaal volledig scherm.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Menu → Zoeken: zoek naar kanalen, films en series.
+
+id: Interfaccia
+msg: Interface
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Menu → Instellingen → Uiterlijk: accentkleur (gids-markeringen en -randen), paneelopaciteit, kanaalnummers, logo's. Wijzigingen gelden meteen.
+
+id: Nascondere e bloccare
+msg: Verbergen en blokkeren
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Verberg kanalen/groepen via het contextmenu; herstel via Instellingen of het groepsmenu. Met een PIN kun je hele categorieën blokkeren (contextmenu van de groep).
+
+id: Playlist multiple
+msg: Meerdere lijsten
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Instellingen → Lijsten: meerdere Xtream-accounts/bronnen, M3U of Stalker, snel wisselen en back-up/herstel van voorkeuren.
+
+id: Connessioni
+msg: Verbindingen
+
+id: Trial
+msg: Proef
+
+id: Creato il
+msg: Aangemaakt op
+
+id: Protocollo
+msg: Protocol
+
+id: Timezone
+msg: Tijdzone
+
+id: Orario server
+msg: Servertijd
+
+id: non caricata
+msg: niet geladen
+
+id: Apri
+msg: Openen
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Een Xtream Codes-server instellen (host, gebruikersnaam, wachtwoord)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, afspelen, uiterlijk, ouderlijk toezicht
+
+id: Categorie
+msg: Categorieën
+
+id: Riproduci
+msg: Afspelen
+
+id: Dettagli
+msg: Details
+
+id: Cerca canali, film e serie…
+msg: Kanalen, films en series zoeken…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Typ en druk op OK om kanalen, films en series te zoeken
+
+id: Seleziona un canale per iniziare
+msg: Selecteer een kanaal om te beginnen
+
+id: Gruppi
+msg: Groepen
+
+id: No information
+msg: Geen informatie
+
+id: Guarda
+msg: Kijken
+
+id: Palinsesto
+msg: Programma
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Uit favorieten verwijderen
+
+id: Aggiungi ai preferiti
+msg: Aan favorieten toevoegen
+
+id: Nascondi canale
+msg: Kanaal verbergen
+
+id: Rinomina canale
+msg: Kanaal hernoemen
+
+id: Sposta su
+msg: Omhoog
+
+id: Sposta giù
+msg: Omlaag
+
+id: Numero canale…
+msg: Kanaalnummer…
+
+id: Nascondi gruppo
+msg: Groep verbergen
+
+id: Ripristina nascosti
+msg: Verborgen herstellen
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Opnemen
+
+id: Stagioni
+msg: Seizoenen
+
+id: Canali — OK: assegna al tile selezionato
+msg: Kanalen — OK: aan de gekozen tegel toewijzen
+
+
+id: Nome playlist:
+msg: Lijstnaam:
+
+id: Server (host:porta o URL):
+msg: Server (host:poort of URL):
+
+id: Username:
+msg: Gebruikersnaam:
+
+id: Password:
+msg: Wachtwoord:
+
+id: URL EPG (vuoto = server Xtream):
+msg: EPG-URL (leeg = Xtream-server):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (leeg = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Extra headers (Naam: waarde, één per regel):
+
+id: ore
+msg: uur
+
+id: attivi
+msg: actief
+
+id: Nessuno
+msg: Geen
+
+id: Movian (predefinito)
+msg: Movian (standaard)
+
+id: Programma
+msg: Programma
+
+id: file di backup non leggibile
+msg: back-upbestand onleesbaar
+
+id: URL del file lista .m3u/.m3u8
+msg: URL van het .m3u/.m3u8-lijstbestand
+
+id: URL del portale
+msg: Portaal-URL
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC-adres (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Niet vereist
+
+id: Non richiesta
+msg: Niet vereist
+
+id: A fine episodio parte automaticamente il successivo
+msg: Aan het einde van een aflevering start de volgende automatisch
+
+id: Attivo: sarai avvisato all'inizio
+msg: Actief: je wordt gewaarschuwd bij aanvang
+
+id: Autoplay episodio successivo
+msg: Volgende aflevering automatisch afspelen
+
+id: Avvisami quando inizia
+msg: Waarschuw mij bij aanvang
+
+id: Cartella non scrivibile
+msg: Map niet beschrijfbaar
+
+id: Cartella registrazioni
+msg: Opnamemap
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Opnamemap (leeg = standaard)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Opnamemap (leeg = standaard):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: Opnamemap niet beschrijfbaar, standaard wordt gebruikt
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Alleen beschikbaar als de provider het archief op het kanaal inschakelt (tv_archive-vlag): klik direct op een beëindigd programma in het gidsraster, lang indrukken op het kanaal → \"Terugkijken\", of de badge in het programmaoverzicht. Als de provider geen timeshift ondersteunt verschijnt de functie niet.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Waar .ts-bestanden opslaan — leeg = plugin-opslag
+
+id: Elimina
+msg: Verwijderen
+
+id: Eliminare la registrazione
+msg: Opname verwijderen
+
+id: Episodio non trovato
+msg: Aflevering niet gevonden
+
+id: Esporta preferiti in M3U
+msg: Favorieten exporteren naar M3U
+
+id: Esportazione fallita
+msg: Export mislukt
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: Bekeken afleveringen hebben een vinkje in de lijst. Aan het einde van een aflevering start de volgende automatisch (uit te schakelen in Instellingen → Afspelen → \"Volgende aflevering automatisch afspelen\").
+
+id: I file .ts registrati appariranno qui
+msg: Opgenomen .ts-bestanden verschijnen hier
+
+id: IN CORSO
+msg: BEZIG
+
+id: In corso
+msg: Bezig
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: Tijdens het kijken: het REC-icoon in de playerbalk (OK op video toont/verbergt info en balk) neemt de stream op in een .ts-bestand tot stop. Opgenomen bestanden kunnen worden afgespeeld en verwijderd via Menu → \"Opnames\"; de doelmap wijzig je in Instellingen → Afspelen.
+
+id: Nessun preferito da esportare
+msg: Geen favorieten om te exporteren
+
+id: Nessun promemoria attivo
+msg: Geen actieve herinneringen
+
+id: Nessun'altra puntata in palinsesto
+msg: Geen andere afleveringen in het overzicht
+
+id: Nessuna puntata futura da registrare
+msg: Geen toekomstige afleveringen om op te nemen
+
+id: Nessuna registrazione completata
+msg: Geen voltooide opnames
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Programmaoverzicht van een kanaal → toekomstig programma → badge \"Opnemen\" → OK. De rij \"Herinnering en serie-opname\" onder het programma biedt ook alleen een melding bij aanvang (zonder opnemen) en het opnemen van alle afleveringen met dezelfde titel. Opnames starten vanzelf en stoppen aan het einde van het programma. Eén tegelijk: opnemen terwijl je een ander kanaal kijkt kan mislukken als de provider maar 1 verbinding toestaat.
+
+id: Predefinita
+msg: Standaard
+
+id: Preferiti esportati
+msg: Favorieten geëxporteerd
+
+id: Promemoria
+msg: Herinnering
+
+id: Promemoria attivato
+msg: Herinnering geactiveerd
+
+id: Promemoria attivo
+msg: Herinnering actief
+
+id: Promemoria e registrazione serie
+msg: Herinnering en serie-opname
+
+id: Promemoria rimosso
+msg: Herinnering verwijderd
+
+id: Promemorie
+msg: Herinneringen
+
+id: Prossimo episodio
+msg: Volgende aflevering
+
+id: Registra tutta la serie
+msg: Hele serie opnemen
+
+id: Registrazione eliminata
+msg: Opname verwijderd
+
+id: Registrazione programmata, promemoria e serie
+msg: Geplande opname, herinnering en serie
+
+id: Registrazione singola puntata
+msg: Opname van één aflevering
+
+id: Salva i canali preferiti come playlist standard
+msg: Favoriete kanalen opslaan als standaard playlist
+
+id: Sta iniziando
+msg: Begint nu
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Gebruik de badge \"Opnemen\" op de programmaregel
+
+id: canali
+msg: kanalen
+
+id: cartella non scrivibile
+msg: map niet beschrijfbaar
+
+id: fallita
+msg: mislukt
+
+id: puntate
+msg: afleveringen
+
+id: puntate in palinsesto
+msg: afleveringen in het overzicht
+

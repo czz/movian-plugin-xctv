@@ -1,0 +1,976 @@
+language: Hungarian
+native: Magyar
+
+id: Server (host[:port] o URL)
+msg: Szerver (host[:port] vagy URL)
+
+id: Username
+msg: Felhasználónév
+
+id: Password
+msg: Jelszó
+
+id: Nome playlist
+msg: Lista neve
+
+id: Abilita EPG
+msg: EPG engedélyezése
+
+id: URL XMLTV personalizzato (opzionale)
+msg: Egyéni XMLTV URL (opcionális)
+
+id: Aggiorna EPG ogni (ore)
+msg: EPG frissítése ennyi óránként
+
+id: Correggi orario EPG (minuti)
+msg: EPG időkorrekció (perc)
+
+id: Aggiorna EPG all'avvio
+msg: EPG frissítése indításkor
+
+id: Log di debug
+msg: Hibakeresési napló
+
+id: Riproduzione
+msg: Lejátszás
+
+id: Formato stream live
+msg: Élő stream formátuma
+
+id: Automatico
+msg: Automatikus
+
+id: HLS (m3u8)
+msg: HLS (m3u8)
+
+id: MPEG-TS
+msg: MPEG-TS
+
+id: Formato film/episodi
+msg: Film-/epizódformátum
+
+id: MKV
+msg: MKV
+
+id: MP4
+msg: MP4
+
+id: AVI
+msg: AVI
+
+id: Durata info canale dopo zap (sec)
+msg: Csatornainfó időtartama zappolás után (mp)
+
+id: Riprendi ultimo canale all'avvio
+msg: Utolsó csatorna folytatása indításkor
+
+id: User-Agent
+msg: User-Agent
+
+id: Header HTTP extra (Nome: valore per riga)
+msg: Extra HTTP fejlécek (Név: érték soronként)
+
+id: Refresh playlist ogni (min, 0 = mai)
+msg: Lista frissítése ennyi percenként (0 = soha)
+
+id: Aspetto
+msg: Megjelenés
+
+id: Mostra numeri canale in guida
+msg: Csatornaszámok mutatása a műsorújságban
+
+id: Mostra loghi canale in guida
+msg: Csatornalogók mutatása a műsorújságban
+
+id: Ore visibili in guida
+msg: Látható órák a műsorújságban
+
+id: Opacita' pannelli (%)
+msg: Panelek átlátszatlansága (%)
+
+id: Colore accento
+msg: Kiemelő szín
+
+id: Blu
+msg: Kék
+
+id: Verde
+msg: Zöld
+
+id: Arancione
+msg: Narancs
+
+id: Rosso
+msg: Piros
+
+id: Viola
+msg: Lila
+
+id: Controllo genitori
+msg: Szülői felügyelet
+
+id: PIN (vuoto = disattivo)
+msg: PIN (üres = kikapcsolva)
+
+id: Ordinamento cataloghi
+msg: Katalógusok rendezése
+
+id: Predefinito
+msg: Alapértelmezett
+
+id: Nome A-Z
+msg: Név A-Z
+
+id: Aggiunti di recente
+msg: Legutóbb hozzáadva
+
+id: Voto
+msg: Értékelés
+
+id: Account
+msg: Fiók
+
+id: Verifica connessione
+msg: Kapcsolat tesztelése
+
+id: Connessione OK
+msg: Kapcsolat OK
+
+id: Errore
+msg: Hiba
+
+id: Inserisci credenziali…
+msg: Hitelesítő adatok megadása…
+
+id: Ricarica EPG adesso
+msg: EPG újratöltése most
+
+id: EPG: ricarico in corso…
+msg: EPG: újratöltés…
+
+id: EPG aggiornata
+msg: EPG frissítve
+
+id: EPG non disponibile
+msg: EPG nem érhető el
+
+id: XCtv
+msg: XCtv
+
+id: — client Xtream Codes per Movian.
+msg: — Xtream Codes kliens Movianhoz.
+
+id: Configura server e credenziali qui sopra, poi apri il servizio dalla home.
+msg: Állítsa be a szervert és a hitelesítő adatokat fent, majd nyissa meg a szolgáltatást a kezdőlapról.
+
+id: Server (host:porta o URL)
+msg: Szerver (host:port vagy URL)
+
+id: Credenziali salvate
+msg: Hitelesítő adatok mentve
+
+id: Playlist aggiornata
+msg: Lista frissítve
+
+id: Sleep timer disattivato
+msg: Alvásidőzítő kikapcsolva
+
+id: Sleep timer: spegnimento tra
+msg: Alvásidőzítő: leállás
+
+id: min
+msg: min
+
+id: Sleep timer: riproduzione fermata
+msg: Alvásidőzítő: lejátszás leállítva
+
+id: Backup salvato
+msg: Biztonsági mentés kész
+
+id: Backup fallito
+msg: Mentés sikertelen
+
+id: Backup ripristinato (i preferiti saranno attivi al riavvio)
+msg: Mentés visszaállítva (a kedvencek újraindítás után lépnek életbe)
+
+id: Ripristino fallito
+msg: Visszaállítás sikertelen
+
+id: Preferiti
+msg: Kedvencek
+
+id: Recenti
+msg: Legutóbbiak
+
+id: Tutti i canali
+msg: Összes csatorna
+
+id: Guida TV
+msg: TV-műsor
+
+id: Multi-view
+msg: Többkép
+
+id: Film
+msg: Filmek
+
+id: Serie TV
+msg: Sorozatok
+
+id: Cerca
+msg: Keresés
+
+id: Registrazioni
+msg: Felvételek
+
+id: Guida
+msg: Súgó
+
+id: Impostazioni
+msg: Beállítások
+
+id: Playlist attiva
+msg: Aktív lista
+
+id: OK passa alla playlist successiva
+msg: Az OK a következő listára vált
+
+id: Nome mostrato nel menu
+msg: Menüben látható név
+
+id: Server
+msg: Szerver
+
+id: host:porta o URL Xtream Codes
+msg: host:port vagy Xtream Codes URL
+
+id: URL EPG
+msg: EPG URL
+
+id: Lascia vuoto per usare la guida del server
+msg: Hagyja üresen a szerver műsorújságához
+
+id: Tipo playlist
+msg: Lista típusa
+
+id: Cambia solo per la nuova playlist (Aggiungi)
+msg: Csak az új listára vonatkozik (Hozzáadás)
+
+id: Refresh automatico playlist
+msg: Lista automatikus frissítése
+
+id: Ricarica liste e guida a intervalli regolari
+msg: Újratölti a listákat és a műsorújságot időközönként
+
+id: Aggiungi playlist…
+msg: Lista hozzáadása…
+
+id: Modifica playlist attiva…
+msg: Aktív lista szerkesztése…
+
+id: Rimuovi playlist attiva
+msg: Aktív lista eltávolítása
+
+id: Guida TV (EPG)
+msg: TV-műsor (EPG)
+
+id: URL XMLTV personalizzato
+msg: Egyéni XMLTV URL
+
+id: Vuoto = xmltv.php del server Xtream
+msg: Üres = a szerver xmltv.php-je
+
+id: Aggiorna EPG ogni
+msg: EPG frissítése ennyi
+
+id: Intervallo di refresh della guida
+msg: Műsorújság frissítési időköze
+
+id: Correggi orario EPG
+msg: EPG időkorrekció
+
+id: Shift dei programmi se la guida e' sfasata
+msg: Eltolja a műsorokat, ha a műsorújság elcsúszott
+
+id: Formato film / episodi
+msg: Film- / epizódformátum
+
+id: Durata info canale
+msg: Csatornainfó időtartama
+
+id: Sempre visibile
+msg: Mindig látható
+
+id: Tempo di visibilita' del pannello dopo lo zap
+msg: A panel láthatósági ideje zappolás után
+
+id: Riprendi ultimo canale
+msg: Utolsó csatorna folytatása
+
+id: All'avvio la guida si apre sull'ultimo canale visto
+msg: Indításkor a műsorújság az utoljára nézett csatornán nyílik
+
+id: UA custom per API e stream sul server
+msg: Egyéni UA az API-hoz és a streamekhez
+
+id: Header HTTP extra
+msg: Extra HTTP fejlécek
+
+id: Uno per riga: \"Nome: valore\" — vale per API e guida
+msg: Soronként egy: \"Név: érték\" — az API-ra és a műsorújságra is érvényes
+
+id: Sleep timer
+msg: Alvásidőzítő
+
+id: Ferma la riproduzione dopo N minuti
+msg: N perc után leállítja a lejátszást
+
+id: Numeri canale
+msg: Csatornaszámok
+
+id: Numero progressivo nella guida
+msg: Sorszám a műsorújságban
+
+id: Loghi canale
+msg: Csatornalogók
+
+id: Ordine dei poster nelle sezioni Film e Serie TV
+msg: Poszterek sorrendje a Filmek és Sorozatok részekben
+
+id: Ampiezza della finestra temporale della griglia EPG
+msg: Az EPG-rács időablakának szélessége
+
+id: Opacita' pannelli
+msg: Panelek átlátszatlansága
+
+id: Trasparenza di guide e menu sul video
+msg: A műsorújság és menük átlátszósága a videó felett
+
+id: Colore di indicatori e linea \"adesso\"
+msg: A jelzők és az \"most\" vonal színe
+
+id: Ripristina ordine e numeri canali
+msg: Sorrend és csatornaszámok visszaállítása
+
+id: Annulla spostamenti e numerazione personalizzata
+msg: Mozgatások és egyéni számozás visszavonása
+
+id: Ripristina canali e gruppi nascosti
+msg: Rejtett csatornák és csoportok visszaállítása
+
+id: Mostra di nuovo tutto cio' che e' stato nascosto
+msg: Minden elrejtett újra megjelenítése
+
+id: PIN
+msg: PIN
+
+id: Non impostato
+msg: Nincs beállítva
+
+id: Blocca i gruppi con contenuti per adulti
+msg: Felnőtt tartalmú csoportok zárolása
+
+id: Gruppi bloccati
+msg: Zárolt csoportok
+
+id: I gruppi \"adulti\" chiedono il PIN per essere aperti
+msg: A \"felnőtt\" csoportok PIN-t kérnek a megnyitáshoz
+
+id: Imposta un PIN per attivare il blocco
+msg: Állítson be PIN-t a zároláshoz
+
+id: Gruppo live
+msg: Élő csoport
+
+id: Categoria film
+msg: Film kategória
+
+id: Categoria serie
+msg: Sorozat kategória
+
+id: Blocca
+msg: Zárolás
+
+id: Esporta backup
+msg: Mentés exportálása
+
+id: Salva impostazioni, preferiti e liste in
+msg: Beállítások, kedvencek és listák mentése ide:
+
+id: Ripristina backup
+msg: Mentés visszaállítása
+
+id: Carica impostazioni e liste dal file di backup
+msg: Betölti a beállításokat és listákat a mentésfájlból
+
+id: Versione
+msg: Verzió
+
+id: Stato
+msg: Állapot
+
+id: Scadenza
+msg: Lejárat
+
+id: Connessioni max
+msg: Max. kapcsolatok
+
+id: Impostazioni Movian…
+msg: Movian beállítások…
+
+id: Pagina impostazioni nativa del plugin
+msg: A bővítmény natív beállításoldala
+
+id: Ripristinati
+msg: Visszaállítva
+
+id: elementi
+msg: elem
+
+id: Nulla da ripristinare
+msg: Nincs mit visszaállítani
+
+id: (riapri il plugin)
+msg: (nyissa meg újra a bővítményt)
+
+id: Ordine e numerazione ripristinati
+msg: Sorrend és számozás visszaállítva
+
+id: Playlist rimossa
+msg: Lista eltávolítva
+
+id: Inserisci il PIN
+msg: Adja meg a PIN-t
+
+id: PIN errato
+msg: Hibás PIN
+
+id: Auto
+msg: Auto
+
+id: Tutto schermo
+msg: Teljes képernyő
+
+id: Formato
+msg: Formátum
+
+id: Registrazione salvata (
+msg: Felvétel mentve (
+
+id: MB) in
+msg: MB) ide:
+
+id: /recordings
+msg: /recordings
+
+id: Registrazione non disponibile su questo canale
+msg: A felvétel nem érhető el ezen a csatornán
+
+id: Registrazione avviata
+msg: Felvétel elindítva
+
+id: canale
+msg: csatorna
+
+id: Registrazione fallita
+msg: Felvétel sikertelen
+
+id: Registrazione completata
+msg: Felvétel kész
+
+id: Registrazione programmata avviata
+msg: Ütemezett felvétel elindítva
+
+id: Registrazione programmata fallita
+msg: Ütemezett felvétel sikertelen
+
+id: Aggiunto ai preferiti
+msg: Kedvencekhez adva
+
+id: Rimosso dai preferiti
+msg: Eltávolítva a kedvencekből
+
+id: Catch-up non supportato da questa playlist
+msg: A catch-up nem támogatott ezen a listán
+
+id: Numero canale (vuoto = automatico)
+msg: Csatornaszám (üres = automatikus)
+
+id: Numero assegnato
+msg: Szám hozzárendelve
+
+id: Numerazione automatica
+msg: Automatikus számozás
+
+id: Nuovo nome canale (vuoto = originale)
+msg: Új csatornanév (üres = eredeti)
+
+id: Canale rinominato in \"
+msg: Csatorna átnevezve: \"
+
+id: Nome originale ripristinato
+msg: Eredeti név visszaállítva
+
+id: Canale nascosto (ripristina dalle Impostazioni)
+msg: Csatorna elrejtve (visszaállítás a Beállításokban)
+
+id: Gruppo nascosto (ripristina dalle Impostazioni)
+msg: Csoport elrejtve (visszaállítás a Beállításokban)
+
+id: Continua a guardare
+msg: Nézés folytatása
+
+id: Tutti
+msg: Összes
+
+id: Playlist
+msg: Lista
+
+id: EPG
+msg: EPG
+
+id: Sistema
+msg: Rendszer
+
+id: Informazioni
+msg: Információ
+
+id: Modifica playlist
+msg: Lista szerkesztése
+
+id: Aggiungi playlist
+msg: Lista hozzáadása
+
+id: Tipo
+msg: Típus
+
+id: host:porta o URL del pannello Xtream
+msg: host:port vagy az Xtream-panel URL-je
+
+id: URL EPG (opzionale)
+msg: EPG URL (opcionális)
+
+id: Vuoto = xmltv.php del server / url-tvg della lista
+msg: Üres = szerver xmltv.php / a lista url-tvg-je
+
+id: Annulla
+msg: Mégse
+
+id: Il server/URL e' obbligatorio
+msg: A szerver/URL kötelező
+
+id: Username obbligatorio per Xtream
+msg: Felhasználónév kötelező az Xtreamhez
+
+id: Inserisci la MAC (aa:bb:cc:dd:ee:ff)
+msg: Adja meg a MAC-címet (aa:bb:cc:dd:ee:ff)
+
+id: Connessione fallita
+msg: Kapcsolódás sikertelen
+
+id: Playlist aggiunta
+msg: Lista hozzáadva
+
+id: Stagione
+msg: Évad
+
+id: Informazioni non disponibili
+msg: Információ nem érhető el
+
+id: Nessuna informazione palinsesto per questo canale
+msg: Nincs műsorinformáció ehhez a csatornához
+
+id: Registrazione programmata rimossa
+msg: Ütemezett felvétel eltávolítva
+
+id: Registrazione programmata
+msg: Ütemezett felvétel
+
+id: alle
+msg: -kor
+
+id: Canale non trovato
+msg: Csatorna nem található
+
+id: Registrazioni programmate
+msg: Ütemezett felvételek
+
+id: Nessuna registrazione programmata
+msg: Nincs ütemezett felvétel
+
+id: Apri il palinsesto di un canale e scegli \"Registra\" su un programma futuro
+msg: Nyissa meg a csatorna műsorát és válassza a \"Felvétel\" lehetőséget egy jövőbeli műsornál
+
+id: Navigazione
+msg: Navigáció
+
+id: Frecce per muoverti, OK/click per confermare. Tasto destro del mouse o long-press (touch/remote) = menu contestuale. ESC/Back = torna indietro.
+msg: Nyilakkal mozog, OK/kattintás a megerősítés. Jobb egérgomb vagy hosszú nyomás (érintés/távoli) = helyi menü. ESC/Vissza = vissza.
+
+id: I gruppi di canali sono a sinistra, i canali a destra. OK su un canale lo sintonizza; l'ultimo canale visto riparte all'apertura se \"Riprendi ultimo canale\" e' attivo nelle Impostazioni.
+msg: A csatornacsoportok balra, a csatornák jobbra. Az OK egy csatornán azt hangolja; az utoljára nézett csatorna megnyitáskor indul, ha a Beállításokban az \"Utolsó csatorna folytatása\" be van kapcsolva.
+
+id: Preferiti e Recenti
+msg: Kedvencek és Legutóbbiak
+
+id: Long-press su un canale → \"Preferiti\": appare nel gruppo \"Preferiti\" in cima. I canali guardati finiscono nel gruppo \"Recenti\", ordinati per ultimo visto.
+msg: Hosszú nyomás egy csatornán → \"Kedvencek\": felül a \"Kedvencek\" csoportban jelenik meg. A nézett csatornák a \"Legutóbbiak\" csoportba kerülnek, utolsó megtekintés szerint.
+
+id: Menu canale (long-press)
+msg: Csatornamenü (hosszú nyomás)
+
+id: Guarda, Palinsesto (EPG del giorno), Rivedi, Preferiti, Nascondi canale, Rinomina, Sposta su/giu' (ordine manuale), Numero canale (numerazione custom), Multi-view.
+msg: Nézés, Műsor (napi EPG), Catch-up, Kedvencek, Csatorna elrejtése, Átnevezés, Fel/le (kézi sorrend), Csatornaszám (egyéni számozás), Többkép.
+
+id: Menu gruppo (long-press sul gruppo)
+msg: Csoportmenü (hosszú nyomás a csoporton)
+
+id: Sposta su/giu' per riordinare i gruppi, Nascondi gruppo, Ripristina nascosti. L'ordine e' persistente.
+msg: Fel/le a csoportok átrendezéséhez, Csoport elrejtése, Rejtettek visszaállítása. A sorrend megmarad.
+
+id: Registrazione
+msg: Felvétel
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts nella cartella recordings/ fino allo stop.
+msg: Nézés közben: a lejátszósáv REC ikonja (az OK a videón mutatja/rejti az infót és a sávot) .ts fájlba rögzíti a streamet a recordings/ mappába leállításig.
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La registrazione parte da sola all'orario e si ferma a fine programma. La lista e le cancellazioni sono in \"Registrazioni\" nel menu. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Csatorna műsora → jövőbeli műsor → \"Felvétel\" jelvény → OK. A felvétel magától indul az adott időben és a műsor végén leáll. A lista és a törlések a menü \"Felvételek\" pontjában vannak. Egyszerre csak egy: másik csatorna nézése közben a felvétel meghiúsulhat, ha a szolgáltató csak 1 kapcsolatot enged.
+
+id: Rivedi (catch-up)
+msg: Catch-up (visszanézés)
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): long-press sul canale → \"Rivedi\", oppure nel palinsesto i programmi gia' finiti hanno il badge blu. Se il tuo provider non supporta il timeshift la voce non appare.
+msg: Csak akkor érhető el, ha a szolgáltató engedélyezi az archívumot a csatornán (tv_archive jelző): hosszú nyomás a csatornán → \"Catch-up\", vagy a műsorban a befejezett műsorokon kék jelvény. Ha a szolgáltató nem támogatja a timeshiftet, a menüpont nem jelenik meg.
+
+id: Zap numerico
+msg: Numerikus zappolás
+
+id: Digita il numero del canale coi tasti 0-9 e conferma con OK/Enter. \"Numero canale\" nel menu contestuale assegna un numero custom.
+msg: Írja be a csatornaszámot a 0-9 gombokkal és erősítse meg OK/Enter-rel. A \"Csatornaszám\" a helyi menüben egyéni számot rendel.
+
+id: Menu → Multi-view: mosaico 2x2 con audio muto; OK su un tile apre il canale a tutto schermo.
+msg: Menü → Többkép: 2x2 mozaik némított hanggal; az OK egy mezőn teljes képernyőn nyitja a csatornát.
+
+id: Menu → Cerca: cerca tra canali, film e serie.
+msg: Menü → Keresés: csatornák, filmek és sorozatok között keres.
+
+id: Interfaccia
+msg: Felület
+
+id: Menu → Impostazioni → Aspetto: colore accento (evidenziature e bordi della guida), opacita' pannello, numeri canale, loghi. I cambiamenti si applicano subito.
+msg: Menü → Beállítások → Megjelenés: kiemelő szín (műsorújság-kiemelések és keretek), panel-átlátszatlanság, csatornaszámok, logók. A változások azonnal érvényesek.
+
+id: Nascondere e bloccare
+msg: Elrejtés és zárolás
+
+id: Nascondi canali/gruppi dal menu contestuale; ripristina da Impostazioni o dal menu del gruppo. Con un PIN impostato puoi bloccare categorie intere (menu contestuale sul gruppo).
+msg: Csatornák/csoportok elrejtése a helyi menüből; visszaállítás a Beállításokból vagy a csoportmenüből. PIN-nel egész kategóriák zárolhatók (csoport helyi menüje).
+
+id: Playlist multiple
+msg: Több lista
+
+id: Impostazioni → Playlist: piu' account/sorgenti Xtream, M3U o Stalker, switch rapido e backup/ripristino delle preferenze.
+msg: Beállítások → Listák: több Xtream-fiók/forrás, M3U vagy Stalker, gyors váltás és beállítások mentése/visszaállítása.
+
+id: Connessioni
+msg: Kapcsolatok
+
+id: Trial
+msg: Próba
+
+id: Creato il
+msg: Létrehozva
+
+id: Protocollo
+msg: Protokoll
+
+id: Timezone
+msg: Időzóna
+
+id: Orario server
+msg: Szerveridő
+
+id: non caricata
+msg: nincs betöltve
+
+id: Apri
+msg: Megnyitás
+
+id: Configura un server Xtream Codes (host, username, password)
+msg: Xtream Codes szerver beállítása (hoszt, felhasználónév, jelszó)
+
+id: EPG, riproduzione, aspetto, controllo genitori
+msg: EPG, lejátszás, megjelenés, szülői felügyelet
+
+id: Categorie
+msg: Kategóriák
+
+id: Riproduci
+msg: Lejátszás
+
+id: Dettagli
+msg: Részletek
+
+id: Cerca canali, film e serie…
+msg: Csatornák, filmek és sorozatok keresése…
+
+id: Digita e premi OK per cercare tra canali, film e serie
+msg: Írjon be és nyomjon OK-t csatornák, filmek és sorozatok kereséséhez
+
+id: Seleziona un canale per iniziare
+msg: Válasszon csatornát a kezdéshez
+
+id: Gruppi
+msg: Csoportok
+
+id: No information
+msg: Nincs információ
+
+id: Guarda
+msg: Nézés
+
+id: Palinsesto
+msg: Műsor
+
+id: Rivedi
+msg: Catch-up
+
+id: Rimuovi dai preferiti
+msg: Eltávolítás a kedvencekből
+
+id: Aggiungi ai preferiti
+msg: Kedvencekhez adás
+
+id: Nascondi canale
+msg: Csatorna elrejtése
+
+id: Rinomina canale
+msg: Csatorna átnevezése
+
+id: Sposta su
+msg: Fel
+
+id: Sposta giù
+msg: Le
+
+id: Numero canale…
+msg: Csatornaszám…
+
+id: Nascondi gruppo
+msg: Csoport elrejtése
+
+id: Ripristina nascosti
+msg: Rejtettek visszaállítása
+
+id: ● REC
+msg: ● REC
+
+id: Registra
+msg: Felvétel
+
+id: Stagioni
+msg: Évadok
+
+id: Canali — OK: assegna al tile selezionato
+msg: Csatornák — OK: hozzárendelés a kiválasztott mezőhöz
+
+
+id: Nome playlist:
+msg: Lista neve:
+
+id: Server (host:porta o URL):
+msg: Szerver (host:port vagy URL):
+
+id: Username:
+msg: Felhasználónév:
+
+id: Password:
+msg: Jelszó:
+
+id: URL EPG (vuoto = server Xtream):
+msg: EPG URL (üres = Xtream szerver):
+
+id: User-Agent (vuoto = Movian):
+msg: User-Agent (üres = Movian):
+
+id: Header extra (Nome: valore, uno per riga):
+msg: Extra fejlécek (Név: érték, soronként egy):
+
+id: ore
+msg: óra
+
+id: attivi
+msg: aktív
+
+id: Nessuno
+msg: Nincs
+
+id: Movian (predefinito)
+msg: Movian (alapértelmezett)
+
+id: Programma
+msg: Műsor
+
+id: file di backup non leggibile
+msg: a mentésfájl nem olvasható
+
+id: URL del file lista .m3u/.m3u8
+msg: A .m3u/.m3u8 listafájl URL-je
+
+id: URL del portale
+msg: Portál URL
+
+id: MAC address (aa:bb:cc:dd:ee:ff)
+msg: MAC-cím (aa:bb:cc:dd:ee:ff)
+
+id: Non richiesto
+msg: Nem kötelező
+
+id: Non richiesta
+msg: Nem kötelező
+
+id: A fine episodio parte automaticamente il successivo
+msg: Az epizód végén a következő automatikusan indul
+
+id: Attivo: sarai avvisato all'inizio
+msg: Aktív: a kezdéskor értesítünk
+
+id: Autoplay episodio successivo
+msg: Következő epizód automatikus lejátszása
+
+id: Avvisami quando inizia
+msg: Értesíts a kezdéskor
+
+id: Cartella non scrivibile
+msg: A mappa nem írható
+
+id: Cartella registrazioni
+msg: Felvételek mappája
+
+id: Cartella registrazioni (vuoto = predefinita)
+msg: Felvételek mappája (üres = alapértelmezett)
+
+id: Cartella registrazioni (vuoto = predefinita):
+msg: Felvételek mappája (üres = alapértelmezett):
+
+id: Cartella registrazioni non scrivibile, uso quella predefinita
+msg: A felvételek mappája nem írható, az alapértelmezett kerül használatra
+
+id: Disponibile solo se il provider abilita l'archivio sul canale (flag tv_archive): click diretto su un programma gia' finito nella griglia guida, long-press sul canale → \"Rivedi\", oppure badge nel palinsesto. Se il provider non supporta il timeshift la funzione non appare.
+msg: Csak akkor érhető el, ha a szolgáltató engedélyezi az archívumot a csatornán (tv_archive jelölés): közvetlen kattintás egy befejezett műsorra a műsorújság rácsában, hosszú nyomás a csatornán → \"Újranézés\", vagy a jelölés a csatorna műsorában. Ha a szolgáltató nem támogatja a timeshiftet, a funkció nem jelenik meg.
+
+id: Dove salvare i file .ts — vuoto = storage del plugin
+msg: Hová mentse a .ts fájlokat — üres = bővítmény tárhelye
+
+id: Elimina
+msg: Törlés
+
+id: Eliminare la registrazione
+msg: Felvétel törlése
+
+id: Episodio non trovato
+msg: Epizód nem található
+
+id: Esporta preferiti in M3U
+msg: Kedvencek exportálása M3U-ba
+
+id: Esportazione fallita
+msg: Az exportálás sikertelen
+
+id: Gli episodi visti hanno il segno di spunta nella lista. A fine puntata parte automaticamente la successiva (disattivabile in Impostazioni → Riproduzione → \"Autoplay episodio successivo\").
+msg: A megtekintett epizódok pipát kapnak a listában. Az epizód végén a következő automatikusan indul (kikapcsolható a Beállítások → Lejátszás → \"Következő epizód automatikus lejátszása\" alatt).
+
+id: I file .ts registrati appariranno qui
+msg: A felvett .ts fájlok itt jelennek meg
+
+id: IN CORSO
+msg: FOLYAMATBAN
+
+id: In corso
+msg: Folyamatban
+
+id: Mentre guardi: icona REC nella barra del player (OK sul video mostra/nasconde info e barra) registra il flusso in un file .ts fino allo stop. I file registrati si rivedono e si eliminano da Menu → \"Registrazioni\"; la cartella di destinazione si cambia in Impostazioni → Riproduzione.
+msg: Nézés közben: a REC ikon a lejátszó sávjában (OK a videón megjeleníti/elrejti az infót és a sávot) a streamet .ts fájlba rögzíti leállításig. A felvett fájlok a Menü → \"Felvételek\" alatt nézhetők meg és törölhetők; a célmappa a Beállítások → Lejátszás alatt módosítható.
+
+id: Nessun preferito da esportare
+msg: Nincs exportálható kedvenc
+
+id: Nessun promemoria attivo
+msg: Nincs aktív emlékeztető
+
+id: Nessun'altra puntata in palinsesto
+msg: Nincs több epizód a műsorban
+
+id: Nessuna puntata futura da registrare
+msg: Nincs jövőbeli epizód rögzítésre
+
+id: Nessuna registrazione completata
+msg: Nincs befejezett felvétel
+
+id: Palinsesto di un canale → programma futuro → badge \"Registra\" → OK. La riga \"Promemoria e registrazione serie\" sotto il programma permette anche il solo avviso all'inizio (senza registrare) e la registrazione di tutte le puntate con lo stesso titolo. Le registrazioni partono da sole e si fermano a fine programma. Una alla volta: registrare mentre guardi un altro canale puo' fallire se il provider permette 1 sola connessione.
+msg: Csatorna műsora → jövőbeli műsor → \"Felvétel\" jelölés → OK. A műsor alatti \"Emlékeztető és sorozatfelvétel\" sor lehetővé teszi a puszta kezdési figyelmeztetést (felvétel nélkül) és az összes azonos című epizód rögzítését is. A felvételek maguktól indulnak és a műsor végén állnak le. Egyenként: felvétel közben másik csatorna nézése sikertelen lehet, ha a szolgáltató csak 1 kapcsolatot enged.
+
+id: Predefinita
+msg: Alapértelmezett
+
+id: Preferiti esportati
+msg: Kedvencek exportálva
+
+id: Promemoria
+msg: Emlékeztető
+
+id: Promemoria attivato
+msg: Emlékeztető bekapcsolva
+
+id: Promemoria attivo
+msg: Emlékeztető aktív
+
+id: Promemoria e registrazione serie
+msg: Emlékeztető és sorozatfelvétel
+
+id: Promemoria rimosso
+msg: Emlékeztető törölve
+
+id: Promemorie
+msg: Emlékeztetők
+
+id: Prossimo episodio
+msg: Következő epizód
+
+id: Registra tutta la serie
+msg: Egész sorozat felvétele
+
+id: Registrazione eliminata
+msg: Felvétel törölve
+
+id: Registrazione programmata, promemoria e serie
+msg: Programozott felvétel, emlékeztető és sorozat
+
+id: Registrazione singola puntata
+msg: Egyetlen epizód felvétele
+
+id: Salva i canali preferiti come playlist standard
+msg: Kedvenc csatornák mentése szabványos lejátszási listaként
+
+id: Sta iniziando
+msg: Most kezdődik
+
+id: Usa il badge \"Registra\" sulla riga del programma
+msg: Használd a \"Felvétel\" jelölést a műsor során
+
+id: canali
+msg: csatornák
+
+id: cartella non scrivibile
+msg: a mappa nem írható
+
+id: fallita
+msg: sikertelen
+
+id: puntate
+msg: epizódok
+
+id: puntate in palinsesto
+msg: epizódok a műsorban
+

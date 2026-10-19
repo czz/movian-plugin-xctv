@@ -1,0 +1,47 @@
+#import "skin://theme.view"
+#import "skin://styles/style_list.view"
+
+// XCtv info — account / server / EPG status rows.
+
+widget(container_z, {
+
+  // sfondo scuro pieno (palette dark)
+  widget(quad, {
+    color: [0.05, 0.06, 0.08];
+  });
+
+  widget(container_y, {
+
+    PageHeader($self.model.metadata.title);
+
+    widget(list_y, {
+      id: "scrollable";
+      navWrap: true;
+      filterConstraintY: true;
+
+      cloner($self.model.nodes, container_z, {
+
+        height: 2.6em;
+
+        widget(container_x, {
+          style: "ListItem";
+
+          widget(label, {
+            caption: $self.metadata.title;
+            style: "ListItemLabel";
+            width: 10em;
+          });
+
+          widget(label, {
+            caption: $self.metadata.description;
+            style: "ListItemLabelDimmed";
+            filterConstraintX: true;
+            ellipsize: true;
+          });
+        });
+      });
+    });
+  });
+
+  ScrollBar("scrollable", 3em, $ui.universeBottomHeight);
+});

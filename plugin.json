@@ -4,7 +4,7 @@
 	"homepage": "",
 	"title": "Xctv",
 	"synopsis": "Xtream Codes IPTV client con EPG",
-	"version": "1.0.0",
+	"version": "1.0.1",
         "file": "xctv.js",
 	"showtimeVersion": "8.3.0",
 	"type": "ecmascript",

@@ -221,6 +221,154 @@ var Xtream = (function () {
 
 
     /*
+     *  _jsonScan — iteratore su un array JSON "piatto" tenuto come
+     *  stringa: isola un item top-level alla volta e lo restituisce
+     *  parsato. JSON.parse(body) su un catalogo materializzerebbe
+     *  l'intero albero dei record grezzi in un colpo — decine di
+     *  migliaia di oggetti grassi coesistono fino al mapping e sui
+     *  box da ~1GB il picco supera la quota (OOM kill misurato a
+     *  ~400MB). Qui ogni record grezzo muore appena mappato nello
+     *  slim object: il picco resta ~body + lista slim.
+     *
+     *  I boundary fra item si trovano con indexOf('},{') — nativo e
+     *  veloce (~10x la scansione carattere-per-carattere, che sui
+     *  box ARM lenti costava ~85s su 40MB). Un '},{' dentro una
+     *  stringa o un oggetto annidato e' un falso boundary: il parse
+     *  del frammento fallisce e il boundary si estende al '},{'
+     *  successivo finche' l'item non si ricompone. Un item che non
+     *  si ricompone mai viene saltato, la scansione continua.
+     *  Ritorna null se il payload non e' un array; next() ritorna
+     *  l'item parsato o undefined a fine lista.
+     */
+    function _jsonScan(body) {
+
+        var b0 = body.indexOf('[');
+        if(b0 < 0) return null;
+        var rb = body.lastIndexOf(']');
+        if(rb <= b0) return null;
+
+        var i = body.indexOf('{', b0);   // gli item attesi sono oggetti
+        var done = false;
+
+        return {
+            next: function() {
+                while(!done) {
+                    if(i < 0 || i > rb) { done = true; return undefined; }
+                    var start = i;
+                    var end = body.indexOf('},{', start + 1);
+                    if(end < 0 || end > rb) end = rb;
+
+                    var raw = undefined;
+                    for(;;) {
+                        // ultimo item: substring(start, rb) esclude ']'
+                        var frag = (end == rb) ?
+                            body.substring(start, rb) :
+                            body.substring(start, end + 1);
+                        try { raw = JSON.parse(frag); } catch(e) {}
+                        if(raw !== undefined) break;
+                        if(end == rb) { raw = null; break; }
+                        // falso boundary: allunga al '},{' successivo
+                        var nx = body.indexOf('},{', end + 3);
+                        if(nx < 0 || nx > rb) { raw = null; break; }
+                        end = nx;
+                    }
+
+                    if(raw !== null && raw !== undefined) {
+                        if(end == rb) done = true;
+                        i = end + 2;
+                        return raw;
+                    }
+
+                    // item corrotto: salta al boundary successivo a
+                    // start e continua — non abortire la lista
+                    var nxt = body.indexOf('},{', start + 1);
+                    if(nxt < 0 || nxt > rb) { done = true; return undefined; }
+                    i = nxt + 2;
+                }
+                return undefined;
+            }
+        };
+    }
+
+
+    /*
+     *  _reqList — fetch sync + scan incrementale per le action che
+     *  tornano liste (stream/serie): sostituisce _req+build, il
+     *  record grezzo non viene mai tenuto tutto in memoria.
+     *  Ritorna { l: array slim, hc: presenza campi categoria } o
+     *  false; hc serve a _catFilter per capire se il server ha
+     *  davvero filtrato o se il payload non ha category_id.
+     */
+    function _reqList(data, itemFn) {
+
+        var res = false;
+
+        if(!this.credentials().username || !this.credentials().password)
+            return res;
+
+        var url = this.playerUrl() +
+                  "?username=" + encodeURIComponent(this.credentials().username) +
+                  "&password=" + encodeURIComponent(this.credentials().password);
+
+        if (data === Object(data) && Object.prototype.toString.call(data) !== '[object Array]') {
+            for(var k in data)
+                url += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]);
+        }
+
+        var s = { method: "GET",
+                  debug: this.options().debug,
+                  compression: false,
+                  connectTimeout: 5000,
+                  readTimeout: 60000,
+                  headers: { 'User-Agent' : this.userAgent() }
+                 };
+
+        try {
+
+            var v = http.request(url, s);
+
+            var body = v.toString();
+            if(!body || body.length < 2)
+                return res;
+
+            var scan = _jsonScan(body);
+            if(!scan) {
+                // non e' un array: shape guard come il path classico
+                var parsed = JSON.parse(body);
+                return _shapeOk(data && data.action, parsed) ?
+                       parsed : res;
+            }
+
+            var out = [], hc = false, first = true;
+            for(;;) {
+                var raw = scan.next();
+                if(raw === undefined) break;
+                if(first) {
+                    first = false;
+                    if(!_shapeOk(data && data.action, [raw]))
+                        return res;
+                }
+                if(!hc && raw &&
+                   (raw.category_id != null || raw.category_ids != null))
+                    hc = true;
+                if(typeof raw === 'object') {
+                    try { out.push(itemFn(this, raw)); } catch(e2) {}
+                }
+            }
+
+            return { l: out, hc: hc };
+
+        }
+        catch (e) {
+            _debug.call(this,  e.toString().replace('\n', ''), 'Xtream', true );
+        }
+
+        return res;
+
+    }
+
+
+    /*
      * Private method req — GET on player_api.php with query args.
      * When statuscode === true, returns the HTTP status code instead
      * of the parsed JSON body.
@@ -294,6 +442,7 @@ var Xtream = (function () {
      *  aperte insieme non scaricano due volte lo stesso catalogo.
      */
     var _inflight = {};
+    var _inflightL = {};   // dedup delle fetch lista incrementali
     function _reqAsync(data, cb) {
 
         var self = this;
@@ -379,6 +528,133 @@ var Xtream = (function () {
                 });
             } catch(e) {
                 _debug.call(self, '_reqAsync req: ' + e, 'Xtream', true);
+                fin(false);
+            }
+        }
+        attempt();
+    }
+
+
+    /*
+     *  _reqListAsync — variante async di _reqList: la scansione del
+     *  body procede a fette via setTimeout cosi' la coda dei task
+     *  ES non resta congelata (e i prop-op di altre pagine girano).
+     *  cb({ l: array slim, hc: hasCategoryFields } | false).
+     *  Il dedup inflight di _reqAsync non si applica: qui la forma
+     *  della risposta dipende da itemFn del chiamante.
+     */
+    function _reqListAsync(data, itemFn, cb) {
+
+        var self = this;
+        if(!self.credentials().username || !self.credentials().password) {
+            cb(false);
+            return;
+        }
+
+        var url = self.playerUrl() +
+                  "?username=" + encodeURIComponent(self.credentials().username) +
+                  "&password=" + encodeURIComponent(self.credentials().password);
+
+        if (data === Object(data) && Object.prototype.toString.call(data) !== '[object Array]') {
+            for(var k in data)
+                url += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(data[k]);
+        }
+
+        var s = { method: "GET",
+                  debug: self.options().debug,
+                  compression: true,
+                  connectTimeout: 5000,
+                  readTimeout: 60000,
+                  headers: { 'User-Agent' : self.userAgent() }
+                 };
+
+        // dedup in-flight: due fetch concorrenti dello stesso
+        // catalogo raddoppierebbero il picco di memoria. Mappa
+        // separata da _inflight: qui la cb riceve {l,hc}, non il
+        // parsed grezzo
+        var fin;
+        if(_inflightL[url]) { _inflightL[url].push(cb); return; }
+        _inflightL[url] = [cb];
+        fin = function(out) {
+            var list = _inflightL[url] || [];
+            delete _inflightL[url];
+            for(var i = 0; i < list.length; i++)
+                try { list[i](out); } catch(e0) {
+                    _debug.call(self, '_reqListAsync cb: ' + e0,
+                                'Xtream', true);
+                }
+        };
+
+        function attempt() {
+            try {
+                http.request(url, s, function(err, res) {
+                    var body = false;
+                    try {
+                        if(!err && res) {
+                            var t = res.toString();
+                            if(t && t.length >= 2) body = t;
+                        }
+                    } catch(e) {
+                        _debug.call(self, '_reqListAsync read: ' + e,
+                                    'Xtream', true);
+                    }
+                    if(body === false && s.compression) {
+                        _debug.call(self, '_reqListAsync ' +
+                            (data && data.action) +
+                            ' gzip fallito, riprovo senza', 'Xtream', true);
+                        s.compression = false;
+                        attempt();
+                        return;
+                    }
+                    if(body === false) { fin(false); return; }
+
+                    var scan;
+                    try { scan = _jsonScan(body); } catch(e2) { scan = null; }
+                    if(!scan) {
+                        // payload non-array: shape check classico
+                        var parsed = false;
+                        try { parsed = JSON.parse(body); } catch(e3) {}
+                        fin(parsed && _shapeOk(data && data.action, parsed) ?
+                            { l: parsed, hc: true } : false);
+                        return;
+                    }
+
+                    var out = [], hc = false, first = true, bad = false;
+                    (function step() {
+                        var cnt = 0;
+                        for(;;) {
+                            var raw;
+                            try { raw = scan.next(); }
+                            catch(e4) { raw = undefined; bad = true; }
+                            if(raw === undefined) break;
+                            if(first) {
+                                first = false;
+                                if(!_shapeOk(data && data.action, [raw])) {
+                                    bad = true;
+                                    break;
+                                }
+                            }
+                            if(!hc && raw &&
+                               (raw.category_id != null ||
+                                raw.category_ids != null))
+                                hc = true;
+                            if(typeof raw === 'object') {
+                                try { out.push(itemFn(self, raw)); }
+                                catch(e5) {}
+                            }
+                            if(++cnt >= 4000) { setTimeout(step, 0); return; }
+                        }
+                        _debug.call(self, '_reqListAsync ' +
+                            (data && data.action) +
+                            (data && data.category_id ?
+                                ' cat=' + data.category_id : '') +
+                            ' err=' + err + ' items=' +
+                            (bad ? 'bad-shape' : out.length), 'Xtream', true);
+                        fin(bad ? false : { l: out, hc: hc });
+                    })();
+                });
+            } catch(e) {
+                _debug.call(self, '_reqListAsync req: ' + e, 'Xtream', true);
                 fin(false);
             }
         }
@@ -567,7 +843,14 @@ var Xtream = (function () {
 
         var ext = 'm3u8';
 
-        var user = this.getInfo('user');
+        // SOLO peek di cache: _liveItem la chiama per OGNI canale
+        // e una getInfo() qui farebbe un _req HTTP sincrono sul
+        // thread ES a TTL scaduto — freeze in pieno parsing del
+        // catalogo. _info viene scaldata da checkLoginAsync allo
+        // start; a cache fredda si usa il default m3u8 (standard
+        // Xtream — 'ts' serve solo ai pannelli senza m3u8).
+        var res = this._cachePeek('_info', 600);
+        var user = res && res.user_info;
         if(user && user.allowed_output_formats) {
             var fmts = user.allowed_output_formats;
             if(fmts.indexOf('m3u8') == -1 && fmts.indexOf('ts') != -1)
@@ -642,19 +925,16 @@ var Xtream = (function () {
      */
     Xtream.prototype.getLiveStreams = function() {
 
-        var live = [];
-
         var self = this;
         var res = this._cached('_live', 300, function() {
-            return _req.call(self, { action: "get_live_streams" });
+            var r = _reqList.call(self, { action: "get_live_streams" },
+                                  _liveItem);
+            return r ? r.l : false;
         });
-        _debug.call(this, JSON.stringify(res), "Xtream:getLiveStreams");
-
-        if(res)
-            for(var i in res)
-                live.push(_liveItem(this, res[i]));
-
-        return live;
+        if(this.options().debug)
+            _debug.call(this, 'items=' + (res ? res.length : res),
+                        "Xtream:getLiveStreams");
+        return res || [];
 
     };
 
@@ -662,9 +942,13 @@ var Xtream = (function () {
     Xtream.prototype.getLiveStreamsAsync = function(cb) {
 
         var self = this;
-        _reqAsync.call(this, { action: "get_live_streams" }, function(res) {
-            if(!res) { cb(false); return; }
-            _buildChunked(_liveItem, self, res, cb);
+        var w = this._cachePeek('_live', 300);
+        if(w) { cb(w); return; }
+        _reqListAsync.call(this, { action: "get_live_streams" },
+                          _liveItem, function(r) {
+            if(!r) { cb(false); return; }
+            self._cachePut('_live', r.l);
+            cb(r.l);
         });
     };
 
@@ -672,24 +956,25 @@ var Xtream = (function () {
     Xtream.prototype.getLiveStreamsByCategoryIdAsync = function(id, cb) {
 
         var self = this;
-        _reqAsync.call(this, { action: "get_live_streams",
-                               category_id: id }, function(res) {
-            var src = res;
-            if(!src) {
+        // catalogo intero gia' in cache -> filtro locale, niente rete
+        var w = this._cachePeek('_live', 300);
+        if(w) { cb(_catFilter(w, true, id)); return; }
+        _reqListAsync.call(this, { action: "get_live_streams",
+                                   category_id: id }, _liveItem,
+                           function(r) {
+            if(!r) {
                 // pannello che rigetta category_id -> catalogo
-                // intero + filtro locale
-                _reqAsync.call(self, { action: "get_live_streams" },
-                               function(res2) {
-                    if(!res2) { cb(false); return; }
-                    _buildChunked(_liveItem, self, res2, function(built) {
-                        cb(_catFilter(res2, built, id));
-                    });
+                // intero + filtro locale (messo in cache: le
+                // categorie successive riusano la stessa lista)
+                _reqListAsync.call(self, { action: "get_live_streams" },
+                                   _liveItem, function(r2) {
+                    if(!r2) { cb(false); return; }
+                    self._cachePut('_live', r2.l);
+                    cb(_catFilter(r2.l, r2.hc, id));
                 });
                 return;
             }
-            _buildChunked(_liveItem, self, src, function(built) {
-                cb(_catFilter(src, built, id));
-            });
+            cb(_catFilter(r.l, r.hc, id));
         });
     };
 
@@ -744,13 +1029,15 @@ var Xtream = (function () {
 
         var res = (this).getLiveStreams();
 
+        // cat_id resta sugli item: la lista slim ora e' condivisa
+        // via cache e gli altri filtri (gruppi nascosti, _catMatch)
+        // lo leggono
         if(res) {
 
            for(var i in res) {
 
               if( String(id) == '0' ) {
                  if( res[i].cat_id == '' || res[i].cat_id == '0' ){
-                    delete res[i].cat_id;
                     streams.push(res[i]);
                  }
               }
@@ -758,7 +1045,6 @@ var Xtream = (function () {
               else {
                 if( res[i].cat_id == id ){
 
-                    delete res[i].cat_id;
                     streams.push(res[i]);
 
                 }
@@ -977,8 +1263,9 @@ var Xtream = (function () {
      *  [{ id, cat_id, title, icon, rating, year, source:{ url } }]
      */
     /*
-     *  _vodBuild — mapper res JSON -> lista vod condiviso dai
-     *  path sync e async.
+     *  _vodItem — mapper record grezzo -> item slim, usato da
+     *  _reqList/_reqListAsync (scan incrementale: il record grezzo
+     *  non resta in memoria dopo il mapping).
      */
     function _vodItem(xt, r) {
 
@@ -996,50 +1283,20 @@ var Xtream = (function () {
                };
     }
 
-    function _vodBuild(xt, res) {
-
-        var streams = [];
-        if(res) {
-           for(var i in res)
-              streams.push(_vodItem(xt, res[i]));
-        }
-        return streams;
-    }
-
-
-    /*
-     *  _buildChunked — come _vodBuild/_seriesBuild ma a fette via
-     *  setTimeout: il catalogo intero puo' superare i 150k item e
-     *  il mapping dentro la callback http tiene il contesto ES
-     *  per secondi, congelando gli altri callback in coda
-     *  (click categoria inclusi). Ogni yield lascia girare gli
-     *  altri task.
-     */
-    function _buildChunked(itemFn, xt, res, cb) {
-
-        var streams = [], i = 0, n = res.length;
-        (function step() {
-            var end = Math.min(i + 4000, n);
-            for(; i < end; i++)
-                streams.push(itemFn(xt, res[i]));
-            if(i < n) {
-                setTimeout(step, 0);
-                return;
-            }
-            cb(streams);
-        })();
-    }
-
 
     Xtream.prototype.getVodStreams = function() {
 
         var self = this;
         var res = this._cached('_vod', 300, function() {
-            return _req.call(self, { action: "get_vod_streams" });
+            var r = _reqList.call(self, { action: "get_vod_streams" },
+                                  _vodItem);
+            return r ? r.l : false;
         });
-        _debug.call(this, JSON.stringify(res), "Xtream:getVodStreams");
+        if(this.options().debug)
+            _debug.call(this, 'items=' + (res ? res.length : res),
+                        "Xtream:getVodStreams");
 
-        return _vodBuild(this, res);
+        return res || [];
 
     };
 
@@ -1056,16 +1313,9 @@ var Xtream = (function () {
      *  categoria il server ha gia' filtrato lui (o il pannello non
      *  la fornisce): rifiltrare svuoterebbe la lista.
      */
-    function _catFilter(res, built, id) {
+    function _catFilter(built, hc, id) {
 
-        var hasCatField = false;
-        for(var i in res)
-            if(res[i] && (res[i].category_id != null ||
-                          res[i].category_ids != null)) {
-                hasCatField = true;
-                break;
-            }
-        if(!hasCatField) return built;
+        if(!hc) return built;
         var streams = [];
         for(var j = 0; j < built.length; j++)
             if(_catMatch(built[j].cat_id, id)) streams.push(built[j]);
@@ -1077,16 +1327,17 @@ var Xtream = (function () {
 
         var self = this;
         var res = this._cached('_vod:' + id, 300, function() {
-            return _req.call(self, { action: "get_vod_streams",
-                                     category_id: id });
+            return _reqList.call(self, { action: "get_vod_streams",
+                                         category_id: id }, _vodItem);
         });
 
         // il pannello rigetta category_id -> fetch intero +
         // filtro locale (stesso risultato, piu' traffico)
         if(!res)
-            res = _req.call(this, { action: "get_vod_streams" });
+            res = _reqList.call(this, { action: "get_vod_streams" },
+                                _vodItem);
 
-        return res ? _catFilter(res, _vodBuild(this, res), id) : [];
+        return res ? _catFilter(res.l, res.hc, id) : [];
 
     };
 
@@ -1094,9 +1345,13 @@ var Xtream = (function () {
     Xtream.prototype.getVodStreamsAsync = function(cb) {
 
         var self = this;
-        _reqAsync.call(this, { action: "get_vod_streams" }, function(res) {
-            if(!res) { cb(false); return; }
-            _buildChunked(_vodItem, self, res, cb);
+        var w = this._cachePeek('_vod', 300);
+        if(w) { cb(w); return; }
+        _reqListAsync.call(this, { action: "get_vod_streams" },
+                          _vodItem, function(r) {
+            if(!r) { cb(false); return; }
+            self._cachePut('_vod', r.l);
+            cb(r.l);
         });
     };
 
@@ -1104,24 +1359,24 @@ var Xtream = (function () {
     Xtream.prototype.getVodStreamsByCategoryIdAsync = function(id, cb) {
 
         var self = this;
-        _reqAsync.call(this, { action: "get_vod_streams",
-                               category_id: id }, function(res) {
-            var src = res;
-            if(!src) {
+        var w = this._cachePeek('_vod', 300);
+        if(w) { cb(_catFilter(w, true, id)); return; }
+        _reqListAsync.call(this, { action: "get_vod_streams",
+                                   category_id: id }, _vodItem,
+                           function(r) {
+            if(!r) {
                 // pannello che rigetta category_id -> catalogo
-                // intero + filtro locale
-                _reqAsync.call(self, { action: "get_vod_streams" },
-                               function(res2) {
-                    if(!res2) { cb(false); return; }
-                    _buildChunked(_vodItem, self, res2, function(built) {
-                        cb(_catFilter(res2, built, id));
-                    });
+                // intero + filtro locale (messo in cache: le
+                // categorie successive riusano la stessa lista)
+                _reqListAsync.call(self, { action: "get_vod_streams" },
+                                   _vodItem, function(r2) {
+                    if(!r2) { cb(false); return; }
+                    self._cachePut('_vod', r2.l);
+                    cb(_catFilter(r2.l, r2.hc, id));
                 });
                 return;
             }
-            _buildChunked(_vodItem, self, src, function(built) {
-                cb(_catFilter(src, built, id));
-            });
+            cb(_catFilter(r.l, r.hc, id));
         });
     };
 
@@ -1191,8 +1446,8 @@ var Xtream = (function () {
 
 
     /*
-     *  _seriesItem/_seriesBuild — mapper res JSON -> lista serie
-     *  condiviso dai path sync e async.
+     *  _seriesItem — mapper record grezzo -> item slim, usato da
+     *  _reqList/_reqListAsync.
      */
     function _seriesItem(xt, r) {
 
@@ -1216,28 +1471,21 @@ var Xtream = (function () {
                };
     }
 
-    function _seriesBuild(xt, res) {
 
-        var series = [];
-        if(res) {
-           for(var i in res)
-              series.push(_seriesItem(xt, res[i]));
-        }
-        return series;
-    }
 
 
     Xtream.prototype.getSeries = function() {
 
         var self = this;
         var res = this._cached('_series', 300, function() {
-            return _req.call(self, { action: "get_series" });
+            var r = _reqList.call(self, { action: "get_series" },
+                                  _seriesItem);
+            return r ? r.l : false;
         });
-        _debug.call(this, JSON.stringify(res), "Xtream:getSeriesStreams request");
-
-        var series = _seriesBuild(this, res);
-        _debug.call(this, JSON.stringify(series), "Xtream:getSeriesStreams stream return");
-        return series;
+        if(this.options().debug)
+            _debug.call(this, 'items=' + (res ? res.length : res),
+                        "Xtream:getSeriesStreams");
+        return res || [];
 
     };
 
@@ -1294,14 +1542,15 @@ var Xtream = (function () {
 
         var self = this;
         var res = this._cached('_series:' + id, 300, function() {
-            return _req.call(self, { action: "get_series",
-                                     category_id: id });
+            return _reqList.call(self, { action: "get_series",
+                                         category_id: id }, _seriesItem);
         });
 
         if(!res)
-            res = _req.call(this, { action: "get_series" });
+            res = _reqList.call(this, { action: "get_series" },
+                                _seriesItem);
 
-        return res ? _catFilter(res, _seriesBuild(this, res), id) : [];
+        return res ? _catFilter(res.l, res.hc, id) : [];
 
     };
 
@@ -1309,9 +1558,13 @@ var Xtream = (function () {
     Xtream.prototype.getSeriesAsync = function(cb) {
 
         var self = this;
-        _reqAsync.call(this, { action: "get_series" }, function(res) {
-            if(!res) { cb(false); return; }
-            _buildChunked(_seriesItem, self, res, cb);
+        var w = this._cachePeek('_series', 300);
+        if(w) { cb(w); return; }
+        _reqListAsync.call(this, { action: "get_series" },
+                          _seriesItem, function(r) {
+            if(!r) { cb(false); return; }
+            self._cachePut('_series', r.l);
+            cb(r.l);
         });
     };
 
@@ -1319,23 +1572,24 @@ var Xtream = (function () {
     Xtream.prototype.getSeriesByCategoryIdAsync = function(id, cb) {
 
         var self = this;
-        _reqAsync.call(this, { action: "get_series",
-                               category_id: id }, function(res) {
-            var src = res;
-            if(!src) {
+        var w = this._cachePeek('_series', 300);
+        if(w) { cb(_catFilter(w, true, id)); return; }
+        _reqListAsync.call(this, { action: "get_series",
+                                   category_id: id }, _seriesItem,
+                           function(r) {
+            if(!r) {
                 // pannello che rigetta category_id -> catalogo intero
-                _reqAsync.call(self, { action: "get_series" },
-                               function(res2) {
-                    if(!res2) { cb(false); return; }
-                    _buildChunked(_seriesItem, self, res2, function(built) {
-                        cb(_catFilter(res2, built, id));
-                    });
+                // (messo in cache: le categorie successive riusano
+                // la stessa lista invece di rifare il fetch)
+                _reqListAsync.call(self, { action: "get_series" },
+                                   _seriesItem, function(r2) {
+                    if(!r2) { cb(false); return; }
+                    self._cachePut('_series', r2.l);
+                    cb(_catFilter(r2.l, r2.hc, id));
                 });
                 return;
             }
-            _buildChunked(_seriesItem, self, src, function(built) {
-                cb(_catFilter(src, built, id));
-            });
+            cb(_catFilter(r.l, r.hc, id));
         });
     };
 

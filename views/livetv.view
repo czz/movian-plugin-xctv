@@ -22,6 +22,8 @@
 // model.gridslots, model.gridspan, model.nowoff, metadata.gridcells
 // su ogni item canale.
 
+delta($ui.fullwindow, isVisible());
+
 $view.osd  = 1;   // la griglia parte aperta
 $view.info = 0;
 $view.menu = 0;   // drawer sezioni app (sinistra dei gruppi)
@@ -31,6 +33,8 @@ $view.ctxar = 0;  // canale con archivio catch-up
 
 // ---- tasti di pagina ----
 
+onEvent("*", { $self.media.error = ""; }, $self.media.error, false, true);
+
 // BACK a strati: popup contestuale -> drawer -> info card ->
 // griglia aperta con video sotto (torna al video pulito).
 // A griglia chiusa o senza video in corso back propaga al
@@ -39,8 +43,14 @@ onEvent(back, { $view.gctx = 0; focus("groupslist"); }, $view.gctx);
 onEvent(back, { $view.ctx = 0; focus("chanlist"); }, $view.ctx);
 onEvent(back, { $view.menu = 0; focus("groupslist"); }, $view.menu && !$view.ctx);
 onEvent(back, { $view.info = 0; focus("zaproot"); }, !$view.osd && $view.info);
-onEvent(back, { $view.osd = 0; $view.info = 0; focus("zaproot"); },
-      $view.osd && !$view.gctx && !$view.ctx && !$view.menu &&
+// Back a video a tutto schermo (OSD chiuso, niente popup): torna
+// alla griglia col video che continua sotto — prima nessun
+// handler lo consumava e l'evento propagava al navigator,
+// chiudendo la pagina (o uscendo dall'app). Dalla griglia il
+// back successivo esce dalla pagina come sempre; per tornare al
+// video pulito si usa MENU/OK.
+onEvent(back, { $view.info = 0; $view.osd = 1; focus("chanlist"); },
+      !$view.osd && !$view.gctx && !$view.ctx && !$view.menu &&
       !isVoid($self.model.zapurl));
 
 // MENU apre/chiude la griglia.
@@ -98,7 +108,7 @@ widget(container_z, {
   // background del tema di Movian durante la riproduzione
   widget(quad, {
     color: 0;
-    hidden: isVoid($self.model.zapurl);
+    hidden: true;
   });
 
   // ---- video sintonizzato, sempre fullscreen ----
@@ -108,13 +118,7 @@ widget(container_z, {
     hidden: isVoid($self.model.zapurl);
 
     // stato buffering dello stream -> throbber sotto
-    delta($view.zaploading, $self.media.current.loading);
-  });
-
-  // throbber mentre lo stream carica o va in buffering
-  widget(throbber, {
-    hidden: iir($view.zaploading, 4) < 0.01;
-    alpha: iir($view.zaploading, 4);
+    delta($view.zaploading, $self.media.loading);
   });
 
   // placeholder prima della prima sintonizzazione
@@ -613,17 +617,24 @@ widget(container_z, {
             focusable: true;
             selectOnFocus: true;
 
-            suggestFocus($self.sel);
+            // grpnav: dopo un click su un gruppo il sel di un
+            // nodo creato in ritardo (rail a chunk) non deve
+            // rubare il focus da dove si trova l'utente
+            suggestFocus($self.sel && !$view.grpnav);
 
             ListItemBevel();
             ListItemHighlight();
 
-            // prima ricarica i canali (i cloni vengono ricreati),
-            // poi sposta il focus sulla lista fresca
+            // ricarica i canali; il focus resta sul gruppo —
+            // si zappa tra le categorie senza perdere la posizione
+            // nel rail (RIGHT/activate sulla lista ci si sposta
+            // comunque quando serve). grpnav: dopo un cambio
+            // gruppo manuale il canale in riproduzione non deve
+            // piu' rubare il focus via suggestFocus
             onEvent(activate, {
+              $view.grpnav = 1;
               fireEvent(deliverEvent($parent.model.eventSink,
                                      fmt("group:%d", $self.xidx)));
-              focus("chanlist");
             });
 
             // long-press: menu contestuale del gruppo — riordina,
@@ -743,7 +754,10 @@ widget(container_z, {
               selectOnFocus: true;
 
               // il canale sintonizzato suggerisce il focus iniziale
-              suggestFocus($self.metadata.xidx == $parent.model.zapidx);
+              // — solo all'apertura della pagina: dopo un cambio
+              // gruppo dal rail (grpnav) il focus resta dove e'
+              suggestFocus($self.metadata.xidx == $parent.model.zapidx &&
+                           !$view.grpnav);
 
               // OK: sintonizza e chiude la guida
               onEvent(activate, {
@@ -1457,5 +1471,77 @@ widget(container_z, {
         });
       });
     });
+  });
+
+  // loader cambio gruppo — come in browse.view: il loader
+  // universale di universe.view resta sotto il quad opaco
+  // di sfondo, va replicato dentro la vista
+  widget(container_z, {
+    hidden: iir($self.model.loading, 8) < 0.01;
+    alpha: iir($self.model.loading, 8);
+    widget(quad, {
+      color: 0;
+      alpha: 0.6;
+    });
+    widget(container_y, {
+      space(1);
+      widget(throbber, {});
+      space(0.2);
+      widget(label, {
+        align: center;
+        caption: $self.model.loadingStatus;
+        bold: true;
+      });
+      space(1);
+    });
+  });
+
+  // throbber mentre lo stream carica o va in buffering
+  widget(container_y, {
+    hidden: isVoid($self.model.zapurl) || $self.media.error ||
+            iir($view.zaploading, 4) < 0.01;
+    alpha: iir($view.zaploading, 4);
+    space(1);
+    widget(container_x, {
+      height: 3em;
+      space(1);
+      widget(throbber, { width: 3em; });
+      space(1);
+    });
+    space(1);
+  });
+
+  widget(container_y, {
+    margin: [2em, 2em];
+    hidden: isVoid($self.model.zapurl) || !$self.media.error;
+    space(1);
+    widget(container_x, {
+      space(0.15);
+      widget(container_z, {
+        weight: 0.7;
+        filterConstraintX: true;
+        widget(quad, {
+          color: 0;
+          alpha: 0.9;
+        });
+        widget(container_x, {
+          padding: [1em, 0.8em];
+          spacing: 0.6em;
+          widget(icon, {
+            source: "skin://icons/ic_error_48px.svg";
+            size: 1.6em;
+          });
+          widget(label, {
+            weight: 1;
+            caption: $self.media.error;
+            color: 1;
+            size: 1em;
+            maxlines: 4;
+          });
+        });
+      });
+      space(0.15);
+    });
+    space(1);
   });
 });

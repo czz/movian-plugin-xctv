@@ -216,6 +216,15 @@ var setSort = settings.createMultiOpt('sortMode', tr('Ordinamento cataloghi'),
     [['default', tr('Predefinito'), true], ['name', tr('Nome A-Z')], ['added', tr('Aggiunti di recente')], ['rating', tr('Voto')]],
     function(v) { cfg.sortMode = String(v); });
 
+// la vista aggregata "Tutti" materializza l'intero catalogo in
+// memoria: con liste grandi (decine di migliaia di item) o box
+// da 1GB di RAM il plugin va in OOM-kill — e' successo con un
+// catalogo live da 28k canali e uno VOD piu' grosso ancora.
+// Opt-in esplicito con l'avviso nel titolo dell'impostazione.
+var setShowAll = settings.createBool('showAll',
+    tr('Vista «Tutti» nei cataloghi — ATTENZIONE: con liste grandi o poca memoria rischia il crash del plugin'),
+    false, function(v) { cfg.showAll = _bool(v); });
+
 settings.createDivider(tr('Account'));
 
 settings.createAction('testLogin', tr('Verifica connessione'), function() {
@@ -243,6 +252,40 @@ settings.createAction('reloadEpg', tr('Ricarica EPG adesso'), function() {
     ensureGuide(function(ok) {
         popup.notify(ok ? tr(tr('EPG aggiornata')) : tr(tr('EPG non disponibile')), 3);
     });
+});
+
+settings.createAction('reloadCatalog', tr('Ricarica liste canali/film/serie adesso'), function() {
+    catalogDropAll();
+    delete cache['livestreams'];
+    delete cache['vodstreams'];
+    delete cache['series'];
+    delete cache['vodfav'];
+    delete cache['seriesfav'];
+    delete cache['livecats'];
+    delete cache['vodcats'];
+    delete cache['seriescats'];
+    popup.notify(tr('Liste: ricarico in corso…'), 3);
+    // scalda solo le categorie: i cataloghi si ricaricano lazy
+    // per-categoria alla prossima apertura delle viste — niente
+    // pre-fetch dei cataloghi interi (OOM sui box da 1GB)
+    var ra = api();
+    var pending = 3, got = 0;
+    var fin = function(c) { pending--; if(c) got++; if(!pending)
+        popup.notify(got ? tr('Liste aggiornate') :
+                           tr('Liste non disponibili'), 3); };
+    try {
+        if(ra.getLiveCategoriesAsync) ra.getLiveCategoriesAsync(function(c) {
+            if(c) cacheSet('livecats', c); fin(c); });
+        else fin(ra.getLiveCategories());
+        if(ra.getVodCategoriesAsync) ra.getVodCategoriesAsync(function(c) {
+            if(c) cacheSet('vodcats', c); fin(c); });
+        else fin(ra.getVodCategories());
+        if(ra.getSeriesCategoriesAsync) ra.getSeriesCategoriesAsync(function(c) {
+            if(c) cacheSet('seriescats', c); fin(c); });
+        else fin(ra.getSeriesCategories());
+    } catch(e) {
+        popup.notify(tr('Liste non disponibili'), 3);
+    }
 });
 
 settings.createInfo('version', logo,
@@ -340,6 +383,7 @@ function resetSession() {
     cache = {};
     guide = null;
     guideFetchedAt = 0;
+    catalogDropAll();
 }
 
 
@@ -396,6 +440,8 @@ function refreshPlaylistData(silent) {
     cache = {};
     xtream = null;         // ricreato lazy da api(): svuota anche
                            // la cache interna di libxtream
+    catalogDropAll();      // altrimenti catalogFromDisk serve per
+                           // 12h il catalogo precedente al refresh
     guideFetchedAt = 0;
     guide = null;
     try {
@@ -428,7 +474,7 @@ function api() {
     // (liste/info/categorie) sopravvive tra un :start e l'altro;
     // si ricrea solo se cambiano playlist/credenziali.
     var key = cfg.server + '|' + cfg.username + '|' + cfg.password +
-              '|' + cfg.plType;
+              '|' + cfg.plType + '|' + cfg.liveExt + '|' + cfg.vodExt;
     if(!xtream || xtreamKey != key) {
         xtream = makeXtream();
         xtreamKey = key;
@@ -477,6 +523,142 @@ function cacheSet(key, v) {
 
 
 /*
+ *  Catalogo live su disco — lo stesso modello dei player "grandi"
+ *  (TiviMate/OTT): sync una tantum, poi la lista si apre da disco
+ *  invece di riscaricare e ri-parsare decine di MB a ogni ingresso.
+ *  File JSON in Core.storagePath/catalog.json; src lega il file
+ *  a provider+server+utente cosi' un cambio playlist non mostra
+ *  mai i canali di un'altra lista.
+ */
+var CATALOG_TTL = 12 * 3600;   // secondi
+
+function catalogFile(kind) {
+    return Core.storagePath + '/catalog-' + kind + '.json';
+}
+
+function catalogSrc() {
+    return cfg.plType + '|' + cfg.server + '|' + cfg.username;
+}
+
+function catalogToDisk(kind, l) {
+    try {
+        var fs = require('fs');
+        var at = Math.floor(Date.now() / 1000);
+        fs.writeFileSync(catalogFile(kind),
+            JSON.stringify({ v: 1, at: at,
+                             src: catalogSrc(), l: l }));
+        // sidecar "n|at|src": conteggio+freschezza in ~20 byte
+        // invece di parsare decine di MB solo per l.length. src
+        // puo' contenere '|' — si parsa tutto dopo il 2o pipe.
+        fs.writeFileSync(catalogFile(kind) + '.n',
+                         String(l.length) + '|' + at + '|' +
+                         catalogSrc());
+        // indice id->categoria per liveById: trovare un canale
+        // non richiede piu' il parse del catalogo intero ne'
+        // la scansione di tutte le categorie
+        if(kind == 'live') {
+            var m = {};
+            for(var i = 0; i < l.length; i++) {
+                var e = l[i];
+                if(e && e.id != null) {
+                    var c = e.cat_id;
+                    if(c != null && typeof c != 'number' &&
+                       typeof c != 'string' && c.length)
+                        c = c[0];
+                    m[String(e.id)] = c;
+                }
+            }
+            fs.writeFileSync(catalogFile(kind) + '.idx',
+                JSON.stringify({ v: 1, at: at,
+                                 src: catalogSrc(), m: m }));
+        }
+    } catch(e) {}
+}
+
+// catalogSidecar — legge il file .n: {n, at} se valido e legato
+// a questa playlist, null se assente/di altra sorgente.
+// Formato nuovo "n|at|src"; vecchio "n|src" -> at=0.
+function catalogSidecar(kind) {
+    try {
+        var raw = require('fs').readFileSync(catalogFile(kind) + '.n');
+        var txt = (typeof TextDecoder == 'function') ?
+            new TextDecoder().decode(raw) : String(raw);
+        var p1 = txt.indexOf('|');
+        if(p1 < 0) return null;
+        var n = parseInt(txt.substr(0, p1), 10);
+        var p2 = txt.indexOf('|', p1 + 1);
+        if(p2 > 0) {
+            var at = parseInt(txt.substring(p1 + 1, p2), 10);
+            if(!isNaN(at) && txt.substr(p2 + 1) == catalogSrc())
+                return { n: isNaN(n) ? -1 : n, at: at };
+        }
+        if(txt.substr(p1 + 1) == catalogSrc())
+            return { n: isNaN(n) ? -1 : n, at: 0 };
+        return null;
+    } catch(e) {}
+    return null;
+}
+
+// catalogCountFromDisk — numero di item del catalogo su disco
+// senza parsare il file. -1 se assente/stale.
+function catalogCountFromDisk(kind) {
+    var s = catalogSidecar(kind);
+    return (s && s.n >= 0) ? s.n : -1;
+}
+
+function catalogFromDisk(kind) {
+    try {
+        // sidecar con timestamp esplicitamente scaduto -> niente
+        // parse di decine di MB solo per scoprire che e' stale
+        var s = catalogSidecar(kind);
+        if(s && s.at &&
+           (Math.floor(Date.now() / 1000) - s.at) >= CATALOG_TTL)
+            return undefined;
+        var raw = require('fs').readFileSync(catalogFile(kind));
+        var txt = (typeof TextDecoder == 'function') ?
+            new TextDecoder().decode(raw) : String(raw);
+        var o = JSON.parse(txt);
+        if(!o || o.v != 1 || o.src != catalogSrc() || !o.l)
+            return undefined;
+        if(Math.floor(Date.now() / 1000) - o.at >= CATALOG_TTL)
+            return undefined;
+        return o.l;
+    } catch(e) {}
+    return undefined;
+}
+
+// liveCatIndexLookup — cat_id di un canale dal sidecar .idx
+// (pochi KB) invece del parse del catalogo. null se assente.
+function liveCatIndexLookup(id) {
+    try {
+        var raw = require('fs').readFileSync(catalogFile('live') + '.idx');
+        var txt = (typeof TextDecoder == 'function') ?
+            new TextDecoder().decode(raw) : String(raw);
+        var o = JSON.parse(txt);
+        if(!o || o.v != 1 || o.src != catalogSrc() || !o.m)
+            return null;
+        var c = o.m[String(id)];
+        return (c === undefined) ? null : c;
+    } catch(e) {}
+    return null;
+}
+
+function catalogDrop(kind) {
+    try {
+        // niente unlinkSync nel modulo fs: un payload invalido
+        // (v != 1) viene scartato da catalogFromDisk
+        require('fs').writeFileSync(catalogFile(kind), '{}');
+    } catch(e) {}
+}
+
+function catalogDropAll() {
+    catalogDrop('live');
+    catalogDrop('vod');
+    catalogDrop('series');
+}
+
+
+/*
  *  EPG guide — XMLTV scaricato una volta, tenuto in memoria e su
  *  disco (epg.xml) fino alla scadenza del TTL.
  */
@@ -486,8 +668,12 @@ var guideLoading = false;
 var guideCallbacks = [];
 var epgStore = store.create('epg');
 
-// Preferiti : store persistente url -> 1
+// Preferiti : store persistente url -> 1 (proxy kvstore, NON
+// enumerabile — i for..in itererebbero le prop interne)
 var favStore = store.create('favorites');
+// lista parallela enumerabile [{u,id,c,e,t,i}] — le viste
+// Preferiti/Recenti si costruiscono da qui senza il catalogo
+var favListStore = store.create('favlist');
 
 // Stato sessione: ultimo canale visto, canali/gruppi nascosti.
 // Lo store e' un proxy chiave→valore senza enumerazione: le
@@ -595,6 +781,8 @@ var zapPage = null;
 function childByName(dir, name, max) {
     for(var i = 0; i < max; i++) {
         var ch = prop.getChild(dir, i);
+        // GetChildren e' uno slice contiguo: il primo null e' la
+        // fine della lista (niente buchi di indice)
         if(!ch) return null;
         if(prop.getName(ch) == name) return ch;
     }
@@ -616,6 +804,84 @@ function currentPageUrl() {
     if(!cp) return null;
     var u = childByName(cp, 'url', 128);
     return u ? String(prop.makeProp(u)) : null;
+}
+
+function liveTransportUrl(url) {
+    var u = String(url || '');
+    if(cfg.plType != 'xtream' || !u) return u;
+    var ext = cfg.liveExt;
+    try {
+        if(!ext || ext == 'auto') {
+            var a = api();
+            ext = a && a.liveExtension ? a.liveExtension() : 'm3u8';
+        }
+    } catch(e) {
+        ext = 'm3u8';
+    }
+    if(ext != 'm3u8' && ext != 'ts') return u;
+    return u.replace(/(\/live\/[^/?#]+\/[^/?#]+\/\d+)\.(?:m3u8|ts)([?#].*)?$/i,
+                     '$1.' + ext + '$2');
+}
+
+function livePlaybackLifecycle(page) {
+    var myUrl = String(page.root.url);
+    var heldZap = null;
+    var disposed = false;
+    var navSub = null;
+    var pageSub = null;
+    var pages = childByName(prop.global.navigators.current, 'pages', 64);
+    if(!pages) throw new Error('Live navigator pages unavailable');
+
+    function dispose() {
+        if(disposed) return;
+        disposed = true;
+        heldZap = null;
+        if(navSub) { navSub.destroy(); navSub = null; }
+        if(pageSub) { pageSub.destroy(); pageSub = null; }
+    }
+
+    function sync() {
+        if(disposed) return;
+        if(prop.isZombie(page.root)) { dispose(); return; }
+        var m = page.model;
+        if(currentPageUrl() == myUrl) {
+            if(heldZap !== null) {
+                var restore = heldZap;
+                heldZap = null;
+                m.zapurl = restore;
+            }
+        } else {
+            var z = prop.getValue(m.zapurl);
+            if(typeof z == 'string' && z) {
+                heldZap = z;
+                m.zapurl = '';
+            }
+        }
+    }
+
+    navSub = prop.subscribe(pages, function(type) {
+        if(type == 'selectchild') sync();
+        else if(type == 'destroyed') { navSub = null; dispose(); }
+    }, { autoDestroy: true, noInitialUpdate: true });
+    pageSub = prop.subscribe(page.root, function(type) {
+        if(type == 'destroyed') { pageSub = null; dispose(); }
+    }, { autoDestroy: true, noInitialUpdate: true });
+    sync();
+
+    return {
+        set: function(url) {
+            if(disposed) return;
+            if(prop.isZombie(page.root)) { dispose(); return; }
+            if(currentPageUrl() == myUrl) {
+                heldZap = null;
+                page.model.zapurl = url;
+            } else {
+                heldZap = url || null;
+                var z = prop.getValue(page.model.zapurl);
+                if(typeof z == 'string' && z) page.model.zapurl = '';
+            }
+        }
+    };
 }
 
 prop.subscribe(prop.global.eventSink, function(type, val) {
@@ -779,9 +1045,9 @@ function canOrderItems(kind, cat) {
  *  Rinomina canali — s.otitle conserva il nome originale (usato
  *  per il matching EPG), s.title e' il nome mostrato.
  */
-function applyRename(s) {
+function applyRename(s, m) {
     if(s.otitle === undefined) s.otitle = s.title;
-    var m = renameStore.map || {};
+    if(m === undefined) m = renameStore.map || {};
     s.title = m[s.source.url] || s.otitle;
 }
 
@@ -1045,6 +1311,10 @@ function restoreNow() {
                 fs.writeFileSync(Core.storagePath + '/store/favorites',
                                  JSON.stringify(favs));
             } catch(e3) {}
+            // favlist ricostruita allo store dei preferiti al
+            // prossimo accesso (migrazione filtrata)
+            try { favListStore.mig = 0; favListStore.list = []; }
+            catch(e5) {}
         }
 
         resetSession();
@@ -1062,8 +1332,13 @@ function restoreNow() {
  */
 function exportFavoritesM3U() {
 
-    liveStreams(function(live) { liveCats(function(cats) { try {
-        live = live || [];
+    // preferiti dalla vista "fav" dello store: niente fetch del
+    // catalogo intero (entry arricchite; le legacy si risolvono
+    // con la scansione filtrata dentro liveStoreList+loader —
+    // qui i campi mancanti restano vuoti, l'export resta utile)
+    var sl = liveStoreList('fav');
+    var live = sl.list;
+    liveCats(function(cats) { try {
         cats = cats || [];
         var catName = {};
         for(var ci = 0; ci < cats.length; ci++)
@@ -1095,7 +1370,7 @@ function exportFavoritesM3U() {
                      tr('canali') + '): ' + out, 6);
     } catch(e) {
         popup.notify(tr('Esportazione fallita') + ': ' + e, 4);
-    } }); });
+    } });
 }
 
 
@@ -1105,7 +1380,7 @@ function exportFavoritesM3U() {
 var histStore = store.create('history');
 var HIST_MAX = 50;
 
-function histAdd(title, icon, playUrl, kind) {
+function histAdd(title, icon, playUrl, kind, extra) {
 
     var list = histStore.list || [];
     // dedup sulla stessa URL
@@ -1113,7 +1388,13 @@ function histAdd(title, icon, playUrl, kind) {
     for(var i = 0; i < list.length; i++)
         if(list[i].u != playUrl) out.push(list[i]);
 
-    out.unshift({ t: title, i: icon || '', u: playUrl, k: kind });
+    var e = { t: title, i: icon || '', u: playUrl, k: kind };
+    // metadati opzionali (id stream, categoria, epgid) — la
+    // vista Recenti si ricostruisce dallo store senza fetch
+    if(kind == 'live' && extra) {
+        e.id = extra.id; e.c = extra.c; e.e = extra.e || '';
+    }
+    out.unshift(e);
     if(out.length > HIST_MAX) out.length = HIST_MAX;
     histStore.list = out;
 }
@@ -1137,7 +1418,7 @@ function flushDeb() {
         var hs = debHist;
         debHist = [];
         for(var i = 0; i < hs.length; i++)
-            histAdd(hs[i].t, hs[i].i, hs[i].u, hs[i].k);
+            histAdd(hs[i].t, hs[i].i, hs[i].u, hs[i].k, hs[i].x);
     } catch(e) {}
 }
 
@@ -1146,8 +1427,8 @@ function uiSetDeb(k, v) {
     if(!debFlushRes) debFlushRes = setTimeout(flushDeb, 4000);
 }
 
-function histAddDeb(title, icon, playUrl, kind) {
-    debHist.push({ t: title, i: icon || '', u: playUrl, k: kind });
+function histAddDeb(title, icon, playUrl, kind, extra) {
+    debHist.push({ t: title, i: icon || '', u: playUrl, k: kind, x: extra });
     if(!debFlushRes) debFlushRes = setTimeout(flushDeb, 4000);
 }
 
@@ -1288,22 +1569,23 @@ function ensureGuide(cb) {
 
         if(guideFresh()) { guideFinish(true); return; }
 
-        // warm parallelo del catalogo live: il filtro wantFor
-        // dell'ingest legge solo la cache — partire subito fa
-        // si' che arrivi prima del documento XMLTV
-        try { liveStreams(function() {}); } catch(e0) {}
-
         var now = Math.floor(Date.now() / 1000);
 
-        // disk cache — epg.json: JSON.parse, niente XML
-        if(epgStore.fetchedAt && (now - epgStore.fetchedAt) < cfg.epgTtlH * 3600 &&
-           epgStore.url == epgSourceUrl()) {
-            var okd = false;
-            try { okd = guideFromDisk(); } catch(e) {
-                console.log('xctv: epg disk load failed: ' + e);
+        // disk cache + fetch entrano in funzione solo se il gate
+        // li consente — il controllo dimensione viene PRIMA del
+        // parse di epg.json (decine di MB sul thread ES)
+        var diskAndFetch = function() {
+            if(epgStore.fetchedAt &&
+               (now - epgStore.fetchedAt) < cfg.epgTtlH * 3600 &&
+               epgStore.url == epgSourceUrl()) {
+                var okd = false;
+                try { okd = guideFromDisk(); } catch(e) {
+                    console.log('xctv: epg disk load failed: ' + e);
+                }
+                if(okd) { guideFinish(true); return; }
             }
-            if(okd) { guideFinish(true); return; }
-        }
+            doFetch();
+        };
 
         // network — fetch asincrona su task thread, callback a
         // download completato (preslice+parse sono CPU-bound e
@@ -1312,45 +1594,88 @@ function ensureGuide(cb) {
         var fin = function(body) {
             if(done) return;
             done = true;
-            // ingest solo quando il catalogo live e' in cache:
-            // serve a collectChannelNames per il filtro wantFor.
-            // Il warm e' partito in parallelo al download — di
-            // norma questo callback e' immediato.
-            liveStreams(function() {
-                var ok = false;
-                try { ok = guideIngest(body, true); } catch(e) {
-                    console.log('xctv: EPG ingest failed: ' + e);
-                }
-                guideFinish(ok);
-            });
+            // collectChannelNames usa cacheGet('livestreams') —
+            // assente sui cataloghi per-categoria, il filtro
+            // wantFor resta vuoto e la guida ingestisce tutto
+            var ok = false;
+            try { ok = guideIngest(body, true); } catch(e) {
+                console.log('xctv: EPG ingest failed: ' + e);
+            }
+            guideFinish(ok);
         };
 
-        try {
-            if(cfg.epgUrl) {
-                require('movian/http')
-                    .request(cfg.epgUrl, { method: 'GET', compression: true,
-                                           connectTimeout: 5000,
-                                           readTimeout: 120000,
-                                           headers: { 'User-Agent': 'movian-go' } },
-                             function(err, res) {
-                        var body = false;
-                        try {
-                            if(!err && res) {
-                                body = res.toString();
-                                if(body.indexOf('<') == -1) body = false;
-                            }
-                        } catch(e) { body = false; }
-                        fin(body);
-                    });
-            } else {
-                api().getEpgAsync(fin);
+        var doFetch = function() {
+            try {
+                if(cfg.epgUrl) {
+                    require('movian/http')
+                        .request(cfg.epgUrl, { method: 'GET', compression: true,
+                                               connectTimeout: 5000,
+                                               readTimeout: 120000,
+                                               headers: { 'User-Agent': 'movian-go' } },
+                                 function(err, res) {
+                            var body = false;
+                            try {
+                                if(!err && res) {
+                                    body = res.toString();
+                                    if(body.indexOf('<') == -1) body = false;
+                                }
+                            } catch(e) { body = false; }
+                            fin(body);
+                        });
+                } else {
+                    api().getEpgAsync(fin);
+                }
+            } catch(e) {
+                console.log('xctv: EPG fetch failed: ' + e);
+                fin(false);
             }
-        } catch(e) {
-            console.log('xctv: EPG fetch failed: ' + e);
-            fin(false);
-        }
+        };
+
+        // La dimensione del catalogo decide se il documento XMLTV
+        // bulk e' scaricabile: su pannelli da decine di migliaia
+        // di canali xmltv.php pesa centinaia di MB decompressi e
+        // bufferizzarlo intero manda il processo in OOM sui box
+        // da ~1GB (misurato ~500MB di picco). Oltre la soglia il
+        // download si salta: la pagina ricade sul fallback
+        // get_short_epg per canale (coda bounded, 4 in volo).
+        // Il gate NON deve materializzare il catalogo: cache e
+        // disco danno la dimensione reale; senza catalogo si usa
+        // il numero di categorie (gia' in cache per il rail) —
+        // tanti gruppi = lista enorme. Prima liveStreams() qui
+        // scaricava 437 categorie intere SOLO per il controllo.
+        var gate = function(n) {
+            if(n > BULK_EPG_MAX) {
+                console.log('xctv: catalogo grande (' + n +
+                    ') — niente XMLTV bulk, EPG per-canale');
+                guideFinish(false);
+                return;
+            }
+            diskAndFetch();
+        };
+        // il conteggio arriva dal sidecar .n (10 byte) o dalla
+        // cache calda — MAI dal parse del catalogo intero su disco
+        var cl = cacheGet('livestreams');
+        if(cl) { gate(cl.length); return; }
+        var cn = catalogCountFromDisk('live');
+        if(cn >= 0) { gate(cn); return; }
+        liveCats(function(cats) {
+            // categorie non disponibili = dimensione ignota: NON
+            // scaricare il bulk — su cataloghi grandi sarebbe il
+            // caso OOM. Il fallback per-canale copre l'EPG.
+            if(!cats) { guideFinish(false); return; }
+            try { gate(cats.length * BULK_EPG_CATMULT); }
+            catch(e) { guideFinish(false); }
+        });
     }, 0);
 }
+
+
+// Oltre questa dimensione del catalogo live il documento XMLTV
+// completo non viene scaricato — vedi ensureGuide. Quando il
+// catalogo non e' materializzato la stima usa #categorie ×
+// CATMULT (canali medi per gruppo su un pannello tipico).
+var BULK_EPG_MAX = 6000;
+var BULK_EPG_CATMULT = 64;
 
 
 function epgSourceUrl() {
@@ -1627,16 +1952,32 @@ function shortEpgKick() {
  *  Senza guida XMLTV il fallback get_short_epg e' limitato ai
  *  primi canali per non fare centinaia di richieste HTTP.
  */
+/*
+ *  Senza guida XMLTV, per ogni canale si accoda una richiesta
+ *  get_short_epg — su chunk da 160-240 righe erano ~128 HTTP +
+ *  migliaia di prop-op a ogni cambio gruppo, ed e' quello che
+ *  rendeva i click successivi lentissimi (thread ES saturo).
+ *  TiviMate/OttPlayer mostrano l'EPG solo delle righe visibili:
+ *  qui si riempiono subito i primi SHORT_INIT canali del chunk,
+ *  il resto arriva via selectchild quando la riga prende focus
+ *  (fillFocusedEpg in hookZap).
+ */
+var SHORT_INIT = 16;
+
 function fillPageEpg(items, streams, fullday) {
 
     ensureGuide(function(ok) {
 
+        var hasGuide = guideFresh();
+        var n = 0;
         for(var i = 0; i < items.length; i++) {
             try {
                 if(prop.isZombie(items[i].root)) return;
+                if(!hasGuide && n >= SHORT_INIT) break;
                 // con guida pronta e' lookup in memoria; senza
                 // guida fillChannelEpg accoda get_short_epg async
                 fillChannelEpg(items[i], streams[i], fullday, true);
+                n++;
             } catch(e) {}
         }
     });
@@ -1679,16 +2020,223 @@ function liveCats(cb) {
 function liveStreams(cb) {
     var w = cacheGet('livestreams');
     if(w) { cb(w); return; }
+    // disco: sync gia' fatta — niente refetch del catalogo intero
+    var disk = catalogFromDisk('live');
+    if(disk) { cacheSet('livestreams', disk); cb(disk); return; }
     var a = api();
     var fin = function(l) {
-        if(l) cacheSet('livestreams', l);
+        if(l) { cacheSet('livestreams', l); catalogToDisk('live', l); }
         cb(l);
     };
-    if(a.getLiveStreamsAsync) a.getLiveStreamsAsync(fin);
-    else fin(a.getLiveStreams());
+    // 'Tutti i canali' opt-in o meno, il catalogo intero passa
+    // dallo scan per-categoria (bounded) invece che dal fetch
+    // unico get_live_streams — vedi wholeByCats
+    wholeByCats('live', a, null, fin);
 }
 
+
+/*
+ *  liveById — uno stream per id senza materializzare il
+ *  catalogo: cache/disco se presente, altrimenti scansione
+ *  per-categoria filtrata sull'id (scheda catch-up, palinsesto,
+ *  registrazioni). cb(stream|null).
+ */
+function liveById(id, cb) {
+
+    var w = cacheGet('livestreams');
+    if(w) {
+        for(var i = 0; i < w.length; i++)
+            if(String(w[i].id) == String(id)) { cb(w[i]); return; }
+        cb(null); return;
+    }
+
+    var scanCat = function(l) {
+        if(l)
+            for(var i = 0; i < l.length; i++)
+                if(String(l[i].id) == String(id)) return l[i];
+        return null;
+    };
+
+    // indice id->cat su disco (pochi KB): basta una fetch
+    // per-categoria — niente parse del catalogo intero ne'
+    // scansione di tutte le categorie
+    var cat = liveCatIndexLookup(id);
+    if(cat != null) {
+        var warm = cacheGet('live:' + cat);
+        if(warm) { cb(scanCat(warm)); return; }
+        var fin = function(l) {
+            if(l) cacheSet('live:' + cat, l);
+            var s = scanCat(l);
+            if(s) { cb(s); return; }
+            diskFallback();
+        };
+        try {
+            var a = api();
+            if(a.getLiveStreamsByCategoryIdAsync) {
+                a.getLiveStreamsByCategoryIdAsync(cat, fin);
+                return;
+            }
+            fin(a.getLiveStreamsByCategoryId(cat));
+            return;
+        } catch(e) {}
+    }
+    diskFallback();
+
+    function diskFallback() {
+        var w2 = catalogFromDisk('live');
+        if(w2) {
+            cacheSet('livestreams', w2);
+            cb(scanCat(w2)); return;
+        }
+        wholeByCats('live', api(), {
+            limit: 1,
+            keep: function(it) { return String(it.id) == String(id); }
+        }, function(l) { cb(l && l.length ? l[0] : null); });
+    }
+}
+
+
+/*
+ *  wholeStreams — catalogo intero vod/series con lo stesso giro
+ *  del live: cache in memoria -> disco -> fetch async. I cataloghi
+ *  VOD arrivano a 100k+ item: senza il disco ogni apertura di
+ *  "Tutti i film"/"Tutte le serie" rifarebbe download+parse da
+ *  decine di MB (e sui box da 1GB era l'altro OOM dopo il live).
+ */
+function wholeStreams(kind, cb) {
+
+    var key = (kind == 'series') ? 'series' : 'vodstreams';
+    var w = cacheGet(key);
+    if(w) { cb(w); return; }
+
+    var disk = catalogFromDisk(kind);
+    if(disk) { cacheSet(key, disk); cb(disk); return; }
+
+    var a = api();
+    var fin = function(l) {
+        if(l) { cacheSet(key, l); catalogToDisk(kind, l); }
+        cb(l);
+    };
+    // fetch per-categoria: n piccole risposte invece di un unico
+    // JSON mostruoso — sui cataloghi da 50k+ il body del fetch
+    // totale + l'array mappato sforano la RAM del box anche con
+    // lo scan incrementale (misurato 543MB -> kill). Le categorie
+    // nascoste non si scaricano nemmeno.
+    wholeByCats(kind, a, null, fin);
+}
+
+
+/*
+ *  wholeByCats — ricostruisce il catalogo 'all' concatenando le
+ *  fetch per-categoria (4 in volo): il provider risponde con
+ *  liste piccole che si accumulano gia' slim. Ordine = ordine
+ *  categorie (come TiviMate). Dedup per id: gli item
+ *  multi-categoria arriverebbero duplicati.
+ *
+ *  opts.keep(it): filtro durante l'accumulo — usato dalle viste
+ *  derivate (Preferiti, ricerca) per tenere solo i match, cosi'
+ *  il risultato resta piccolo anche a catalogo enorme.
+ *  opts.limit: smette di alimentare la coda a N risultati.
+ *  opts.queue: lista esplicita di category_id (senza ->
+ *  tutte le categorie visibili del provider).
+ */
+function wholeByCats(kind, a, opts, cb) {
+
+    opts = opts || {};
+    var isLive = (kind == 'live');
+    var isSeries = (kind == 'series');
+    var catsKey = isLive ? 'livecats' : (isSeries ? 'seriescats' : 'vodcats');
+    var CONC = 4;
+
+    var finCats = function(cats) {
+        if(!cats || !cats.length) { cb(false); return; }
+
+        // salta del tutto le categorie nascoste/bloccate:
+        // non si scaricano e non occupano RAM
+        var bm = opts.queue ? {} : blockedCatMap(kind, cats);
+        var queue = [];
+        if(opts.queue) {
+            for(var q = 0; q < opts.queue.length; q++) queue.push(opts.queue[q]);
+        } else {
+            for(var i = 0; i < cats.length; i++)
+                if(cats[i].id != null && cats[i].id !== '' &&
+                   !bm[String(cats[i].id)])
+                    queue.push(cats[i].id);
+        }
+
+        if(!queue.length) { cb([]); return; }
+
+        var out = [], seen = {}, qi = 0, inflight = 0, failed = 0;
+        var byCat = isLive ? a.getLiveStreamsByCategoryIdAsync :
+                    isSeries ? a.getSeriesByCategoryIdAsync :
+                               a.getVodStreamsByCategoryIdAsync;
+        if(!byCat) { cb(false); return; }
+
+        function step() {
+            while(inflight < CONC && qi < queue.length &&
+                  !(opts.limit && out.length >= opts.limit)) {
+                var cid = queue[qi++];
+                inflight++;
+                byCat.call(a, cid, function(l) {
+                    inflight--;
+                    if(l) {
+                        for(var j = 0; j < l.length; j++) {
+                            var it = l[j];
+                            if(seen[it.id]) continue;
+                            if(opts.keep && !opts.keep(it)) continue;
+                            seen[it.id] = 1;
+                            out.push(it);
+                        }
+                    } else {
+                        failed++;
+                    }
+                    if(qi < queue.length &&
+                       !(opts.limit && out.length >= opts.limit)) {
+                        step(); return;
+                    }
+                    if(inflight == 0)
+                        cb(out.length || failed < queue.length ? out : false);
+                });
+            }
+        }
+        step();
+    };
+
+    var warm = cacheGet(catsKey);
+    if(warm) { finCats(warm); return; }
+    try {
+        if(isLive) {
+            if(a.getLiveCategoriesAsync)
+                a.getLiveCategoriesAsync(function(c) {
+                    if(c) cacheSet(catsKey, c); finCats(c); });
+            else finCats(a.getLiveCategories());
+        } else if(isSeries) {
+            if(a.getSeriesCategoriesAsync)
+                a.getSeriesCategoriesAsync(function(c) {
+                    if(c) cacheSet(catsKey, c); finCats(c); });
+            else finCats(a.getSeriesCategories());
+        } else {
+            if(a.getVodCategoriesAsync)
+                a.getVodCategoriesAsync(function(c) {
+                    if(c) cacheSet(catsKey, c); finCats(c); });
+            else finCats(a.getVodCategories());
+        }
+    } catch(e) { finCats(false); }
+}
+
+
 function fillLiveGroups(page, groups, activeCat, cats) {
+
+    // abort dei railFill pendenti PRIMA di tutto: un chunk di
+    // una fill vecchia creerebbe nodi fantasma dopo la refill
+    var gen = (page.__railGen = (page.__railGen || 0) + 1);
+
+    // teardown incrementale del rail: prop.deleteChilds era un
+    // blocco sincrono (freeze al refill) — i root vecchi muoiono
+    // a slice in background. __railNodes traccia tutti i nodi
+    // creati (anche dai chunk tardivi): riferimenti, non nomi.
+    killRootsIncr(page, page.__railNodes);
+    page.__railNodes = [];
 
     // groups: array condiviso hookZap <-> liveLoader, mutato in
     // place — una refill async (categorie arrivate dopo)
@@ -1704,7 +2252,10 @@ function fillLiveGroups(page, groups, activeCat, cats) {
     if(hasRecent)
         groups.push({ cat: 'recent', title: tr('Recenti') });
 
-    groups.push({ cat: null, title: tr('Tutti i canali') });
+    // "Tutti i canali" materializza il catalogo intero: opt-in
+    // via Impostazioni (rischio OOM su liste grandi)
+    if(cfg.showAll)
+        groups.push({ cat: null, title: tr('Tutti i canali') });
 
     if(cats)
         for(var i = 0; i < cats.length; i++) {
@@ -1732,8 +2283,16 @@ function fillLiveGroups(page, groups, activeCat, cats) {
         groups = sorted;
     }
 
-    prop.deleteChilds(page.model.groups);
-    for(var i = 0; i < groups.length; i++) {
+    // nodi del rail creati a rate: con centinaia di categorie il
+    // ciclo completo (createRoot + setParent + clone della view)
+    // teneva il thread ES impegnato secondi all'apertura. I primi
+    // RAIL_INIT compaiono subito, il resto arriva via setTimeout.
+    // page.__railCat tiene la categoria corrente: un nodo tardivo
+    // eredita il sel giusto anche se il click e' gia' avvenuto.
+    // page.__railGen (gia' incrementato in cima) invalida i
+    // chunk di una fill precedente.
+    page.__railCat = activeCat;
+    var mkNode = function(i) {
         var n = prop.createRoot();
         n.metadata.title = groups[i].title;
         // gli pseudo-gruppi (Preferiti/Recenti/Tutti) non si
@@ -1741,9 +2300,25 @@ function fillLiveGroups(page, groups, activeCat, cats) {
         n.metadata.canhide = (groups[i].cat != 'fav' &&
             groups[i].cat != 'recent' && groups[i].cat !== null) ? 1 : 0;
         n.xidx = i;
-        n.sel = (groups[i].cat == activeCat) ? 1 : 0;
+        n.sel = (groups[i].cat == page.__railCat) ? 1 : 0;
         groups[i].node = n;
+        page.__railNodes.push(n);
         prop.setParent(n, page.model.groups);
+    };
+    var RAIL_INIT = 48;
+    var ni = 0;
+    var ne = Math.min(RAIL_INIT, groups.length);
+    for(; ni < ne; ni++) mkNode(ni);
+    if(ni < groups.length) {
+        var railFill = function() {
+            if(page.__railGen != gen || prop.isZombie(page.root))
+                return;
+            var e2 = Math.min(ni + 64, groups.length);
+            for(; ni < e2; ni++) mkNode(ni);
+            if(ni < groups.length)
+                setTimeout(railFill, 0);
+        };
+        setTimeout(railFill, 0);
     }
     return groups;
 }
@@ -1868,12 +2443,19 @@ function cycleValue(setProp, cfgKey, values, labels, cur, multiopt) {
 /*
  *  fillSettings — opzioni della sezione `sec` in model.nodes.
  *  I nodi restano vivi fra i refresh (riuso via mappa id->node).
+ *  fresh=true (navigazione utente) resetta settingsTried: i fetch
+ *  async si ritentano entrando di nuovo nella sezione, MAI in loop
+ *  dentro la stessa vista (un cb(false) farebbe refill->miss->
+ *  refetch->refill all'infinito = freeze/ANR su Android).
  */
-function fillSettings(page, sec, nodes) {
+var settingsTried = {};
+
+function fillSettings(page, sec, nodes, fresh) {
 
     prop.deleteChilds(page.model.nodes);
     for(var id in nodes) delete nodes[id];
     nodes.__sec = sec;
+    if(fresh) settingsTried = {};
 
     function add(meta) {
         var n = optRow(page, meta);
@@ -2084,19 +2666,25 @@ function fillSettings(page, sec, nodes) {
             for(var si = 0; si < catsSecs.length; si++) {
                 var lcats = cacheGet(catsSecs[si][1]);
                 if(!lcats) {
-                    missing++;
-                    (function(cs) {
-                        cs[3](function(cats) {
-                            if(cats) cacheSet(cs[1], cats);
-                            // ri-riempi solo se la sezione e'
-                            // ancora quella genitori
-                            try {
-                                if(!prop.isZombie(page.root) &&
-                                   nodes.__sec == 'parental')
-                                    fillSettings(page, 'parental', nodes);
-                            } catch(e2) {}
-                        });
-                    })(catsSecs[si]);
+                    // un solo fetch per chiave per visita: su
+                    // fallimento il refill mostra la sezione senza
+                    // categorie invece di rilanciare la request
+                    if(!settingsTried[catsSecs[si][1]]) {
+                        settingsTried[catsSecs[si][1]] = 1;
+                        missing++;
+                        (function(cs) {
+                            cs[3](function(cats) {
+                                if(cats) cacheSet(cs[1], cats);
+                                // ri-riempi solo se la sezione e'
+                                // ancora quella genitori
+                                try {
+                                    if(!prop.isZombie(page.root) &&
+                                       nodes.__sec == 'parental')
+                                        fillSettings(page, 'parental', nodes);
+                                } catch(e2) {}
+                            });
+                        })(catsSecs[si]);
+                    }
                     continue;
                 }
                 for(var ci = 0; ci < lcats.length; ci++) {
@@ -2132,7 +2720,8 @@ function fillSettings(page, sec, nodes) {
     case 'info':
 
         var user = infoStoreCache.user || null;
-        if(!user) {
+        if(!user && !settingsTried.info) {
+            settingsTried.info = 1;
             // fetch async + ri-riempi se la sezione e' ancora info
             try {
                 var a0 = api();
@@ -2496,7 +3085,7 @@ function hookSettingsPage(page, sections, initial) {
     function load(idx) {
         for(var g = 0; g < groups.length; g++)
             groups[g].node.sel = (g == idx) ? 1 : 0;
-        fillSettings(page, groups[idx].id, nodes);
+        fillSettings(page, groups[idx].id, nodes, true);
     }
 
     prop.subscribe(page.model.eventSink, function(type, val) {
@@ -2596,9 +3185,160 @@ function saveChanOrder(ordKey, streams) {
     ordStore.map = m;
 }
 
+/*
+ *  _liveIdFromUrl — stream_id Xtream dal path /live/u/p/12345.ts
+ *  (usato per entry di store legacy senza metadati).
+ */
+function _liveIdFromUrl(u) {
+    var m = /\/live\/[^\/]+\/[^\/]+\/(\d+)\./.exec(u || '');
+    return m ? parseInt(m[1], 10) : 0;
+}
+
+function _liveNameFromUrl(u) {
+    try {
+        var s = decodeURIComponent(u);
+        var seg = s.split('/').pop() || '';
+        return seg.replace(/\.\w+$/, '') || s;
+    } catch(e) { return u; }
+}
+
+/*
+ *  firstBrowseCat — prima categoria reale visibile (non nascosta
+ *  / non bloccata): destinazione di fallback quando la vista
+ *  aggregata "Tutti" e' disattivata dalle impostazioni.
+ */
+function firstBrowseCat(kind, cats) {
+
+    var bm = blockedCatMap(kind, cats);
+    if(cats)
+        for(var i = 0; i < cats.length; i++)
+            if(cats[i].id != null && !bm[String(cats[i].id)])
+                return cats[i].id;
+    return hasFavItems(kind) ? 'fav' : 'history';
+}
+
+/*
+ *  liveStoreList — lista per le viste 'fav'/'recent' costruita
+ *  dagli store, senza toccare il catalogo: le entry arricchite
+ *  (toggleFav/histAdd salvano id+cat+epgid) diventano stream
+ *  completi. Le entry legacy favStore[url]==1 non enumerabili
+ *  non vengono migrate — nessuna scansione del catalogo.
+ */
+function liveStoreList(cat) {
+
+    var list = [];
+
+    function mk(u, meta) {
+        return {
+            id: (meta && meta.id != null) ? meta.id : _liveIdFromUrl(u),
+            cat_id: meta ? meta.c : undefined,
+            epgid: (meta && meta.e) || '',
+            title: (meta && meta.t) || _liveNameFromUrl(u),
+            icon: (meta && meta.i) || '',
+            source: { url: u }
+        };
+    }
+
+    // entrambe le sorgenti sono array enumerabili: favlist viene
+    // scritto da toggleFav/migrazione, history da histAdd — i
+    // kvstore non si iterano, quindi niente for..in su favStore
+    var src = cat == 'fav' ? (favListStore.list || [])
+                         : (histStore.list || []);
+    for(var i = 0; i < src.length; i++) {
+        var h = src[i];
+        if(cat != 'fav' && h.k != 'live') continue;
+        list.push(mk(h.u, h));
+    }
+    return { list: list };
+}
+
+/*
+ *  killRootsIncr — distruzione incrementale di root prop: slice
+ *  da 24 per tick, cede il thread ES tra una slice e l'altra
+ *  cosi' il click nuovo non aspetta la distruzione della lista
+ *  vecchia (prop.deleteChilds era UN blocco sincrono — con liste
+ *  grandi secondi di freeze). Si usano riferimenti, non nomi:
+ *  i nodi appesi dalla build nuova non sono mai toccati.
+ */
+function killRootsIncr(page, roots) {
+    if(!roots || !roots.length) return;
+    var q = roots;
+    var tick = function() {
+        try {
+            if(prop.isZombie(page.root)) return;
+            var n = 0;
+            while(q.length && n++ < 24) {
+                try { prop.destroy(q.shift()); } catch(e) {}
+            }
+            if(q.length) setTimeout(tick, 0);
+        } catch(e) {}
+    };
+    setTimeout(tick, 0);
+}
+
+/*
+ *  browseKill — variante per le pagine browse (vod/series):
+ *  gli item appesi vengono tracciati in page.__browseItems e i
+ *  separatori in page.__browseStrays — qui si collezionano i
+ *  root e parte la distruzione incrementale.
+ */
+function browseKill(page) {
+    var kill = [];
+    var bi = page.__browseItems;
+    if(bi)
+        for(var i = 0; i < bi.length; i++)
+            if(bi[i] && bi[i].root) kill.push(bi[i].root);
+    var bs = page.__browseStrays;
+    if(bs)
+        for(var j = 0; j < bs.length; j++)
+            if(bs[j] && bs[j].root) kill.push(bs[j].root);
+    page.__browseItems = [];
+    page.__browseStrays = [];
+    killRootsIncr(page, kill);
+}
+
 function liveLoader(page, groups) {
 
-    return function(cat, done) {
+    return function catLoad(cat, done) {
+
+        // contatore di sequenza: un fetch superato dal click su un
+        // altro gruppo non deve arrivare a build() — appenderebbe
+        // righe fantasma a model.nodes (mai tracciate in items,
+        // quindi mai distrutte) e ruberebbe page.paginator. E' la
+        // causa della "lista che resta quella di prima".
+        var mySeq = (catLoad.seq = (catLoad.seq || 0) + 1);
+        var stale = function() { return mySeq != catLoad.seq; };
+
+        // vista aggregata disattivata: l'ingresso senza gruppo
+        // atterra sulla prima categoria reale del rail. Se il rail
+        // non l'ha ancora (categorie in fetch async) si aspettano
+        // via liveCats — mai il catalogo intero.
+        if(cat == null && !cfg.showAll) {
+            var target = null;
+            for(var g0 = 0; g0 < groups.length; g0++) {
+                var c0 = groups[g0].cat;
+                if(c0 != null && c0 != 'fav' && c0 != 'recent') {
+                    target = c0; break;
+                }
+            }
+            if(target == null) {
+                liveCats(function(cats) {
+                    // un click piu' recente ha gia' preso la
+                    // pagina: il fallback non deve superarlo
+                    if(stale()) return;
+                    var t = null;
+                    if(cats)
+                        for(var ci = 0; ci < cats.length; ci++)
+                            if(cats[ci].id != null &&
+                               !isHiddenGroup(cats[ci].id)) {
+                                t = cats[ci].id; break;
+                            }
+                    catLoad(t || 'fav', done);
+                });
+                return;
+            }
+            cat = target;
+        }
 
         var ordKey = (cat == null) ? '_all' : String(cat);
 
@@ -2653,7 +3393,12 @@ function liveLoader(page, groups) {
             applyChanOrder(live, ordKey);
             var nums = hidMap(numStore);
 
-        prop.deleteChilds(page.model.nodes);
+        // NIENTE prop.deleteChilds qui: i root della lista vecchia
+        // li distrugge il kill-loop a slice partito in load() —
+        // cancellare qui di nuovo in sincrono congelerebbe il
+        // thread ES per liste grandi. I separatori sono tracciati
+        // in page.__strays e muoiono nella stessa passata.
+        var t1 = Date.now();
 
         // appendItem + fillChannelEpg costano ~20 prop-op per
         // canale: con migliaia di canali e' il collo di bottiglia
@@ -2677,14 +3422,23 @@ function liveLoader(page, groups) {
             var chunkItems = [];
             var chunkStreams = [];
             // primo chunk piccolo: la pagina renderizza subito,
-            // i successivi sono piu' grandi e arrivano scrollando
-            var end = Math.min(pos + (first ? 40 : 160), live.length);
+            // i successivi sono piu' grandi e arrivano scrollando.
+            // 24/80: ogni riga costa prop-op sincrone sul thread
+            // ES — un primo chunk grosso ritarda il paint della
+            // lista dopo il click sul gruppo
+            var end = Math.min(pos + (first ? 24 : 80), live.length);
             first = false;
+
+            // le mappe kvstore si leggono UNA volta per chunk:
+            // st.map e' un getter del proxy (deserializza JSON) —
+            // per-riga sarebbe un parse ad item
+            var hidm = hidMap(hidChanStore);
+            var renm = renameStore.map || {};
 
             for(; pos < end; pos++) {
                 var s = live[pos];
-                if(isHiddenChan(s.source.url)) continue;
-                applyRename(s);
+                if(hidm[s.source.url]) continue;
+                applyRename(s, renm);
                 // xidx = posizione finale in streams[]: il push su
                 // streams avviene dopo il ciclo, va contato anche
                 // il chunk corrente altrimenti tutti gli xidx del
@@ -2696,7 +3450,7 @@ function liveLoader(page, groups) {
                 s.epgurl = plugin.id + ':chanepg:' +
                     encodeURIComponent(s.title) + ':' + s.id + ':' +
                     encodeURIComponent(s.epgid || s.otitle || s.title);
-                chunkItems.push(page.appendItem(plugin.id + ':play:' +
+                chunkItems.push(page.appendItem(plugin.id + ':playlive:' +
                     encodeURIComponent(s.title) + ':' +
                     encodeURIComponent(s.source.url), 'video', s));
                 chunkStreams.push(s);
@@ -2724,10 +3478,25 @@ function liveLoader(page, groups) {
         // wantmorechilds ottiene haveMore(false) — un riferimento
         // stale alla categoria precedente appenderebbe righe
         // sbagliate.
-        more();
-        page.paginator = more;
-        if(pos >= live.length)
+        if(!live.length) {
+            // gruppo vuoto (es. Preferiti senza elementi): deve
+            // restare una pagina "vuota" con messaggio, non un
+            // loader eterno. Il separatore va in __strays: lo
+            // distrugge il kill-loop del prossimo cambio gruppo.
+            (page.__strays = page.__strays || []).push(
+                page.appendPassiveItem('separator', '', {
+                    title: tr('Nessun elemento') }));
+            page.paginator = function() { return false; };
             prop.haveMore(page.model.nodes, false);
+        } else {
+            more();
+            if(cfg.debug)
+                console.log('xctv: build cat=' + cat + ' rows=' +
+                            (Date.now() - t1) + 'ms n=' + live.length);
+            page.paginator = more;
+            if(pos >= live.length)
+                prop.haveMore(page.model.nodes, false);
+        }
 
         return {
             streams: streams, items: items, title: title,
@@ -2758,21 +3527,54 @@ function liveLoader(page, groups) {
             };
         }   // end build
 
+        // 'recent': lista dalla cronologia arricchita — niente
+        // fetch del catalogo, sempre fresca (lo store cambia ad
+        // ogni zap, quindi niente cache)
+        if(cat == 'recent') {
+            if(done) done(build(liveStoreList(cat).list));
+            return;
+        }
+
+        // 'fav': solo i preferiti dell'utente, letti da
+        // favListStore — nessun fetch di rete. Una tantum, al
+        // primo accesso dopo l'upgrade, gira in background una
+        // scansione filtrata per recuperare i preferiti salvati
+        // col vecchio formato (favStore[url]==1, non enumerabili)
+        // e popolare favListStore coi metadati.
+        if(cat == 'fav') {
+            // solo preferiti marcati col toggle (favListStore) —
+            // niente scansione del catalogo, neanche una tantum:
+            // i vecchi preferiti in formato kvstore restano inerti
+            var sl = liveStoreList('fav').list;
+            if(done) done(build(sl));
+            return;
+        }
+
         // sorgente lista: cache calda -> riempimento sincrono;
         // altrimenti fetch async col loader visibile — niente
         // piu' _req bloccante sul click del gruppo
-        var whole = (cat == null || cat == 'fav' || cat == 'recent');
+        var whole = (cat == null);
         var key = whole ? 'livestreams' : 'live:' + cat;
         var warm = cacheGet(key);
         if(warm) { if(done) done(build(warm)); return; }
 
-        prop.deleteChilds(page.model.nodes);
+        // loader subito: i root vecchi li distrugge il kill-loop
+        // a slice partito in load() — si sovrappone alla fetch.
         page.model.loadingStatus = tr('Caricamento…');
         setLoading(page, true);
 
+        var tReq = Date.now();
         var fin = function(list) {
+            // drop del fetch superato PRIMA di build(): le righe
+            // appendute da una build non piu' corrente non sono
+            // tracciate e resterebbero visibili per sempre
+            if(stale()) return;
             try {
                 setLoading(page, false);
+                if(cfg.debug)
+                    console.log('xctv: fetch cat=' + cat + ' ' +
+                                (Date.now() - tReq) + 'ms items=' +
+                                (list ? list.length : list));
                 if(prop.isZombie(page.root)) return;
                 if(list) cacheSet(key, list);
                 if(done) done(list ? build(list) : null);
@@ -2783,8 +3585,10 @@ function liveLoader(page, groups) {
         try {
             var a = api();
             if(whole) {
-                if(a.getLiveStreamsAsync) a.getLiveStreamsAsync(fin);
-                else fin(a.getLiveStreams());
+                // 'Tutti i canali' e' opt-in (cfg.showAll): fetch
+                // per-categoria a memoria limitata invece del
+                // catalogo intero in un colpo
+                wholeByCats('live', a, null, fin);
             } else {
                 if(a.getLiveStreamsByCategoryIdAsync)
                     a.getLiveStreamsByCategoryIdAsync(cat, fin);
@@ -2945,6 +3749,13 @@ function stopRecording(quiet) {
 
 function toggleRecording(s) {
     if(rec) { stopRecording(); return; }
+    // una registrazione programmata e' gia' in corso: una seconda
+    // connessione fallirebbe comunque (max_connections) e
+    // aprirebbe due pump
+    if(schedRec) {
+        popup.notify(tr('Registrazione programmata in corso'), 3);
+        return;
+    }
     if(!s || !s.source || !s.source.url ||
        s.source.url.indexOf('http') != 0) {
         popup.notify(tr('Registrazione non disponibile su questo canale'), 3);
@@ -3138,6 +3949,27 @@ function toggleFav(s, item) {
     var u = s.source.url;
     var on = favStore[u] ? 0 : 1;
     favStore[u] = on;
+    // favlist: array enumerabile con i metadati dell'entry — la
+    // vista Preferiti si ricostruisce da qui senza scaricare il
+    // catalogo (i kvstore non sono iterabili via for..in)
+    try {
+        var fl = (favListStore.list || []).slice();
+        if(on) {
+            var rem = [];
+            for(var fi2 = 0; fi2 < fl.length; fi2++)
+                if(fl[fi2].u != u) rem.push(fl[fi2]);
+            rem.push({ u: u, id: s.id, c: s.cat_id,
+                       e: s.epgid || '',
+                       t: s.otitle || s.title, i: s.icon || '' });
+            fl = rem;
+        } else {
+            var keep = [];
+            for(var fi3 = 0; fi3 < fl.length; fi3++)
+                if(fl[fi3].u != u) keep.push(fl[fi3]);
+            fl = keep;
+        }
+        favListStore.list = fl;
+    } catch(e2) {}
     s.fav = on;
     if(item) {
         try { item.root.metadata.fav = on; } catch(e) {}
@@ -3157,6 +3989,7 @@ function toggleFav(s, item) {
  */
 function hookZap(page, groups, loader, initialCat) {
 
+    var playback = livePlaybackLifecycle(page);
     var cur = -1;
     var curUrl = null;
     var streams = [];
@@ -3166,6 +3999,7 @@ function hookZap(page, groups, loader, initialCat) {
     var curFind = null;   // cerca un url materializzando chunk
     var curTotal = 0;
     var unlockedGroups = {};
+    var lastZapEpg = 0;   // throttle get_short_epg su zapping rapido
 
     // opzioni d'aspetto/playback lette dalla view
     var m0 = page.model;
@@ -3224,9 +4058,10 @@ function hookZap(page, groups, loader, initialCat) {
         uiSetDeb('lastGroup', curCat);
         // cronologia "Recenti" — i canali live usano lo stesso
         // store della storia VOD con kind 'live'
-        try { histAddDeb(s.title, s.icon, s.source.url, 'live'); } catch(e) {}
+        try { histAddDeb(s.title, s.icon, s.source.url, 'live',
+                         { id: s.id, c: s.cat_id, e: s.epgid }); } catch(e) {}
 
-        var canon = plugin.id + ':play:' + encodeURIComponent(s.title) +
+        var canon = plugin.id + ':playlive:' + encodeURIComponent(s.title) +
                     ':' + encodeURIComponent(s.source.url);
         var m = page.model;
         m.zapidx = i;
@@ -3234,12 +4069,15 @@ function hookZap(page, groups, loader, initialCat) {
         m.zaptitle = s.title;
         m.zapicon = s.icon;
         m.zapcanon = canon;
-        m.zapurl = 'videoparams:' + JSON.stringify({
+        playback.set('videoparams:' + JSON.stringify({
             title: s.title,
             canonicalUrl: canon,
-            sources: [{ url: s.source.url }],
-            live: true
-        });
+            sources: [{ url: liveTransportUrl(s.source.url) }],
+            live: true,
+            // senza la sonda sottotitoli lo zap e' piu' rapido —
+            // come gia' fa la route :play: sugli URL /live/
+            no_subtitle_scan: true
+        }));
 
         var now = Math.floor(Date.now() / 1000);
         var evs = guideFresh() ?
@@ -3248,9 +4086,14 @@ function hookZap(page, groups, loader, initialCat) {
 
         if(!evs.length) {
             // async: lo zap non aspetta un RTT — il banner now/next
-            // si aggiorna quando la risposta arriva
+            // si aggiorna quando la risposta arriva. Throttle a
+            // ~300ms: CH± veloce non deve accodare una request
+            // per ogni canale attraversato (sopratutto con
+            // max_connections bassi)
             var zcanon = canon;
-            api().getShortEpgAsync(s.id, 4, function(aevs) {
+            var zid = s.id;
+            var fireEpg = function() {
+            api().getShortEpgAsync(zid, 4, function(aevs) {
                 try {
                     if(!aevs || !aevs.length) return;
                     if(String(m.zapcanon || '') != String(zcanon)) return;
@@ -3272,6 +4115,17 @@ function hookZap(page, groups, loader, initialCat) {
                     m.zapnextstop = n3 ? n3.stop : 0;
                 } catch(e) {}
             });
+            };
+            var dt = Date.now() - lastZapEpg;
+            lastZapEpg = Date.now();
+            if(dt < 300)
+                setTimeout(function() {
+                    if(String(m.zapcanon || '') != String(zcanon)) return;
+                    try { fireEpg(); } catch(e2) {}
+                }, 300);
+            else {
+                try { fireEpg(); } catch(e3) {}
+            }
         }
 
         var cur2 = null, nxt = null;
@@ -3297,13 +4151,73 @@ function hookZap(page, groups, loader, initialCat) {
     // Il loader consegna via callback (fetch async a cache
     // fredda): loadSeq scarta i load superati.
     var loadSeq = 0;
+    var selIdx = -1;
     function load(cat) {
 
+        // "Tutti i canali" disattivato dalle impostazioni: si
+        // apre la prima categoria reale del rail
+        if(cat == null && !cfg.showAll) {
+            for(var g0 = 0; g0 < groups.length; g0++) {
+                var c0 = groups[g0].cat;
+                if(c0 != null && c0 != 'fav' && c0 != 'recent') {
+                    cat = c0; break;
+                }
+            }
+        }
+
         var mySeq = ++loadSeq;
+        // drop immediato del lavoro del gruppo precedente: la coda
+        // short_epg e il paginator della vecchia lista non devono
+        // finire prima che parta quella nuova — era la sensazione
+        // "deve ancora finire" a ogni cambio gruppo rapido
+        shortQ.length = 0;
+        page.paginator = function() { return false; };
+        // distruzione incrementale delle righe vecchie:
+        // prop.deleteChilds era UN blocco sincrono — con liste
+        // grandi teneva il thread ES per secondi e il click sul
+        // gruppo nuovo sembrava "aspettare". Qui i root degli
+        // item (+ i separatori) si distruggono a slice da 24 per
+        // tick: il loop cede il thread tra una slice e l'altra,
+        // i click si intercalano, e il lavoro si sovrappone alla
+        // fetch di rete. Si usano i riferimenti (non i nomi):
+        // le righe appese dalla lista nuova non sono mai toccate.
+        var kill = [];
+        if(items)
+            for(var ki = 0; ki < items.length; ki++)
+                if(items[ki] && items[ki].root)
+                    kill.push(items[ki].root);
+        var str = page.__strays || [];
+        for(var ks = 0; ks < str.length; ks++)
+            if(str[ks] && str[ks].root) kill.push(str[ks].root);
+        page.__strays = [];
+        items = [];
+        killRootsIncr(page, kill);
+        // throbber subito: su click il loader deve apparire al
+        // frame successivo — se la lista e' calda si spegne nello
+        // stesso tick e non si vede mai
+        page.model.loadingStatus = tr('Caricamento…');
+        setLoading(page, true);
+        try {
         loader(cat, function(r) {
             if(mySeq != loadSeq) return;
             setLoading(page, false);
-            if(!r || !r.streams) return;
+            if(!r || !r.streams) {
+                // fetch fallita: senza feedback il click sembrava
+                // "morto" — mostra l'errore come hookBrowse
+                (page.__strays = page.__strays || []).push(
+                    page.appendPassiveItem('separator', '', {
+                        title: tr('Caricamento fallito — riprova') }));
+                page.paginator = function() { return false; };
+                prop.haveMore(page.model.nodes, false);
+                return;
+            }
+            // le richieste short_epg accodate appartenevano al
+            // gruppo precedente: le righe sono zombie, i job in
+            // coda farebbero solo HTTP a vuoto — si svuota (i 4
+            // in volo finiscono e vengono scartati dallo
+            // zombie-check)
+            shortQ.length = 0;
+
             streams = r.streams;
             items = r.items || [];
             curCat = cat;
@@ -3312,8 +4226,23 @@ function hookZap(page, groups, loader, initialCat) {
             var curHas = r.hasUrl || null;
             curTotal = r.total || streams.length;
             setPageHeader(page, r.title + ' (' + curTotal + ')');
+            // rail: aggiorna solo i due nodi che cambiano —
+            // scrivere .sel su ~400 voci a ogni click era un
+            // ciclo di prop-op sul thread ES. I nodi non ancora
+            // creati dai chunk prendono sel da __railCat alla
+            // nascita.
+            page.__railCat = cat;
+            if(selIdx >= 0 && selIdx < groups.length &&
+               groups[selIdx].cat != cat && groups[selIdx].node) {
+                try { groups[selIdx].node.sel = 0; } catch(e0) {}
+            }
+            selIdx = -1;
             for(var g = 0; g < groups.length; g++)
-                groups[g].node.sel = (groups[g].cat == cat) ? 1 : 0;
+                if(groups[g].cat == cat) {
+                    if(groups[g].node) groups[g].node.sel = 1;
+                    selIdx = g;
+                    break;
+                }
 
             cur = -1;
             page.model.zapidx = -1;
@@ -3328,7 +4257,48 @@ function hookZap(page, groups, loader, initialCat) {
                 }
             }
             boot();
+
+            // prefetch in idle delle categorie adiacenti nel rail:
+            // lo zapping su/giu' tra gruppi vicini trova la lista
+            // gia' in cache (come i player dedicati). In volo sono
+            // deduplicate da _inflightL; stale-load scartate via
+            // loadSeq.
+            setTimeout(function() {
+                try {
+                    if(mySeq != loadSeq || prop.isZombie(page.root))
+                        return;
+                    var pa = api();
+                    if(!pa.getLiveStreamsByCategoryIdAsync) return;
+                    for(var pg = 0; pg < groups.length; pg++) {
+                        if(groups[pg].cat != cat) continue;
+                        for(var d = -1; d <= 1; d += 2) {
+                            var nc = groups[pg + d];
+                            if(!nc || nc.cat == null ||
+                               nc.cat == 'fav' || nc.cat == 'recent')
+                                continue;
+                            var nk = 'live:' + nc.cat;
+                            if(cacheGet(nk)) continue;
+                            (function(c2, k2) {
+                                try {
+                                    pa.getLiveStreamsByCategoryIdAsync(
+                                        c2, function(l) {
+                                            if(l) cacheSet(k2, l);
+                                        });
+                                } catch(e) {}
+                            })(nc.cat, nk);
+                        }
+                        break;
+                    }
+                } catch(e) {}
+            }, 800);
         });
+        } catch(e) {
+            // l'overlay "Caricamento" copre il video: se il loader
+            // esplode in modo sincrono (build/store/prop) il flag
+            // resterebbe acceso e a video si vedrebbe solo il
+            // quad scuro mentre l'audio continua a suonare
+            setLoading(page, false);
+        }
     }
 
     // gruppo bloccato (regex adulti o scelta utente): chiede il PIN
@@ -3393,12 +4363,12 @@ function hookZap(page, groups, loader, initialCat) {
         m.zapnowstart = start;
         m.zapnowstop = stop;
         m.zapnexttitle = '';
-        m.zapurl = 'videoparams:' + JSON.stringify({
+        playback.set('videoparams:' + JSON.stringify({
             title: s.title,
             canonicalUrl: plugin.id + ':play:' + encodeURIComponent(s.title) +
                           ':' + encodeURIComponent(url),
             sources: [{ url: url }]
-        });
+        }));
     }
 
     // GLW delivers to model.eventSink: "watch:N" (item activated →
@@ -3551,12 +4521,34 @@ function hookZap(page, groups, loader, initialCat) {
         autoDestroy: true,
     });
 
+    // EPG lazy sul focus (come fanno TiviMate/OTT Player: il
+    // palinsesto si carica solo per le righe che si guardano).
+    // Senza guida bulk, selectOnFocus spedisce selectchild al
+    // parent: qui si accoda get_short_epg per il canale sotto il
+    // cursore + 2 di lookahead, deduplicato da shortReq. Con la
+    // guida XMLTV caricata le righe sono gia' coperte in memoria.
+    prop.subscribe(page.model.nodes, function(type, child) {
+        try {
+            if(type != 'selectchild' || prop.isZombie(page.root))
+                return;
+            if(guideFresh()) return;
+            var x = parseInt(prop.makeProp(child).metadata.xidx, 10);
+            if(isNaN(x) || x < 0) return;
+            for(var k = x; k <= x + 2 && k < streams.length; k++)
+                if(items[k])
+                    shortEpgQueue(items[k], streams[k], false);
+        } catch(e) {}
+    }, {
+        autoDestroy: true,
+    });
+
     // Start playing the first channel immediately,
     // the list overlay is drawn over it. Con "ultimo canale"
     // attivo si riparte dal gruppo/canale dell'ultima sessione.
     // Con cache fredda il loader risponde in callback: l'avvio
     // e' differito al primo load che porta streams non vuoti.
     var booted = false;
+    var bootRetried = false;
     function boot() {
         if(booted) return;
         var startIdx = -1;
@@ -3564,8 +4556,14 @@ function hookZap(page, groups, loader, initialCat) {
             // materializza i chunk fino al canale (capped dentro
             // findUrl)
             startIdx = curFind(uiStore.lastChan);
-        // il gruppo di restore non ha prodotto canali -> default
-        if(!streams.length && curCat !== initialCat) {
+        // il gruppo di restore non ha prodotto canali -> default.
+        // Solo se si era davvero tentato il restore lastChan:
+        // un gruppo vuoto (Preferiti/Recenti senza elementi, o
+        // una categoria vuota) deve restare vuoto, non rimbalzare
+        // altrove in loop col loader che continua a girare.
+        if(!streams.length && curCat !== initialCat && !bootRetried &&
+           cfg.lastChan && uiStore.lastChan) {
+            bootRetried = true;
             gatedLoad(initialCat);
             return;
         }
@@ -3584,32 +4582,16 @@ function hookZap(page, groups, loader, initialCat) {
 
     // Quando un'altra pagina copre questa (es. Impostazioni o la
     // home) il widget video resta vivo e continuerebbe a suonare
-    // sotto: qui si azzera model.zapurl mentre la pagina non e'
-    // corrente — il player si ferma — e lo si ripristina al ritorno
-    // (risintonizzazione live). Se la pagina viene distrutta
-    // l'intervallo si chiude da solo.
-    var myUrl = String(page.root.url);
-    var heldZap = null;
-    var guard = setInterval(function() {
-        try {
-            if(prop.isZombie(page.root)) {
-                clearInterval(guard);
-                return;
-            }
-            var m = page.model;
-            var z = '';
-            try { z = String(m.zapurl); } catch(e) {}
-            if(currentPageUrl() == myUrl) {
-                if(heldZap !== null && !z) {
-                    m.zapurl = heldZap;
-                    heldZap = null;
-                }
-            } else if(z) {
-                heldZap = z;
-                m.zapurl = '';
-            }
-        } catch(e) {}
-    }, 1000);
+    // sotto: livePlaybackLifecycle azzera model.zapurl appena
+    // il navigatore seleziona un'altra pagina, senza polling.
+    // Al ritorno si ripristina lo stream; alla distruzione
+    // della pagina vengono rimosse le sottoscrizioni.
+    // Su Android si usa lo stop ordinario del player, senza
+    // anticipare il rilascio di MediaCodec o della Surface.
+    // I caricamenti asincroni passano da playback.set: se la
+    // pagina non e' corrente, l'URL viene conservato senza play.
+    // La navigazione nei gruppi non seleziona un'altra pagina
+    // e quindi non interrompe il canale in riproduzione.
 
     return {
         // refill del rail quando le categorie arrivano in async:
@@ -3645,7 +4627,12 @@ function fillRail(page, cats, activeCat, kind) {
     if(hasFavItems(kind))
         groups.push({ cat: 'fav', title: tr('Preferiti') });
 
-    groups.push({ cat: 'all', title: tr('Tutti') });
+    // "Tutti" materializza il catalogo intero: opt-in via
+    // Impostazioni (rischio OOM su liste grandi). Per kind 'eps'
+    // il gruppo resta sempre (sono gli episodi di UNA serie,
+    // decine di item al massimo)
+    if(cfg.showAll || kind == 'eps')
+        groups.push({ cat: 'all', title: tr('Tutti') });
     if(cats)
         for(var i = 0; i < cats.length; i++) {
             if(isHiddenBrowseGroup(kind, cats[i].id)) continue;
@@ -3672,8 +4659,14 @@ function fillRail(page, cats, activeCat, kind) {
         groups = sorted;
     }
 
-    prop.deleteChilds(page.model.groups);
-    for(var i = 0; i < groups.length; i++) {
+    // rail a chunk come fillLiveGroups: centinaia di categorie
+    // non bloccano piu' il primo paint della pagina. Teardown
+    // incrementale dei nodi vecchi via __railNodes (riferimenti).
+    var gen = (page.__railGen = (page.__railGen || 0) + 1);
+    killRootsIncr(page, page.__railNodes);
+    page.__railNodes = [];
+    page.__railCat = activeCat;
+    var mkNode = function(i) {
         var n = prop.createRoot();
         n.metadata.title = groups[i].title;
         // gli pseudo-gruppi (Continua/Tutti) non si nascondono
@@ -3681,9 +4674,25 @@ function fillRail(page, cats, activeCat, kind) {
                               groups[i].cat != 'fav' &&
                               groups[i].cat != 'all') ? 1 : 0;
         n.xidx = i;
-        n.sel = (groups[i].cat == activeCat) ? 1 : 0;
+        n.sel = (groups[i].cat == page.__railCat) ? 1 : 0;
         groups[i].node = n;
+        page.__railNodes.push(n);
         prop.setParent(n, page.model.groups);
+    };
+    var RAIL_INIT = 48;
+    var ni = 0;
+    var ne = Math.min(RAIL_INIT, groups.length);
+    for(; ni < ne; ni++) mkNode(ni);
+    if(ni < groups.length) {
+        var railFill = function() {
+            if(page.__railGen != gen || prop.isZombie(page.root))
+                return;
+            var e2 = Math.min(ni + 64, groups.length);
+            for(; ni < e2; ni++) mkNode(ni);
+            if(ni < groups.length)
+                setTimeout(railFill, 0);
+        };
+        setTimeout(railFill, 0);
     }
     return groups;
 }
@@ -3701,6 +4710,8 @@ function browseLoader(page, kind, cats) {
     // categorie diverse lasciano in volo due fetch: solo la piu'
     // recente puo' riempire la pagina (altrimenti si vedono gli
     // item del gruppo sbagliato col rail selezionato su un altro)
+    var isSeries = (kind == 'series');
+
     return function catLoader(cat, done) {
 
         var mySeq = (catLoader.seq = (catLoader.seq || 0) + 1);
@@ -3710,38 +4721,77 @@ function browseLoader(page, kind, cats) {
         // async e la pagina mostra "Caricamento" finche' i dati
         // non arrivano.
 
+        // vista aggregata "Tutti" disattivata (cfg.showAll off):
+        // l'ingresso senza categoria atterra sulla prima
+        // categoria reale visibile, mai sul catalogo intero
+        if(cat == 'all' && !cfg.showAll) {
+            var bm0 = blockedCatMap(kind, cats);
+            var next = null;
+            if(cats)
+                for(var c0 = 0; c0 < cats.length; c0++)
+                    if(cats[c0].id != null && !bm0[String(cats[c0].id)]) {
+                        next = cats[c0].id; break;
+                    }
+            if(next != null) cat = next;
+            else if(hasFavItems(kind)) cat = 'fav';
+            else cat = 'history';
+        }
+
         if(cat == 'history') {
             // "Continua a guardare": items dalla cronologia con
             // url diretto di riproduzione
             var hist = histStore.list || [];
-            prop.deleteChilds(page.model.nodes);
+            browseKill(page);
             var n = 0;
             for(var i = 0; i < hist.length; i++) {
                 if(hist[i].k != kind) continue;
-                page.appendItem(plugin.id + ':play:' +
-                    encodeURIComponent(hist[i].t) + ':' +
-                    encodeURIComponent(hist[i].u), 'video',
-                    { title: hist[i].t, icon: hist[i].i,
-                      source: { url: hist[i].u } });
+                page.__browseItems.push(
+                    page.appendItem(plugin.id + ':play:' +
+                        encodeURIComponent(hist[i].t) + ':' +
+                        encodeURIComponent(hist[i].u), 'video',
+                        { title: hist[i].t, icon: hist[i].i,
+                          source: { url: hist[i].u } }));
                 n++;
             }
             done(null, n);
             return;
         }
 
-        var isSeries = kind == 'series';
-        // 'all' e 'fav' riusano le chiavi condivise col searcher
-        var key = (cat == 'all' || cat == 'fav') ?
-                  (isSeries ? 'series' : 'vodstreams')
+        // 'fav': solo gli elementi marcati dall'utente, letti da
+        // favItemStore (entry arricchite con titolo/icona/url al
+        // toggle) — niente fetch del catalogo, nessuno scan per
+        // recuperare le entry legacy (valore 1 senza metadati:
+        // vengono ignorate, il ri-toggle le risalva complete)
+        if(cat == 'fav') {
+            var pfx = kind + ':';
+            var fm0 = hidMap(favItemStore);
+            var favs = [];
+            for(var k in fm0) {
+                if(!fm0[k] || k.indexOf(pfx) != 0) continue;
+                var fv = fm0[k], fid = k.substr(pfx.length);
+                if(fv && typeof fv == 'object' && fv.u)
+                    favs.push({ id: fid, cat_id: fv.c,
+                                title: fv.t || ('ID ' + fid),
+                                icon: fv.i || '',
+                                source: { url: fv.u } });
+            }
+            done(null, fill(favs));
+            return;
+        }
+
+        // 'all' riusa la chiave condivisa col searcher
+        var key = cat == 'all' ? (isSeries ? 'series' : 'vodstreams')
                                : (isSeries ? 'series:' : 'vod:') + cat;
 
         function fill(list) {
 
             // 'fav': solo gli elementi marcati preferiti
             if(cat == 'fav') {
+                var favm0 = hidMap(favItemStore);
                 var favs = [];
                 for(var fi = 0; fi < list.length; fi++)
-                    if(isFavItem(kind, list[fi].id)) favs.push(list[fi]);
+                    if(favm0[kind + ':' + list[fi].id])
+                        favs.push(list[fi]);
                 list = favs;
             }
 
@@ -3777,13 +4827,16 @@ function browseLoader(page, kind, cats) {
                     });
             }
 
-            prop.deleteChilds(page.model.nodes);
+            // teardown incrementale come il live: i poster vecchi
+            // muoiono a slice in background, il fill non aspetta
+            browseKill(page);
 
             // gli elementi nascosti singolarmente non si
             // materializzano (il catalogo in cache resta integro)
+            var hidim = hidMap(hidItemStore);
             var disp = [];
             for(var di = 0; di < list.length; di++)
-                if(!isHiddenBrowseItem(kind, list[di].id))
+                if(!hidim[kind + ':' + list[di].id])
                     disp.push(list[di]);
             list = disp;
 
@@ -3793,8 +4846,9 @@ function browseLoader(page, kind, cats) {
 
             var total = list.length;
             if(!total) {
-                page.appendPassiveItem('separator', '', {
-                    title: tr('Nessun elemento') });
+                page.__browseStrays.push(
+                    page.appendPassiveItem('separator', '', {
+                        title: tr('Nessun elemento') }));
                 page.paginator = function() { return false; };
                 prop.haveMore(page.model.nodes, false);
                 return 0;
@@ -3807,6 +4861,11 @@ function browseLoader(page, kind, cats) {
             function more() {
                 var end = Math.min(pos + (first ? 60 : 240), total);
                 first = false;
+                // mappe kvstore lette una volta per chunk, non per
+                // riga: st.map e' un getter del proxy
+                var namesm = hidMap(nameItemStore);
+                var favm = hidMap(favItemStore);
+                var bitems = page.__browseItems;
                 for(; pos < end; pos++) {
                     var it = list[pos];
                     var u = isSeries ?
@@ -3819,21 +4878,27 @@ function browseLoader(page, kind, cats) {
                     // rinomina elemento: otitle conserva l'originale
                     // (usato anche per l'URL di playurl)
                     if(it.otitle === undefined) it.otitle = it.title;
-                    it.title = hidMap(nameItemStore)[it.vodkey] || it.otitle;
+                    it.title = namesm[it.vodkey] || it.otitle;
                     it.playurl = (!isSeries && it.source && it.source.url) ?
                         plugin.id + ':play:' + encodeURIComponent(it.otitle) + ':' +
                         encodeURIComponent(it.source.url) : '';
-                    it.fav = isFavItem(kind, it.id) ? 1 : 0;
-                    page.appendItem(u, 'directory', it);
+                    it.fav = favm[it.vodkey] ? 1 : 0;
+                    bitems.push(page.appendItem(u, 'directory', it));
                 }
                 return pos < total;
             }
             // chiavi nell'ordine mostrato — il menu contestuale le
-            // usa per gli swap Sposta su/giu'
+            // usa per gli swap Sposta su/giu'; itemByKey serve al
+            // toggle preferiti per salvare la categoria dell'item
+            // (cosi' la vista Preferiti fetcha solo quelle)
             var dkeys = [];
-            for(var dk = 0; dk < list.length; dk++)
+            var byKey = {};
+            for(var dk = 0; dk < list.length; dk++) {
                 dkeys.push(kind + ':' + list[dk].id);
+                byKey[dkeys[dk]] = list[dk];
+            }
             catLoader.keys = dkeys;
+            catLoader.itemByKey = byKey;
 
             more();
             page.paginator = more;
@@ -3846,10 +4911,11 @@ function browseLoader(page, kind, cats) {
         if(hit) { done(null, fill(hit)); return; }
 
         // loader standard di Movian (throbber + status) finche'
-        // la fetch async non completa — niente riga di testo
-        prop.deleteChilds(page.model.nodes);
+        // la fetch async non completa — il teardown dei poster
+        // vecchi gira a slice in background, non blocca
         page.model.loadingStatus = tr('Caricamento…');
         setLoading(page, true);
+        browseKill(page);
 
         var fin = function(list) {
             // risposta tardiva di un load superato: scarta tutto,
@@ -3857,8 +4923,9 @@ function browseLoader(page, kind, cats) {
             if(mySeq != catLoader.seq) return;
             try {
                 setLoading(page, false);
-                console.log('xctv: browse ' + kind + ' cat=' + cat +
-                            ' -> ' + (list ? list.length : list));
+                if(cfg.debug)
+                    console.log('xctv: browse ' + kind + ' cat=' + cat +
+                                ' -> ' + (list ? list.length : list));
                 if(prop.isZombie(page.root)) return;
                 if(list) cacheSet(key, list);
                 done(list ? null : 'fail', list ? fill(list) : -1);
@@ -3871,21 +4938,14 @@ function browseLoader(page, kind, cats) {
             // fallback sync per le lib senza varianti Async
             // (m3u/stalker lavorano su liste locali, non servono)
             var a = api();
-            var wholeCat = (cat == 'all' || cat == 'fav');
-            if(isSeries) {
-                if(wholeCat)
-                    if(a.getSeriesAsync) a.getSeriesAsync(fin);
-                    else fin(a.getSeries());
-                else
-                    if(a.getSeriesByCategoryIdAsync) a.getSeriesByCategoryIdAsync(cat, fin);
-                    else fin(a.getSeriesByCategoryId(cat));
+            if(cat == 'all')
+                wholeStreams(kind, fin);
+            else if(isSeries) {
+                if(a.getSeriesByCategoryIdAsync) a.getSeriesByCategoryIdAsync(cat, fin);
+                else fin(a.getSeriesByCategoryId(cat));
             } else {
-                if(wholeCat)
-                    if(a.getVodStreamsAsync) a.getVodStreamsAsync(fin);
-                    else fin(a.getVodStreams());
-                else
-                    if(a.getVodStreamsByCategoryIdAsync) a.getVodStreamsByCategoryIdAsync(cat, fin);
-                    else fin(a.getVodStreamsByCategoryId(cat));
+                if(a.getVodStreamsByCategoryIdAsync) a.getVodStreamsByCategoryIdAsync(cat, fin);
+                else fin(a.getVodStreamsByCategoryId(cat));
             }
         } catch(e) {
             setLoading(page, false);
@@ -3908,8 +4968,15 @@ function hookBrowse(page, groups, loader, initialCat, keepTitle, kind, cats) {
                    (kind == 'eps') ? 'eps:' : 'vod:';
     var curCat = initialCat;
     var loadSeq = 0;
+    var selIdx = -1;
 
     function load(cat) {
+
+        // "Tutti" disattivato dalle impostazioni: si apre la
+        // prima categoria reale del rail (kind 'eps' = stagioni
+        // di una serie, 'all' li' resta sempre lecito)
+        if(cat == 'all' && !cfg.showAll && kind != 'eps')
+            cat = firstBrowseCat(kind, cats);
 
         curCat = cat;
         var myLoad = ++loadSeq;
@@ -3919,9 +4986,22 @@ function hookBrowse(page, groups, loader, initialCat, keepTitle, kind, cats) {
             page.model.canitemorder = canOrderItems(kind, cat) ? 1 : 0;
         } catch(e) {}
         // sel subito: feedback istantaneo al click sul rail, i
-        // contenuti arrivano dalla callback del loader
+        // contenuti arrivano dalla callback del loader. Solo i
+        // due nodi che cambiano: scrivere .sel su tutte le voci
+        // era ~400 prop-op a click; i nodi tardivi dei chunk
+        // prendono sel da __railCat alla nascita
+        page.__railCat = cat;
+        if(selIdx >= 0 && selIdx < groups.length &&
+           groups[selIdx].cat != cat && groups[selIdx].node) {
+            try { groups[selIdx].node.sel = 0; } catch(e0) {}
+        }
+        selIdx = -1;
         for(var g = 0; g < groups.length; g++)
-            groups[g].node.sel = (groups[g].cat == cat) ? 1 : 0;
+            if(groups[g].cat == cat) {
+                if(groups[g].node) groups[g].node.sel = 1;
+                selIdx = g;
+                break;
+            }
 
         loader(cat, function(err, count) {
             // load superato nel frattempo: il nuovo load governa
@@ -3933,9 +5013,10 @@ function hookBrowse(page, groups, loader, initialCat, keepTitle, kind, cats) {
                 setLoading(page, false);
                 if(prop.isZombie(page.root)) return;
                 if(err) {
-                    prop.deleteChilds(page.model.nodes);
-                    page.appendPassiveItem('separator', '', {
-                        title: tr('Caricamento fallito — riprova') });
+                    browseKill(page);
+                    page.__browseStrays.push(
+                        page.appendPassiveItem('separator', '', {
+                            title: tr('Caricamento fallito — riprova') }));
                     setPageHeader(page, tr('Errore'));
                     // niente paginator stale: scrollando, la vecchia
                     // closure more() appenderebbe item della lista
@@ -4007,22 +5088,38 @@ function hookBrowse(page, groups, loader, initialCat, keepTitle, kind, cats) {
                     var hideCat = groups[hg].cat;
                     hidSet(hidBrowseGrpStore, kindPref + hideCat, 1);
                     popup.notify(tr('Gruppo nascosto (ripristina dalle Impostazioni)'), 3);
-                    groups = fillRail(page, cats, 'all', kind);
-                    load(curCat === hideCat ? 'all' : curCat);
+                    var defCat = cfg.showAll ? 'all' : firstBrowseCat(kind, cats);
+                    groups = fillRail(page, cats, defCat, kind);
+                    load(curCat === hideCat ? defCat : curCat);
                 }
             } else if(val.indexOf('favitem:') == 0) {
                 var fkey = val.substr(8);
                 if(fkey) {
                     var fm = hidMap(favItemStore);
                     var on = fm[fkey] ? 0 : 1;
-                    hidSet(favItemStore, fkey, on);
+                    // entry arricchita coi metadati dell'item
+                    // (categoria + titolo/icona/url): la vista
+                    // Preferiti si costruisce dallo store senza
+                    // fetch di rete
+                    var fm2 = {};
+                    for(var fk in fm) fm2[fk] = fm[fk];
+                    var fit = (loader.itemByKey || {})[fkey];
+                    fm2[fkey] = on ? {
+                        c: fit ? fit.cat_id : null,
+                        t: fit ? (fit.otitle || fit.title) : null,
+                        i: fit ? (fit.icon || '') : '',
+                        u: fit && fit.source ? fit.source.url : ''
+                    } : 0;
+                    favItemStore.map = fm2;
+                    // la cache della vista preferiti e' obsoleta
+                    delete cache[kind == 'series' ? 'seriesfav' : 'vodfav'];
                     popup.notify(on ? tr('Aggiunto ai preferiti') :
                                  tr('Rimosso dai preferiti'), 2);
                     // la voce di rail compare/sparisce col refill;
                     // il contenuto si ricarica solo dentro 'fav'
                     var stayCat = curCat;
                     if(curCat === 'fav' && !on && !hasFavItems(kind))
-                        stayCat = 'all';
+                        stayCat = cfg.showAll ? 'all' : firstBrowseCat(kind, cats);
                     groups = fillRail(page, cats, stayCat, kind);
                     if(curCat === 'fav') load(stayCat);
                 }
@@ -4445,34 +5542,47 @@ function xctvSearch(page, query) {
     var bms = blockedCatMap('series', cacheGet('seriescats'));
 
     // come vod/series: niente fetch sync durante la digitazione;
-    // a cache fredda si scalda in background
+    // a cache fredda parte uno scan per-categoria filtrato sul
+    // titolo — accumula solo i match, non il catalogo intero
     var live = cacheGet('livestreams');
-    if(!live && api().getLiveStreamsAsync)
-        api().getLiveStreamsAsync(function(l) {
-            if(l) cacheSet('livestreams', l);
-        });
     if(live) {
         for(var i = 0; i < live.length && hits < 200; i++) {
             if(bml[String(live[i].cat_id)] ||
                isHiddenChan(live[i].source.url)) continue;
             applyRename(live[i]);
             if(match(live[i].title)) {
-                var it = page.appendItem(plugin.id + ':play:' + encodeURIComponent(live[i].title) + ':' + encodeURIComponent(live[i].source.url), 'video', live[i]);
+                var it = page.appendItem(plugin.id + ':playlive:' + encodeURIComponent(live[i].title) + ':' + encodeURIComponent(live[i].source.url), 'video', live[i]);
                 fillChannelEpg(it, live[i], false);
                 hits++;
             }
         }
+    } else {
+        var la = api();
+        wholeByCats('live', la, {
+            limit: 200 - hits,
+            keep: function(it) {
+                return !bml[String(it.cat_id)] &&
+                       !isHiddenChan(it.source.url) &&
+                       match(it.title);
+            }
+        }, function(l) {
+            if(!l || prop.isZombie(page.root)) return;
+            for(var i = 0; i < l.length; i++) {
+                applyRename(l[i]);
+                var it2 = page.appendItem(plugin.id + ':playlive:' +
+                    encodeURIComponent(l[i].title) + ':' +
+                    encodeURIComponent(l[i].source.url), 'video', l[i]);
+                fillChannelEpg(it2, l[i], false);
+            }
+        });
     }
 
     // cacheGet: la ricerca non scarica il catalogo intero in
-    // sync (decine di MB = freeze). Se assente si scalda in
-    // background via async e i risultati compaiono dalla
-    // ricerca successiva.
+    // sync (decine di MB = freeze). Se assente parte uno scan
+    // per-categoria filtrato sul titolo: accumula solo i match
+    // (max 200), mai il catalogo intero — e i risultati si
+    // appendono appena lo scan finisce.
     var vod = cacheGet('vodstreams');
-    if(!vod && api().getVodStreamsAsync)
-        api().getVodStreamsAsync(function(l) {
-            if(l) cacheSet('vodstreams', l);
-        });
     if(vod) {
         for(var i = 0; i < vod.length && hits < 200; i++) {
             if(bmv[String(vod[i].cat_id)] ||
@@ -4482,13 +5592,25 @@ function xctvSearch(page, query) {
                 hits++;
             }
         }
+    } else {
+        var va = api();
+        wholeByCats('vod', va, {
+            limit: 200 - hits,
+            keep: function(it) {
+                return !bmv[String(it.cat_id)] &&
+                       !isHiddenBrowseItem('vod', it.id) &&
+                       match(it.title);
+            }
+        }, function(l) {
+            if(!l || prop.isZombie(page.root)) return;
+            for(var i = 0; i < l.length; i++)
+                page.appendItem(plugin.id + ':vodinfo:' +
+                    encodeURIComponent(l[i].title) + ':' + l[i].id,
+                    'directory', l[i]);
+        });
     }
 
     var series = cacheGet('series');
-    if(!series && api().getSeriesAsync)
-        api().getSeriesAsync(function(l) {
-            if(l) cacheSet('series', l);
-        });
     if(series) {
         for(var i = 0; i < series.length && hits < 200; i++) {
             if(bms[String(series[i].cat_id)] ||
@@ -4498,6 +5620,22 @@ function xctvSearch(page, query) {
                 hits++;
             }
         }
+    } else {
+        var sa = api();
+        wholeByCats('series', sa, {
+            limit: 200 - hits,
+            keep: function(it) {
+                return !bms[String(it.cat_id)] &&
+                       !isHiddenBrowseItem('series', it.id) &&
+                       match(it.title);
+            }
+        }, function(l) {
+            if(!l || prop.isZombie(page.root)) return;
+            for(var i = 0; i < l.length; i++)
+                page.appendItem(plugin.id + ':seriesinfo:' +
+                    encodeURIComponent(l[i].title) + ':' + l[i].id,
+                    'directory', l[i]);
+        });
     }
 }
 
@@ -4539,6 +5677,30 @@ new page.Route(plugin.id + ":play:(.*):(.*)", function(page, title, url) {
         // canale live Xtream: niente prompt "continua/riavvia" —
         // il resume resta solo per contenuti on-demand.
         live: du2.indexOf('/live/') != -1
+    });
+
+});
+
+
+/*
+ *  Play Live — come :play: ma il chiamante garantisce che e' un
+ *  canale live: live:true + no_subtitle_scan anche quando l'URL
+ *  non contiene '/live/' (playlist M3U/Stalker). Le righe live
+ *  e i risultati ricerca live puntano qui.
+ */
+new page.Route(plugin.id + ":playlive:(.*):(.*)", function(page, title, url) {
+
+    setLoading(page, false);
+    page.type = 'video';
+
+    var du = decodeURIComponent(url);
+    page.source = "videoparams:" + JSON.stringify({
+        title: decodeURIComponent(title),
+        canonicalUrl: plugin.id + ':playlive:' +
+            decodeURIComponent(title) + ':' + du,
+        sources: [{url: liveTransportUrl(du)}],
+        no_subtitle_scan: true,
+        live: true
     });
 
 });
@@ -4638,13 +5800,16 @@ new page.Route(plugin.id + ":seriesinfo:(.*):(.*)", function(page,title,series_i
 
         prop.deleteChilds(page.model.nodes);
 
+        // la mappa watched si legge una volta per fill, non per
+        // episodio (watchStore.map e' un getter del proxy)
+        var wmap = hidMap(watchStore);
         var n = 0;
         for(var i = 0; i < series.length; i++) {
             var sn = series[i].season && series[i].season.number != null ?
                 String(series[i].season.number) : '0';
             if(cat != 'all' && sn != cat) continue;
             var cu = playepUrl(series_id, series[i].id);
-            series[i].watched = watchIs(cu);
+            series[i].watched = (wmap[cu] || watchStore[cu]) ? 1 : 0;
             page.appendItem(cu, 'video', series[i]);
             n++;
         }
@@ -4842,7 +6007,7 @@ new page.Route(plugin.id + ":livestreams:(.*):(.*)", function(page,title,cat_id)
     page.model.loadingStatus = tr('Caricamento…');
 
     var groups = [];
-    fillLiveGroups(page, groups, cat_id, cacheGet('livecats'));
+    groups = fillLiveGroups(page, groups, cat_id, cacheGet('livecats'));
     fillAppMenu(page, 'live');
     var hk = hookZap(page, groups, liveLoader(page, groups), cat_id);
     // categorie in async: il rail si riempie quando arrivano,
@@ -4864,7 +6029,7 @@ new page.Route(plugin.id + ":alllivestreams:(.*)", function(page,title) {
     page.model.loadingStatus = tr('Caricamento…');
 
     var groups = [];
-    fillLiveGroups(page, groups, null, cacheGet('livecats'));
+    groups = fillLiveGroups(page, groups, null, cacheGet('livecats'));
     fillAppMenu(page, 'live');
     var hk2 = hookZap(page, groups, liveLoader(page, groups), null);
     liveCats(function(cats) {
@@ -4886,6 +6051,7 @@ new page.Route(plugin.id + ":multiview", function(page) {
     setPageHeader(page, tr('Multi-view'));
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/multiview.view";
+    page.model.loadingStatus = tr('Caricamento…');
     setLoading(page, true);
 
     var m = page.model;
@@ -4901,7 +6067,7 @@ new page.Route(plugin.id + ":multiview", function(page) {
     m.mvfocus = 0;
 
     var groups = [];
-    fillLiveGroups(page, groups, null, cacheGet('livecats'));
+    groups = fillLiveGroups(page, groups, null, cacheGet('livecats'));
     var loader = liveLoader(page, groups);
     var mstreams = [];
     // "Tutti i canali" nella rail — la callback arriva subito a
@@ -4951,9 +6117,11 @@ new page.Route(plugin.id + ":multiview", function(page) {
                 if(!sj) return;
                 // la pagina live si apre sul canale del tile
                 // (redirect: i tile si fermano, il player unico
-                // riparte da lastChan)
+                // riparte da lastChan). lastGroup = gruppo del
+                // canale: senza, il restore lo cerca solo nella
+                // prima categoria e sintonizza il canale sbagliato
                 uiStore.lastChan = sj.source.url;
-                uiStore.lastGroup = null;
+                uiStore.lastGroup = (sj.cat_id != null) ? sj.cat_id : null;
                 page.redirect(plugin.id + ':alllivestreams:Guida TV');
             }
         } catch(e) {}
@@ -4998,6 +6166,7 @@ new page.Route(plugin.id + ":chanepg:(.*):(.*):(.*)", function(page,title,stream
     setPageHeader(page, title);
     page.type = "directory";
     page.metadata.glwview = Plugin.path + "views/schedule.view";
+    page.model.loadingStatus = tr('Caricamento…');
     setLoading(page, true);
 
     ensureGuide(function(ok) {
@@ -5025,21 +6194,13 @@ new page.Route(plugin.id + ":chanepg:(.*):(.*):(.*)", function(page,title,stream
             }
 
             // il canale ha un archivio? i programmi finiti diventano
-            // riproducibili via catch-up — lookup async, niente
-            // fetch bloccante a cache fredda
-            liveStreams(function(all) { try {
+            // riproducibili via catch-up — lookup per id (scan
+            // per-categoria filtrato), niente catalogo intero
+            liveById(stream_id, function(sref) { try {
 
             if(prop.isZombie(page.root)) return;
 
-            var hasArchive = false;
-            var sref = null;
-            if(all)
-                for(var k = 0; k < all.length; k++)
-                    if(String(all[k].id) == String(stream_id)) {
-                        sref = all[k];
-                        hasArchive = !!all[k].archive;
-                        break;
-                    }
+            var hasArchive = !!(sref && sref.archive);
 
             var surl = sref && sref.source ? sref.source.url : '';
             for(var i = 0; i < evs.length; i++) {
@@ -5124,15 +6285,9 @@ new page.Route(plugin.id + ":schedrec:(.*):(.*):(.*):(.*):(.*):(.*)",
     var evt = decodeURIComponent(evtitle);
     var st = parseInt(start, 10), sp = parseInt(stop, 10);
 
-    liveStreams(function(all) {
+    liveById(stream_id, function(sref) {
 
-    var surl = '';
-    if(all)
-        for(var k = 0; k < all.length; k++)
-            if(String(all[k].id) == String(stream_id)) {
-                surl = all[k].source.url;
-                break;
-            }
+    var surl = sref && sref.source ? sref.source.url : '';
 
     var list = schedStore.list || [];
     var idx = schedFind(surl, st);
@@ -5275,15 +6430,9 @@ new page.Route(plugin.id + ":schedrecseries:(.*):(.*):(.*):(.*)",
     var want = decodeURIComponent(evtitle).replace(/\s+/g, ' ').toLowerCase();
     var now = Math.floor(Date.now() / 1000);
 
-    liveStreams(function(all) {
+    liveById(stream_id, function(sref) {
 
-    var surl = '';
-    if(all)
-        for(var k = 0; k < all.length; k++)
-            if(String(all[k].id) == String(stream_id)) {
-                surl = all[k].source.url;
-                break;
-            }
+    var surl = sref && sref.source ? sref.source.url : '';
 
     var applyEvs = function(evs) {
         var n = 0;

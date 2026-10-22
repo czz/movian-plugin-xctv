@@ -41,6 +41,9 @@ var XmlTv = (function () {
         // channelId -> { id, names[], icon }
         this.channels = {};
         this.fetchedAt = 0;
+        // match() memo: i canali senza EPG farebbero uno scan
+        // lineare di alias a OGNI chiamata (righe x alias)
+        this._matchCache = {};
     }
 
 
@@ -254,6 +257,7 @@ var XmlTv = (function () {
         this.alias = alias;
         this.channels = channels;
         this.fetchedAt = Math.floor(Date.now() / 1000);
+        this._matchCache = {};
 
         _debug.call(this, 'XmlTv: parsed ' + chans.length + ' channels, ' +
                     progs.length + ' programmes', 'XmlTv:parse');
@@ -265,26 +269,38 @@ var XmlTv = (function () {
     /*
      *  match — resolve a stream name or epg_channel_id to a guide id.
      *  Exact id first, then normalized name, then longest alias that
-     *  is a prefix/suffix of the normalized name.
+     *  is a prefix/suffix of the normalized name. Risultati memoizzati:
+     *  un miss (canale senza EPG) costerebbe O(#alias) a ogni chiamata.
      */
     XmlTv.prototype.match = function(name) {
 
         if(!name) return '';
         name = String(name);
 
-        if(name in this.byId) return name;
+        var c = this._matchCache[name];
+        if(c !== undefined) return c;
 
-        var n = normalizeName(name);
-        if(n in this.alias) return this.alias[n];
-
-        var best = '';
-        for(var a in this.alias) {
-            if(a.length < 4 || a.length <= best.length) continue;
-            if(n.indexOf(a) === 0 || n.lastIndexOf(a) === n.length - a.length)
-                best = a;
+        var r;
+        if(name in this.byId) {
+            r = name;
+        } else {
+            var n = normalizeName(name);
+            if(n in this.alias) {
+                r = this.alias[n];
+            } else {
+                var best = '';
+                for(var a in this.alias) {
+                    if(a.length < 4 || a.length <= best.length) continue;
+                    if(n.indexOf(a) === 0 ||
+                       n.lastIndexOf(a) === n.length - a.length)
+                        best = a;
+                }
+                r = best ? this.alias[best] : '';
+            }
         }
 
-        return best ? this.alias[best] : '';
+        this._matchCache[name] = r;
+        return r;
     };
 
 
@@ -592,6 +608,7 @@ var XmlTv = (function () {
         this.alias = alias;
         this.channels = channels;
         this.fetchedAt = Math.floor(Date.now() / 1000);
+        this._matchCache = {};
 
         _debug.call(this, 'XmlTv: scan ' + Object.keys(byId).length +
                     ' channels, ' + nprog + ' programmes', 'XmlTv:scan');

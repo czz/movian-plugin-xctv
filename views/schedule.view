@@ -140,4 +140,26 @@ widget(container_z, {
   });
 
   ScrollBar("scrollable", 3em, $ui.universeBottomHeight);
+
+  // loader EPG — il loader universale di universe.view resta
+  // sotto lo sfondo opaco della vista
+  widget(container_z, {
+    hidden: iir($self.model.loading, 8) < 0.01;
+    alpha: iir($self.model.loading, 8);
+    widget(quad, {
+      color: 0;
+      alpha: 0.6;
+    });
+    widget(container_y, {
+      space(1);
+      widget(throbber, {});
+      space(0.2);
+      widget(label, {
+        align: center;
+        caption: $self.model.loadingStatus;
+        bold: true;
+      });
+      space(1);
+    });
+  });
 });
